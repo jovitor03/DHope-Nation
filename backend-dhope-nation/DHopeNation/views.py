@@ -4,7 +4,7 @@ from .serializers import UserSerializer
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from rest_framework import status
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 
 @api_view(['POST'])
 def login(request):
@@ -39,3 +39,6 @@ def register(request):
 def profile(request):
     
     return Response({})
+
+
+# Create your views here.
