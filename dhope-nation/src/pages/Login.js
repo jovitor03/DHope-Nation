@@ -1,5 +1,6 @@
 import "../styles/Login.css";
 import logo from "../assets/logo.png";
+import { Link } from 'react-router-dom';
 
 function Login() {
   return (
@@ -15,19 +16,19 @@ function Login() {
         </h1>
         <label className="text-lg 2xl:text-2xl mt-4">
           Don't have an account?{" "}
-          <span className="text-[#809F8B] underline underline-offset-2 font-bold">
+          <Link to="/create-account" className="text-[#809F8B] underline underline-offset-2 font-bold">
             Create new account
-          </span>
+          </Link>
         </label>
         <label className="text-left font-bold text-lg 2xl:text-2xl mt-6">
-          Username
+          Username<span className="text-[#FF0000]">*</span>
         </label>
         <input
           type="text"
           className="rounded-md bg-white border border-[#AFAFAF] h-12 text-lg 2xl:text-xl px-4 focus:outline-none focus:border-black 2xl:h-[7vh]"
         />
         <label className="text-left font-bold text-lg 2xl:text-2xl mt-4">
-          Password
+          Password<span className="text-[#FF0000]">*</span>
         </label>
         <input
           type="password"
