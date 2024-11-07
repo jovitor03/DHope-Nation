@@ -5,6 +5,7 @@ import './index.css';
 import Login from './pages/Login';
 import CreateAccount1 from './pages/CreateAccount1';
 import CreateAccount2 from './pages/CreateAccount2';
+import ConfirmIdentity from './pages/ConfirmIdentity';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -15,6 +16,7 @@ root.render(
         <Route path="/login" element={<Login />} />
         <Route path="/create-account/page-1" element={<CreateAccount1 />} />
         <Route path="/create-account/page-2" element={<CreateAccount2 />} />
+        <Route path="/confirm-identity" element={<ConfirmIdentity />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
