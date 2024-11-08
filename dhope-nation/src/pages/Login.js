@@ -7,7 +7,6 @@ import { login } from "../api/Accounts";
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async () => {
@@ -64,9 +63,6 @@ function Login() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        {errorMessage && (
-          <div className="text-red-500 mt-4">{errorMessage}</div>
-        )}
         <button
           onClick={handleLogin}
           className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8 "
