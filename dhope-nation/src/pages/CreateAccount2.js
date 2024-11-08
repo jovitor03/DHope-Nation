@@ -1,8 +1,32 @@
 import "../styles/CreateAccount.css";
 import logo from "../assets/logo.png";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { register } from "../api/Accounts";
 
 function CreateAccount2() {
+  const location = useLocation();
+  const { name, surname, email } = location.state || {};
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSignUp = async () => {
+    try {
+      const data = {
+        first_name: name,
+        last_name: surname,
+        email: email,
+        username,
+        password,
+      };
+      await register(data);
+      alert("Account created successfully!");
+    } catch (error) {
+      console.error("Error creating account: ", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
+
   return (
     <div className="login text-black">
       <div className="flex flex-col align-middle bg-[#F7FFFD] rounded-[50px] text-center p-12 w-1/3  2xl:w-[30vw] h-auto mx-auto relative transform 2xl:scale-[1.2] mt-16">
@@ -27,6 +51,8 @@ function CreateAccount2() {
         <input
           type="text"
           className="rounded-md bg-white border border-[#AFAFAF] h-12 text-lg px-4 focus:outline-none focus:border-black"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
         />
         <label className="text-left font-bold text-lg mt-4">
           Password<span className="text-[#FF0000]">*</span>
@@ -34,6 +60,8 @@ function CreateAccount2() {
         <input
           type="password"
           className="rounded-md bg-white border border-[#AFAFAF] h-12 text-lg px-4 focus:outline-none focus:border-black"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
         <div className="flex flex-row justify-between">
           <Link
@@ -42,12 +70,9 @@ function CreateAccount2() {
           >
             <button>Go Back</button>
           </Link>
-          <Link
-            to="/confirm-identity"
-            className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8 w-[12vw]"
-          >
-            <button>Next</button>
-          </Link>
+          <button onClick={handleSignUp} className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8 w-[12vw]">
+            Sign Up
+          </button>
         </div>
         <label className="text-[#8C8C8C] font-semibold mt-8 ">
           Copyright © [2024] DHope Nation. <br /> All rights reserved.

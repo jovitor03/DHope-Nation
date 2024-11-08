@@ -1,8 +1,20 @@
 import "../styles/CreateAccount.css";
 import logo from "../assets/logo.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 function CreateAccount1() {
+  const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
+  const [email, setEmail] = useState("");
+  const navigate = useNavigate();
+
+  const handleNextPage = () => {
+    navigate(`/create-account/page-2`, {
+      state: { name, surname, email },
+    });
+  };
+
   return (
     <div className="login text-black">
       <div className="flex flex-col align-middle bg-[#F7FFFD] rounded-[50px] text-center p-12 w-1/3 2xl:w-[30vw] h-auto mx-auto relative transform 2xl:scale-[1.2] mt-16">
@@ -53,6 +65,8 @@ function CreateAccount1() {
             <input
               type="text"
               className="rounded-md bg-white border border-[#AFAFAF] h-12 text-lg px-4 focus:outline-none focus:border-black w-[12vw]"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div className="flex flex-col text-left ml-4">
@@ -62,6 +76,8 @@ function CreateAccount1() {
             <input
               type="text"
               className="rounded-md bg-white border border-[#AFAFAF] h-12 text-lg px-4 focus:outline-none focus:border-black w-[12vw]"
+              value={surname}
+              onChange={(e) => setSurname(e.target.value)}
             />
           </div>
         </div>
@@ -71,13 +87,15 @@ function CreateAccount1() {
         <input
           type="text"
           className="rounded-md bg-white border border-[#AFAFAF] h-12 text-lg px-4 focus:outline-none focus:border-black"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
-        <Link
-          to="/create-account/page-2"
+        <button
+          onClick={handleNextPage}
           className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8"
         >
-          <button>Next</button>
-        </Link>
+          Next
+        </button>
         <label className="text-[#8C8C8C] font-semibold mt-8 ">
           Copyright © [2024] DHope Nation. <br /> All rights reserved.
         </label>
