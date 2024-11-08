@@ -5,6 +5,9 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from rest_framework import status
 from django.shortcuts import get_object_or_404, render
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
 
 @api_view(['POST'])
 def login(request):
@@ -35,10 +38,15 @@ def register(request):
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def profile(request):
+    print(request.user)
+    #serializer= UserSerializer(instance=request.user)
     
-    return Response({})
+    return Response("You are authenticated {}".format(request.user.username),status=status.HTTP_200_OK)
 
 
 # Create your views here.
