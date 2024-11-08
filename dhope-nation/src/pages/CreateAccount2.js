@@ -70,7 +70,10 @@ function CreateAccount2() {
           >
             <button>Go Back</button>
           </Link>
-          <button onClick={handleSignUp} className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8 w-[12vw]">
+          <button
+            onClick={handleSignUp}
+            className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8 w-[12vw]"
+          >
             Sign Up
           </button>
         </div>

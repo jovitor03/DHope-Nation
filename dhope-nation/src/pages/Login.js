@@ -1,8 +1,33 @@
 import "../styles/Login.css";
 import logo from "../assets/logo.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { login } from "../api/Accounts";
 
 function Login() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async () => {
+    try {
+      const data = { username, password };
+      const response = await login(data);
+
+      if (response.status === 200 && response.data.token) {
+        localStorage.setItem("authToken", response.data.token);
+        alert("Login successful!");
+        navigate("/");
+      } else {
+        alert("Invalid username or password.");
+      }
+    } catch (error) {
+      console.error("Error logging in: ", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
+
   return (
     <div className="login text-black">
       <div className="flex flex-col align-middle bg-[#F7FFFD] rounded-[50px] text-center p-12 w-1/3 2xl:w-[30vw] h-auto mx-auto relative 2xl:scale-[1.2] mt-16">
@@ -27,6 +52,8 @@ function Login() {
         <input
           type="text"
           className="rounded-md bg-white border border-[#AFAFAF] h-12 text-lg px-4 focus:outline-none focus:border-black"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
         />
         <label className="text-left font-bold text-lg mt-4">
           Password<span className="text-[#FF0000]">*</span>
@@ -34,8 +61,16 @@ function Login() {
         <input
           type="password"
           className="rounded-md bg-white border border-[#AFAFAF] h-12 text-lg px-4 focus:outline-none focus:border-black"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
-        <button className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8 ">
+        {errorMessage && (
+          <div className="text-red-500 mt-4">{errorMessage}</div>
+        )}
+        <button
+          onClick={handleLogin}
+          className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8 "
+        >
           Log In
         </button>
         <label className="text-[#8C8C8C] font-semibold mt-8">
