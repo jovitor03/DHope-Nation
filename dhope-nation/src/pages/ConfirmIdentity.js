@@ -1,10 +1,10 @@
-import "../styles/CreateAccount.css";
-import logo from "../assets/logo.png";
+import "../styles/Account.css";
+import logo from "../assets/images/logo.png";
 import { Link } from "react-router-dom";
 
 function CreateAccount3() {
   return (
-    <div className="login text-black">
+    <div className="account-page text-black">
       <div className="flex flex-col align-middle bg-[#F7FFFD] rounded-[50px] text-center p-12 w-1/3 2xl:w-[30vw] h-auto mx-auto relative transform 2xl:scale-[1.2] mt-16">
         <img
           src={logo}

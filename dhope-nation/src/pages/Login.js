@@ -1,5 +1,5 @@
-import "../styles/Login.css";
-import logo from "../assets/logo.png";
+import "../styles/Account.css";
+import logo from "../assets/images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { login } from "../api/Accounts";
@@ -17,7 +17,7 @@ function Login() {
       if (response.status === 200 && response.data.token) {
         localStorage.setItem("authToken", response.data.token);
         alert("Login successful!");
-        navigate("/");
+        navigate("/profile");
       } else {
         alert("Invalid username or password.");
       }
@@ -28,7 +28,7 @@ function Login() {
   };
 
   return (
-    <div className="login text-black">
+    <div className="account-page text-black">
       <div className="flex flex-col align-middle bg-[#F7FFFD] rounded-[50px] text-center p-12 w-1/3 2xl:w-[30vw] h-auto mx-auto relative 2xl:scale-[1.2] mt-16">
         <img
           src={logo}
