@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 function CreateAccount1() {
+  const [type, setType] = useState("");
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [email, setEmail] = useState("");
@@ -11,7 +12,7 @@ function CreateAccount1() {
 
   const handleNextPage = () => {
     navigate(`/create-account/page-2`, {
-      state: { name, surname, email },
+      state: { type, name, surname, email },
     });
   };
 
@@ -42,6 +43,8 @@ function CreateAccount1() {
               type="radio"
               name="userType"
               className="appearance-none w-5 h-5 bg-white border-2 rounded-full relative border-gray-400"
+              value={"donator"}
+              onChange={(e) => setType(e.target.value)}
             />
             <label className="text-left text-lg mt-0 ml-2">Donator</label>
           </div>
@@ -50,6 +53,8 @@ function CreateAccount1() {
               type="radio"
               name="userType"
               className="appearance-none w-5 h-5 bg-white border-2 rounded-full relative border-gray-400"
+              value={"campaignCreator"}
+              onChange={(e) => setType(e.target.value)}
             />
             <label className="text-left text-lg mt-0 ml-2">
               Campaign Creator

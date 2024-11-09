@@ -18,6 +18,8 @@ function CreateAccount2() {
         email: email,
         username,
         password,
+        is_campaign_creator: false,
+        is_donator: true,
       };
       await register(data);
       alert("Account created successfully!");
