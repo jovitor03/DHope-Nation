@@ -6,7 +6,7 @@ class UserAccount(User):
     is_campaign_creator = models.BooleanField(default=False)
 
 class Donator(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(UserAccount, on_delete=models.CASCADE)
     xp = models.IntegerField(default=0)
     donaiton_value = models.IntegerField(default=0)
     donation_count = models.IntegerField(default=0)
@@ -25,7 +25,7 @@ class Donator(models.Model):
         super().save(*args, **kwargs)
     
 class CampaignCreator(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(UserAccount, on_delete=models.CASCADE)
     is_verified = models.BooleanField(default=False)
     
     def save(self, *args, **kwargs):
