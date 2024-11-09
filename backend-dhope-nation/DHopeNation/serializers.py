@@ -5,7 +5,7 @@ from .models import Donator, CampaignCreator, UserAccount
 class UserAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAccount
-        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name','is_campaign_creator', 'is_donator']
+        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name','is_campaign_creator', 'is_donator','date_joined']
         extra_kwargs = {'password': {'write_only': True}}
     def create(self, validated_data):
         password = validated_data.pop('password')
@@ -18,7 +18,7 @@ class DonatorSerializer(serializers.ModelSerializer):
     user=UserAccountSerializer()
     class Meta:
         model = Donator
-        fields = ['user','xp', 'donaiton_value', 'donation_count', 'honor', 'is_verified', 'level', 'rank', 'donation_history']
+        fields = ['user','xp', 'donation_value', 'donation_count', 'honor', 'is_verified', 'level', 'rank', 'donation_history']
     
     def create(self, validated_data):
         user_data = validated_data.pop('user')

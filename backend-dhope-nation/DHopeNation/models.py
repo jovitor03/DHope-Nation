@@ -8,11 +8,11 @@ class UserAccount(User):
 class Donator(models.Model):
     user = models.OneToOneField(UserAccount, on_delete=models.CASCADE)
     xp = models.IntegerField(default=0)
-    donaiton_value = models.IntegerField(default=0)
+    donation_value = models.FloatField(default=0)
     donation_count = models.IntegerField(default=0)
-    honor = models.CharField(max_length=100, default='neutral honor')
+    honor = models.CharField(max_length=100, default='Neutral Honor')
     is_verified = models.BooleanField(default=False)
-    level = models.IntegerField(default=0)
+    level = models.IntegerField(default=1)
     rank = models.IntegerField(default=0)
     donation_history = models.TextField(default='[]')
     
