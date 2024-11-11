@@ -1,8 +1,8 @@
-import "../styles/Account.css";
-import logo from "../assets/images/logo.png";
+import "../../styles/Account.css";
+import logo from "../../assets/images/logo.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { register } from "../api/Accounts";
+import { register } from "../../api/Accounts";
 
 function CreateAccount2() {
   const location = useLocation();

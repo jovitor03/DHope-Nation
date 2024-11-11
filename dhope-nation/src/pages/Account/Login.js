@@ -1,8 +1,8 @@
-import "../styles/Account.css";
-import logo from "../assets/images/logo.png";
+import "../../styles/Account.css";
+import logo from "../../assets/images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { login } from "../api/Accounts";
+import { login } from "../../api/Accounts";
 
 function Login() {
   const [username, setUsername] = useState("");

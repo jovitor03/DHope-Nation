@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import DonatorLayout from "../layouts/DonatorLayout";
-import profileIcon from "../assets/images/profile-big-icon.png";
-import medalIcon from "../assets/images/medal.png";
-import hexagon from "../assets/images/hexagon.png";
-import LevelBorder from "../components/LevelBorder.js";
-import Hexagon from "../components/Hexagon.js";
-import LinearProgressBar from "../components/LinearProgressBar.js";
-import { getProfile } from "../api/Profile";
-import LevelSystem from "../utils/LevelSystem";
+import DonatorLayout from "../../layouts/DonatorLayout";
+import profileIcon from "../../assets/images/profile-big-icon.png";
+import medalIcon from "../../assets/images/medal.png";
+import hexagon from "../../assets/images/hexagon.png";
+import LevelBorder from "../../components/LevelBorder.js";
+import Hexagon from "../../components/Hexagon.js";
+import LinearProgressBar from "../../components/LinearProgressBar.js";
+import { getProfile } from "../../api/Profile";
+import LevelSystem from "../../utils/LevelSystem";
 
 function DonatorProfile() {
   const [profileStats, setProfileStats] = useState({});
@@ -161,7 +161,7 @@ function DonatorProfile() {
           </div>
           <div className="h-64 w-48 text-white flex flex-col items-center">
             <label className="text-2xl font-semibold mt-2">Level System</label>
-            <label className="text-md">1€ donated = 50 XP</label>
+            <label className="text-md">1€ donated = 100 XP</label>
             <div className="flex flex-row">
               <div className="flex flex-col">
                 <div className="flex flex-row items-center mt-2">
