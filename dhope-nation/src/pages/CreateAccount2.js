@@ -1,6 +1,6 @@
 import "../styles/Account.css";
 import logo from "../assets/images/logo.png";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { register } from "../api/Accounts";
 
@@ -9,6 +9,7 @@ function CreateAccount2() {
   const { name, surname, email } = location.state || {};
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSignUp = async () => {
     try {
@@ -23,6 +24,7 @@ function CreateAccount2() {
       };
       await register(data);
       alert("Account created successfully!");
+      navigate("/login");
     } catch (error) {
       console.error("Error creating account: ", error);
       alert("An error occurred. Please try again.");
