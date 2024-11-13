@@ -1,9 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DonatorLayout from "../../layouts/DonatorLayout";
 import "../../styles/Campaigns.css";
+import { createCampaign } from "../../api/Campaign";
 
 function CreateCampaign() {
+  const [title, setTitle] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [deadline, setDeadline] = useState("");
+  const [description, setDescription] = useState("");
+  const [motivationAmount, setMotivationAmount] = useState("");
+  const [motivationItem, setMotivationItem] = useState("");
+  const [goal, setGoal] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
   const categories = [
@@ -26,17 +33,45 @@ function CreateCampaign() {
       }
     });
   };
-
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
+  const handleCreateCampaign = async () => {
+    console.log(selectedCategories);
+
+    const data = {
+      title: title,
+      category: selectedCategories,
+      end_date: deadline,
+      description: description,
+      ratio: motivationAmount,
+      sentence: motivationItem,
+      goal: goal,
+    };
+
+    const token = localStorage.getItem("authToken");
+
+    try {
+      const responseData = await createCampaign(token, data);
+      console.log(responseData);
+    } catch (error) {
+      console.error("Erro ao criar campanha:", error);
+    }
+  };
+
+  useEffect(() => {
+    console.log(localStorage.getItem("authToken"));
+  });
+
   return (
     <DonatorLayout>
-      {/* Title - centrado */}
+      {/* Título - centrado */}
       <div className="flex flex-row justify-center mt-[-20px]">
         <input
           type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
           placeholder="Write your campaign's title here (Max. 50 characters)"
           maxLength={50}
           className="bg-transparent focus:outline-none border-b border-black text-[#28372C] font-semibold w-3/4 text-center text-3xl 2xl:text-4xl placeholder-gray-500"
@@ -46,7 +81,7 @@ function CreateCampaign() {
       {/* Conteúdo principal na metade da direita */}
       <div className="flex flex-row mt-4 justify-center 2xl:mt-8 ml-20 mr-8">
         <div className="flex flex-col">
-          {/* Click here to select category(s) e Deadline lado a lado */}
+          {/* Select category(s) e Deadline lado a lado */}
           <div className="flex flex-row mb-6 w-full items-center mt-4 space-x-12">
             <div className="relative w-[330px]">
               <button
@@ -78,13 +113,15 @@ function CreateCampaign() {
               )}
             </div>
 
-            {/* Ajuste aqui: Alinhar Deadline */}
+            {/* Deadline */}
             <div className="flex flex-col items-start w-[180px] ml-5 mt-[-30px]">
               <h3 className="text-[#35473A] text-xl font-semibold">
                 Deadline:
               </h3>
               <input
                 type="date"
+                value={deadline}
+                onChange={(e) => setDeadline(e.target.value)}
                 className="border border-green-700 rounded-md h-12 pl-2 text-white bg-[#4A6B53] text-xl w-full"
               />
             </div>
@@ -119,6 +156,8 @@ function CreateCampaign() {
               Description:
             </h2>
             <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               placeholder="Write your campaign's description here! (Max. 250 characters)"
               className="bg-transparent focus:outline-none border border-green-800 text-[#28372C] w-full h-[155px] text-xl p-4 placeholder-gray-500 resize-none"
               maxLength={250}
@@ -134,11 +173,15 @@ function CreateCampaign() {
               <label>1€ =</label>
               <input
                 type="text"
+                value={motivationAmount}
+                onChange={(e) => setMotivationAmount(e.target.value)}
                 className="bg-transparent focus:outline-none border-b border-b-green-800 ml-2 text-[#28372C] w-1/12 text-xl placeholder-gray-500 text-center"
                 placeholder="10"
               />
               <input
                 type="text"
+                value={motivationItem}
+                onChange={(e) => setMotivationItem(e.target.value)}
                 className="bg-transparent focus:outline-none border-b border-b-green-800 ml-2 text-[#28372C] w-2/12 text-xl placeholder-gray-500 text-center"
                 placeholder="meals"
               />
@@ -149,7 +192,8 @@ function CreateCampaign() {
           <div className="flex flex-row w-full mt-2 items-center text-xl text-[#35473A] ">
             <h2 className="font-semibold">Preview:</h2>
             <label className="ml-2">
-              Your contribution will provide 10 meals.
+              Your contribution will provide {motivationAmount} {motivationItem}
+              .
             </label>
           </div>
 
@@ -163,6 +207,8 @@ function CreateCampaign() {
                 </span>
                 <input
                   type="number"
+                  value={goal}
+                  onChange={(e) => setGoal(e.target.value)}
                   className="bg-transparent focus:outline-none border-b border-green-800 text-[#28372C] w-full text-xl pl-8 placeholder-gray-500 custom-number-input"
                   placeholder="Max. 1.000.000€"
                 />
@@ -170,7 +216,10 @@ function CreateCampaign() {
             </div>
 
             {/* Botão de Save Changes expandido */}
-            <button className="flex-grow h-12 border-2 border-white rounded-md bg-[#4A6B53] text-white text-2xl font-semibold">
+            <button
+              className="flex-grow h-12 border-2 border-white rounded-md bg-[#4A6B53] text-white text-2xl font-semibold"
+              onClick={handleCreateCampaign}
+            >
               SAVE CHANGES/CREATE
             </button>
           </div>
