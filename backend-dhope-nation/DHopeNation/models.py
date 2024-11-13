@@ -46,6 +46,8 @@ class Campaign(models.Model):
     total_donators = models.IntegerField(default=0)
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField()
+    ratio = models.IntegerField(default=0)
+    sentence = models.CharField(max_length=100, default='No sentence')    
     is_verified = models.BooleanField(default=False)
     is_completed = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
@@ -74,6 +76,6 @@ class Campaign(models.Model):
     def complete_campaign(self):
         self.is_completed = True
         self.is_active = False
-        
-        
+    
+
     
