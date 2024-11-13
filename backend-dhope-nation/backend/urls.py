@@ -23,4 +23,6 @@ urlpatterns = [
     re_path('register',views.register),
     re_path('profile/donator',views.profile_donator),
     re_path('profile/campign-creator',views.profile_campaign_creator),
+    re_path('campaign/create',views.create_campaign),
+    re_path('campaign/',views.get_campaigns),
 ]
