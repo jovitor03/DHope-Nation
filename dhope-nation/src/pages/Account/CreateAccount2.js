@@ -6,12 +6,14 @@ import { register } from "../../api/Accounts";
 
 function CreateAccount2() {
   const location = useLocation();
-  const { name, surname, email } = location.state || {};
+  const { type, name, surname, email } = location.state || {};
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSignUp = async () => {
+    let donator = type === "donator";
+
     try {
       const data = {
         first_name: name,
@@ -19,8 +21,8 @@ function CreateAccount2() {
         email: email,
         username,
         password,
-        is_campaign_creator: false,
-        is_donator: true,
+        is_campaign_creator: !donator,
+        is_donator: donator,
       };
       await register(data);
       alert("Account created successfully!");

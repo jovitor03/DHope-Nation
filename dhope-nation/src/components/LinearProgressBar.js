@@ -8,7 +8,10 @@ function LinearProgressBar({
   xpToNextLevel,
   minXpLevel,
 }) {
-  const progress = ((xp - minXpLevel) / (xpToNextLevel - minXpLevel)) * 100;
+  const progress =
+    xpToNextLevel - minXpLevel === 0
+      ? 0
+      : ((xp - minXpLevel) / (xpToNextLevel - minXpLevel)) * 100;
 
   const progressWidth = (width * progress) / 100;
 
