@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404, render
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
-
+#----------------------------------------------Account--------------------------------------------------------
 @api_view(['POST'])
 def register(request):
     serializer = UserAccountSerializer(data=request.data)
@@ -66,6 +66,7 @@ def profile_campaign_creator(request):
     else:
         return Response({"error": "User is not a campaign creator"}, status=status.HTTP_400_BAD_REQUEST)
 
+#------------------------------------------------Campaigns-----------------------------------------------------------------
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -91,3 +92,17 @@ def get_campaigns(request):
     campaign = get_object_or_404(Campaign, id=campaign_id)
     serializer = CampaignSerializer(campaign)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_campaigns_by_creator(request):
+    user = get_object_or_404(UserAccount, username=request.user.username)
+    if user.is_campaign_creator:
+        campaign_creator = get_object_or_404(CampaignCreator, user=user)
+        campaigns = Campaign.objects.filter(campaign_creator=campaign_creator)
+        serializer = CampaignSerializer(campaigns, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": "User is not a campaign creator"}, status=status.HTTP_400_BAD_REQUEST)
+    
