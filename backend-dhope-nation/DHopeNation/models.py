@@ -65,8 +65,6 @@ class Campaign(models.Model):
         self.title = new_title
     def change_description(self, new_description):
         self.description = new_description
-    def select_category(self, category):
-        self.category.append(category)
     def change_goal(self, new_goal):
         self.goal = new_goal
     def change_end_date(self, new_end_date):
