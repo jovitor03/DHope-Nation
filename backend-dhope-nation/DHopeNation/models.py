@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 class UserAccount(User):
     is_donator = models.BooleanField(default=False)
     is_campaign_creator = models.BooleanField(default=False)
+    identification = models.FileField(upload_to='identification/', blank=True, null=True)
 
 class Donator(models.Model):
     user = models.OneToOneField(UserAccount, on_delete=models.CASCADE)
