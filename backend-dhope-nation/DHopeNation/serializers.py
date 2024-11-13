@@ -41,6 +41,7 @@ class CampaignCreatorSerializer(serializers.ModelSerializer):
 
 class CampaignSerializer(serializers.ModelSerializer):
     campaign_creator = serializers.PrimaryKeyRelatedField(queryset=CampaignCreator.objects.all())
+    category=serializers.JSONField()
     class Meta:
         model = Campaign
         fields = ['campaign_creator', 'title', 'description', 'category', 'goal', 'current_amount', 'total_donators', 'start_date', 'end_date','ratio','sentence', 'is_verified', 'is_completed', 'is_active']

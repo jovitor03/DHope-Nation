@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class UserAccount(User):
     is_donator = models.BooleanField(default=False)
     is_campaign_creator = models.BooleanField(default=False)
@@ -40,7 +41,7 @@ class Campaign(models.Model):
     campaign_creator = models.ForeignKey(CampaignCreator, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     description = models.TextField()
-    category = models.TextField(default='[]')
+    category = models.JSONField(blank=True, null=True, default=list)
     goal = models.FloatField()
     current_amount = models.FloatField(default=0)
     total_donators = models.IntegerField(default=0)
