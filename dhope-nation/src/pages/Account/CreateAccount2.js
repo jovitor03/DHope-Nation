@@ -1,8 +1,7 @@
 import "../../styles/Account.css";
 import logo from "../../assets/images/logo.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { register } from "../../api/Accounts";
+import { useEffect, useState } from "react";
 
 function CreateAccount2() {
   const location = useLocation();
@@ -11,27 +10,19 @@ function CreateAccount2() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSignUp = async () => {
-    let donator = type === "donator";
-
-    try {
-      const data = {
-        first_name: name,
-        last_name: surname,
-        email: email,
-        username,
-        password,
-        is_campaign_creator: !donator,
-        is_donator: donator,
-      };
-      await register(data);
-      alert("Account created successfully!");
-      navigate("/login");
-    } catch (error) {
-      console.error("Error creating account: ", error);
-      alert("An error occurred. Please try again.");
+  const handleNextPage = () => {
+    if (!username || !password) {
+      alert("Please fill in all required fields.");
+      return;
     }
+    navigate(`/confirm-identity`, {
+      state: { type, name, surname, email, username, password },
+    });
   };
+
+  useEffect(() => {
+    console.log("Details: ", type, name, surname, email);
+  }, [type, name, surname, email]);
 
   return (
     <div className="account-page text-black">
@@ -77,10 +68,10 @@ function CreateAccount2() {
             <button>Go Back</button>
           </Link>
           <button
-            onClick={handleSignUp}
+            onClick={handleNextPage}
             className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8 w-[12vw]"
           >
-            Sign Up
+            Next
           </button>
         </div>
         <label className="text-[#8C8C8C] font-semibold mt-8 ">
