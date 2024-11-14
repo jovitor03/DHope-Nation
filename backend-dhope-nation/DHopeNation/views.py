@@ -65,7 +65,10 @@ def profile_campaign_creator(request):
         }, status=status.HTTP_200_OK)
     else:
         return Response({"error": "User is not a campaign creator"}, status=status.HTTP_400_BAD_REQUEST)
-
+@api_view(['GET'])
+def donar_count(request):
+    donator_count = Donator.objects.count()
+    return Response({"donator_count": donator_count}, status=status.HTTP_200_OK)
 #------------------------------------------------Campaigns-----------------------------------------------------------------
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
@@ -105,4 +108,3 @@ def get_campaigns_by_creator(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response({"error": "User is not a campaign creator"}, status=status.HTTP_400_BAD_REQUEST)
-    

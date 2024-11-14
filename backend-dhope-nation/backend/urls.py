@@ -28,6 +28,7 @@ urlpatterns = [
     re_path('profile/campaign-creator/my_campaigns',views.get_campaigns_by_creator),
     re_path('campaign/create',views.create_campaign),
     re_path('campaign/get',views.get_campaigns),
+    re_path('donator_get',views.donar_count),
    
 ]
 
