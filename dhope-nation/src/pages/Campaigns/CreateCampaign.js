@@ -52,6 +52,11 @@ function CreateCampaign() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
+  const toggleDropdown = (event) => {
+    event.stopPropagation();
+    setIsOpen((prevIsOpen) => !prevIsOpen);
+  };
+
   const categories = [
     "Education",
     "Health",
@@ -82,10 +87,6 @@ function CreateCampaign() {
       setShowAlert(false);
     }
   }, [showAlert]);
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
 
   const handleCreateCampaign = async () => {
     console.log(selectedCategories);
@@ -118,17 +119,30 @@ function CreateCampaign() {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Write your campaign's title here (Max. 50 characters)"
-          maxLength={50}
+          placeholder="Write your campaign's title here (Max. 70 characters)"
+          maxLength={70}
           className="bg-transparent focus:outline-none border-b border-black text-[#28372C] font-semibold w-3/4 text-center text-3xl 2xl:text-4xl placeholder-gray-500"
         />
       </div>
 
       {/* Conteúdo principal na metade da direita */}
-      <div className="flex flex-row mt-4 justify-center ml-20 mr-8">
+      <div className="flex flex-row mt-4 justify-center ml-10 mr-8">
         <div className="flex flex-col w-1/2 gap-2">
           {/* Select category(s) e Deadline lado a lado */}
           <div className="flex flex-row mb-6 w-full items-center mt-6 space-x-12 justify-center">
+            {/* Deadline */}
+            <div className="flex flex-col items-start w-[180px] ml-5 mt-[-30px]">
+              <h3 className="text-[#35473A] text-xl font-semibold">
+                Deadline:
+              </h3>
+              <input
+                type="date"
+                value={deadline}
+                onChange={(e) => setDeadline(e.target.value)}
+                className="border border-green-700 rounded-md h-12 pl-2 text-white bg-[#4A6B53] text-xl w-full"
+              />
+            </div>
+
             <div className="relative w-[330px]">
               <button
                 type="button"
@@ -160,19 +174,6 @@ function CreateCampaign() {
                   ))}
                 </div>
               )}
-            </div>
-
-            {/* Deadline */}
-            <div className="flex flex-col items-start w-[180px] ml-5 mt-[-30px]">
-              <h3 className="text-[#35473A] text-xl font-semibold">
-                Deadline:
-              </h3>
-              <input
-                type="date"
-                value={deadline}
-                onChange={(e) => setDeadline(e.target.value)}
-                className="border border-green-700 rounded-md h-12 pl-2 text-white bg-[#4A6B53] text-xl w-full"
-              />
             </div>
           </div>
 

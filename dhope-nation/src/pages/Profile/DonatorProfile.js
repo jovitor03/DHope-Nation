@@ -5,7 +5,7 @@ import medalIcon from "../../assets/images/medal.png";
 import hexagon from "../../assets/images/hexagon.png";
 import LevelBorder from "../../components/LevelBorder.js";
 import Hexagon from "../../components/Hexagon.js";
-import LinearProgressBar from "../../components/LinearProgressBar.js";
+import LinearProgressBar from "../../components/LevelProgressBar.js";
 import { getProfile } from "../../api/Profile";
 import LevelSystem from "../../utils/LevelSystem";
 
@@ -150,6 +150,7 @@ function DonatorProfile() {
                   LevelSystem.getLevel(profileStats.xp)
                 )}
                 minXpLevel={LevelSystem.getMaxXPForLevel(profileStats.level)}
+                radius={10}
               />
             </div>
             <label className="mt-1">
@@ -161,7 +162,7 @@ function DonatorProfile() {
           </div>
           <div className="h-64 w-48 text-white flex flex-col items-center">
             <label className="text-2xl font-semibold mt-2">Level System</label>
-            <label className="text-md">1€ donated = 100 XP</label>
+            <label className="text-md">1€ donated = 10 XP</label>
             <div className="flex flex-row">
               <div className="flex flex-col">
                 <div className="flex flex-row items-center mt-2">

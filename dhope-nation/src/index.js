@@ -8,6 +8,7 @@ import CreateAccount2 from "./pages/Account/CreateAccount2.js";
 import ConfirmIdentity from "./pages/Account/ConfirmIdentity.js";
 import DonatorProfile from "./pages/Profile/DonatorProfile.js";
 import CreateCampaign from "./pages/Campaigns/CreateCampaign.js";
+import Campaign from "./pages/Campaigns/Campaign.js";
 import reportWebVitals from "./reportWebVitals";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -21,6 +22,7 @@ root.render(
         <Route path="/confirm-identity" element={<ConfirmIdentity />} />
         <Route path="/profile" element={<DonatorProfile />} />
         <Route path="/create-campaign" element={<CreateCampaign />} />
+        <Route path="/campaign/:id" element={<Campaign />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
