@@ -267,7 +267,7 @@ function CreateCampaign() {
 
             {/* Botão de Save Changes expandido */}
             <button
-              className="flex-grow h-12 border-2 border-white rounded-md bg-[#4A6B53] text-white text-2xl font-semibold mb-[-10px]"
+              className="flex-grow h-12 border-2 border-white rounded-md bg-[#4A6B53] text-white text-2xl font-semibold mb-[-10px] shadow-y"
               onClick={handleCreateCampaign}
             >
               SAVE CHANGES/CREATE

@@ -9,6 +9,7 @@ import ConfirmIdentity from "./pages/Account/ConfirmIdentity.js";
 import DonatorProfile from "./pages/Profile/DonatorProfile.js";
 import CreateCampaign from "./pages/Campaigns/CreateCampaign.js";
 import Campaign from "./pages/Campaigns/Campaign.js";
+import CampaignDonation from "./pages/Campaigns/CampaignDonation.js";
 import ProtectedRoute from "./components/ProtectedRoute.js";
 import reportWebVitals from "./reportWebVitals";
 
@@ -32,6 +33,10 @@ root.render(
         <Route
           path="/campaign/:id"
           element={<ProtectedRoute element={<Campaign />} />}
+        />
+        <Route
+          path="/campaign/:id/donate"
+          element={<ProtectedRoute element={<CampaignDonation />} />}
         />
       </Routes>
     </BrowserRouter>

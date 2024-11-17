@@ -62,13 +62,13 @@ function Header() {
             <h2 className="text-2xl font-semibold mb-4 text-[#516158]">Are you sure you want to log out from your account?</h2>
             <div className="flex justify-center space-x-12">
               <button
-                className="bg-[#34A77F] text-white px-4 py-2 rounded-md hover:bg-[#2e8063]"
+                className="bg-[#34A77F] text-white px-6 py-2 rounded-md hover:bg-[#2e8063] text-xl"
                 onClick={handleConfirmLogout}
               >
                 Yes
               </button>
               <button
-                className="bg-[#CA0404] text-white px-4 py-2 rounded-md hover:bg-red-700"
+                className="bg-[#CA0404] text-white px-6 py-2 rounded-md hover:bg-red-700 text-xl"
                 onClick={handleCancelLogout}
               >
                 No

@@ -82,6 +82,10 @@ function CampaignDetails() {
 
   const Layout = profileData.is_donator ? DonatorLayout : CampaignCreatorLayout;
 
+  const navigateToDonation = () => {
+    navigate(`/campaign/${campaignId}/donate`);
+  };
+
   return (
     <Layout>
       <div className="flex flex-row justify-center mt-[-20px]">
@@ -127,7 +131,10 @@ function CampaignDetails() {
             </label>
           </div>
           <div className="flex w-full">
-            <button className="flex-grow h-12 border-2 border-white rounded-md bg-[#4A6B53] text-white text-2xl font-semibold mb-[-10px]">
+            <button
+              onClick={navigateToDonation}
+              className="flex-grow h-12 border-2 border-white rounded-md bg-[#4A6B53] text-white text-2xl font-semibold mb-[-10px] shadow-y"
+            >
               DONATE HERE!
             </button>
           </div>

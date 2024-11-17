@@ -98,7 +98,7 @@ function DonatorProfile() {
                   ({profileData.first_name} {profileData.last_name})
                 </label>
               </div>
-              <label className="text-lg">
+              <label className="text-lg 2xl:text-xl">
                 Joined: {formatDate(profileData.date_joined)}
               </label>
               <button
