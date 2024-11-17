@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
 import CampaignCreatorLayout from "../../layouts/CampaignCreatorLayout";
+import DonatorLayout from "../../layouts/DonatorLayout";
 import "../../styles/Campaigns.css";
 import shareIcon from "../../assets/images/share.png";
 import { getCampaignById } from "../../api/Campaign";
 import LinearProgressBar from "../../components/LevelProgressBar.js";
 import { useParams, useNavigate } from "react-router-dom";
+import { getProfile } from "../../api/Profile";
 
 function CampaignDetails() {
   const [textareaHeight, setTextareaHeight] = useState("150px");
   const [campaign, setCampaign] = useState(null);
   const { id: campaignId } = useParams();
+  const [profileData, setProfileData] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,8 +50,26 @@ function CampaignDetails() {
     fetchCampaign();
   }, [campaignId, navigate]);
 
-  if (!campaign) {
-    return null;
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        console.error("Token de autenticação não encontrado.");
+        return;
+      }
+      try {
+        const response = await getProfile(token);
+        setProfileData(response.data.donator.user);
+      } catch (error) {
+        console.error("Erro ao obter os dados do perfil:", error);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
+
+  if (!campaign || !profileData) {
+    return <div>Carregando...</div>;
   }
 
   const formattedDeadline = campaign.end_date
@@ -59,8 +80,10 @@ function CampaignDetails() {
       })
     : "Data indisponível";
 
+  const Layout = profileData.is_donator ? DonatorLayout : CampaignCreatorLayout;
+
   return (
-    <CampaignCreatorLayout>
+    <Layout>
       <div className="flex flex-row justify-center mt-[-20px]">
         <h1 className="text-3xl 2xl:text-4xl text-[#28372C] font-semibold">
           {campaign.title}
@@ -110,7 +133,7 @@ function CampaignDetails() {
           </div>
         </div>
       </div>
-    </CampaignCreatorLayout>
+    </Layout>
   );
 }
 

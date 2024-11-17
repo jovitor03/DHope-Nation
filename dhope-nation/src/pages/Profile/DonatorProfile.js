@@ -8,6 +8,8 @@ import Hexagon from "../../components/Hexagon.js";
 import LinearProgressBar from "../../components/LevelProgressBar.js";
 import { getProfile } from "../../api/Profile";
 import LevelSystem from "../../utils/LevelSystem";
+import { format } from "date-fns";
+import { deleteProfile } from "../../api/Profile";
 
 function DonatorProfile() {
   const [profileStats, setProfileStats] = useState({});
@@ -49,6 +51,33 @@ function DonatorProfile() {
     return "#84F1FF";
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "Unknown";
+    try {
+      const date = new Date(dateString);
+      return format(date, "dd MMM yyyy 'at' HH:mm");
+    } catch (error) {
+      console.error("Erro ao formatar a data:", error);
+      return "Invalid date";
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.error("Token de autenticação não encontrado.");
+      return;
+    }
+    try {
+      await deleteProfile(token);
+      localStorage.removeItem("authToken");
+      alert("Conta excluída com sucesso.");
+    } catch (error) {
+      console.error("Erro ao excluir a conta:", error);
+      alert("Erro ao excluir a conta. Por favor, tente novamente.");
+    }
+  };
+
   useEffect(() => {
     getProfileStats();
     getProfileData();
@@ -69,8 +98,13 @@ function DonatorProfile() {
                   ({profileData.first_name} {profileData.last_name})
                 </label>
               </div>
-              <label className="text-xl">Joined: 13 Jun 2021 at 13:16</label>
-              <button className="bg-[#CA0404] rounded rounded-md text-white border-2 border-[#303934] font-semibold p-1 text-lg mt-2 2xl:mt-3">
+              <label className="text-lg">
+                Joined: {formatDate(profileData.date_joined)}
+              </label>
+              <button
+                className="bg-[#CA0404] rounded rounded-md text-white border-2 border-[#303934] font-semibold p-1 text-lg mt-2 2xl:mt-3"
+                onClick={handleDeleteAccount}
+              >
                 Delete Account
               </button>
             </div>
