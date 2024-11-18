@@ -7,6 +7,8 @@ import Layout from "../../layouts/DonatorLayout.js";
 function CampaignDonation() {
   const [campaign, setCampaign] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("");
+  const [itemsProvided, setItemsProvided] = useState(0);
+
   const { id: campaignId } = useParams();
   const navigate = useNavigate();
 
@@ -28,6 +30,15 @@ function CampaignDonation() {
 
   const handlePaymentMethodChange = (event) => {
     setPaymentMethod(event.target.value);
+  };
+
+  const handleDonationAmountChange = (event) => {
+    const amount = parseFloat(event.target.value) || 0;
+
+    if (campaign && campaign.ratio) {
+      const items = amount * campaign.ratio;
+      setItemsProvided(Math.round(items));
+    }
   };
 
   if (!campaign) {
@@ -76,16 +87,25 @@ function CampaignDonation() {
                 type="number"
                 className="p-2 border bg-[#4A6B53] border-gray-300 rounded-md ml-2 w-[200px] mt-4 text-white custom-number-input placeholder-gray-400 text-center text-xl focus:outline-none"
                 placeholder="0,50€ - 100000€"
+                onChange={handleDonationAmountChange}
               ></input>
             </div>
-            <div className="mb-6 mt-6 w-1/2 justify-center flex flex-row space-x-12">
+            {campaign.ratio && (
+              <div className="mt-4">
+                <p className="text-[#28372C] text-xl font-semibold">
+                  Your contribution will provide {itemsProvided}{" "}
+                  {campaign.sentence}.
+                </p>
+              </div>
+            )}
+            <div className="mb-6 mt-6 flex flex-row justify-between space-x-4">
               <button
-                className="flex-grow h-12 w-6/12 border-2 rounded-sm border-[#4A6B53] bg-[#D9D9D9] text-[#4A6B53] text-2xl font-semibold shadow-y"
+                className="h-12 px-4 border-2 rounded-sm border-[#4A6B53] bg-[#D9D9D9] text-[#4A6B53] text-2xl font-semibold shadow-y whitespace-nowrap"
                 onClick={() => navigate(`/campaign/${campaignId}`)}
               >
                 CANCEL
               </button>
-              <button className="flex-grow h-12 w-10/12 border-2 rounded-sm border-white bg-[#4A6B53] text-white text-2xl font-semibold shadow-y">
+              <button className="h-12 px-4 border-2 rounded-sm border-white bg-[#4A6B53] text-white text-2xl font-semibold shadow-y whitespace-nowrap">
                 CONFIRM DONATION
               </button>
             </div>
