@@ -10,6 +10,7 @@ import DonatorProfile from "./pages/Profile/DonatorProfile.js";
 import CreateCampaign from "./pages/Campaigns/CreateCampaign.js";
 import Campaign from "./pages/Campaigns/Campaign.js";
 import CampaignDonation from "./pages/Campaigns/CampaignDonation.js";
+import CampaignSearch from "./pages/Campaigns/CampaignSearch.js";
 import ProtectedRoute from "./components/ProtectedRoute.js";
 import reportWebVitals from "./reportWebVitals";
 
@@ -37,6 +38,10 @@ root.render(
         <Route
           path="/campaign/:id/donate"
           element={<ProtectedRoute element={<CampaignDonation />} />}
+        />
+        <Route
+          path="/campaigns"
+          element={<ProtectedRoute element={<CampaignSearch />} />}
         />
       </Routes>
     </BrowserRouter>

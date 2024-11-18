@@ -9,16 +9,20 @@ function LinearProgressBar({
   minXpLevel,
   radius,
 }) {
-  const progress =
-    xpToNextLevel - minXpLevel === 0
-      ? 0
-      : ((xp - minXpLevel) / (xpToNextLevel - minXpLevel)) * 100;
+  const progress = xpToNextLevel === 0 ? 0 : (xp / xpToNextLevel) * 100;
 
   const progressWidth = (width * progress) / 100;
 
   return (
     <svg width={width} height={height}>
-      <rect x="0" y="0" width={width} height={height} fill="#BEBEBE" rx={radius} />
+      <rect
+        x="0"
+        y="0"
+        width={width}
+        height={height}
+        fill="#BEBEBE"
+        rx={radius}
+      />
       <rect
         x="0"
         y="0"

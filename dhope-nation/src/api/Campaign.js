@@ -41,3 +41,26 @@ export const getCampaignById = async (campaignId, token) => {
     return null;
   }
 };
+
+export const donateToCampaign = async (data, authToken) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:8000/campaign/donate/",
+      data,
+      {
+        headers: {
+          Authorization: `Token ${authToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Erro ao processar doação:",
+      error.response?.data || error.message
+    );
+    throw error.response?.data || error.message;
+  }
+};

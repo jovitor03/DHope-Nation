@@ -1,27 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getCampaignById } from "../../api/Campaign";
+import { getCampaignById, donateToCampaign } from "../../api/Campaign";
 import "../../styles/Campaigns.css";
 import Layout from "../../layouts/DonatorLayout.js";
 
 function CampaignDonation() {
   const [campaign, setCampaign] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("");
+  const [donationAmount, setDonationAmount] = useState("");
   const [itemsProvided, setItemsProvided] = useState(0);
-
   const { id: campaignId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCampaign = async () => {
-      const data = await getCampaignById(
-        campaignId,
-        localStorage.getItem("authToken")
-      );
-      if (!data) {
+      try {
+        const data = await getCampaignById(
+          campaignId,
+          localStorage.getItem("authToken")
+        );
+        if (!data) {
+          navigate("/campaigns");
+        } else {
+          setCampaign(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch campaign data:", error);
         navigate("/campaigns");
-      } else {
-        setCampaign(data);
       }
     };
 
@@ -34,10 +39,43 @@ function CampaignDonation() {
 
   const handleDonationAmountChange = (event) => {
     const amount = parseFloat(event.target.value) || 0;
+    setDonationAmount(event.target.value);
 
     if (campaign && campaign.ratio) {
       const items = amount * campaign.ratio;
       setItemsProvided(Math.round(items));
+    }
+  };
+
+  const handleConfirmDonation = async () => {
+    const amount = parseFloat(donationAmount);
+
+    if (!amount || amount <= 0) {
+      alert("Please enter a valid donation amount.");
+      return;
+    }
+
+    if (!paymentMethod) {
+      alert("Please select a payment method.");
+      return;
+    }
+
+    try {
+      await donateToCampaign(
+        {
+          campaign_id: campaignId,
+          amount,
+          payment_method: paymentMethod,
+          items_provided: itemsProvided,
+        },
+        localStorage.getItem("authToken")
+      );
+
+      alert(`Donation successful! XP Gained: ${amount * 10}`);
+      navigate(`/campaign/${campaignId}`);
+    } catch (error) {
+      console.error("Donation failed:", error);
+      alert("Failed to process your donation.");
     }
   };
 
@@ -85,8 +123,9 @@ function CampaignDonation() {
               <label className="text-[#28372C] text-xl">Amount:</label>
               <input
                 type="number"
+                value={donationAmount}
                 className="p-2 border bg-[#4A6B53] border-gray-300 rounded-md ml-2 w-[200px] mt-4 text-white custom-number-input placeholder-gray-400 text-center text-xl focus:outline-none"
-                placeholder="0,50€ - 100000€"
+                placeholder="0.50€ - 100000€"
                 onChange={handleDonationAmountChange}
               ></input>
             </div>
@@ -105,7 +144,10 @@ function CampaignDonation() {
               >
                 CANCEL
               </button>
-              <button className="h-12 px-4 border-2 rounded-sm border-white bg-[#4A6B53] text-white text-2xl font-semibold shadow-y whitespace-nowrap">
+              <button
+                className="h-12 px-4 border-2 rounded-sm border-white bg-[#4A6B53] text-white text-2xl font-semibold shadow-y whitespace-nowrap"
+                onClick={handleConfirmDonation}
+              >
                 CONFIRM DONATION
               </button>
             </div>

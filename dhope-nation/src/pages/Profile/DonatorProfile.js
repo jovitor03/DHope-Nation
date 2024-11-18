@@ -132,12 +132,14 @@ function DonatorProfile() {
               <div className="flex flex-row items-center ml-6 mt-4">
                 <img src={hexagon} alt="hexagon" className="w-12"></img>
                 <label className="ml-2 text-2xl 2xl:text-3xl">
-                  0 donations
+                  {profileStats.donation_count} donations
                 </label>
               </div>
               <div className="flex flex-row items-center ml-6 mt-3">
                 <img src={hexagon} alt="hexagon" className="w-12"></img>
-                <label className="ml-2 text-2xl 2xl:text-3xl">€ donated</label>
+                <label className="ml-2 text-2xl 2xl:text-3xl">
+                  {profileStats.donation_value}€ donated
+                </label>
               </div>
               <div className="flex flex-row items-center ml-6 mt-3">
                 <img src={hexagon} alt="hexagon" className="w-12"></img>
