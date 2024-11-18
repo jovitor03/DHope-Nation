@@ -24,11 +24,17 @@ urlpatterns = [
     re_path('login',views.login),
     re_path('register',views.register),
     re_path('profile/donator',views.profile_donator),
+    re_path('profile/donator/delete',views.delete_account),#BRO esta aqui o delete do donator
     re_path('profile/campign-creator',views.profile_campaign_creator),
     re_path('profile/campaign-creator/my_campaigns',views.get_campaigns_by_creator),
+    re_path('profile/campaign-creator/delete',views.delete_account), #BRO esta aqui o delete do campaign creator
     re_path('campaign/create',views.create_campaign),
     re_path('campaign/get',views.get_campaigns),
     re_path('donator_get',views.donar_count),
+    re_path('campaign/donate',views.donate),#BRO esta qui o donate
+    re_path('get_all_donators',views.get_all_donators),
+    re_path('get_all_campaign_creators',views.get_all_campaign_creators),
+    re_path('get_all_campaigns',views.get_all_campaigns),
    
 ]
 
