@@ -69,6 +69,24 @@ def profile_campaign_creator(request):
 def donar_count(request):
     donator_count = Donator.objects.count()
     return Response({"donator_count": donator_count}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_account(request):
+    user = get_object_or_404(UserAccount, username=request.user.username)
+    user.delete()
+    return Response({"message": "Account deleted successfully"}, status=status.HTTP_200_OK)
+@api_view(['GET'])
+def get_all_donators(request):
+    donators = Donator.objects.all()
+    serializer = DonatorSerializer(donators, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+@api_view(['GET'])
+def get_all_campaign_creators(request):
+    campaign_creators = CampaignCreator.objects.all()
+    serializer = CampaignCreatorSerializer(campaign_creators, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 #------------------------------------------------Campaigns-----------------------------------------------------------------
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
@@ -108,3 +126,29 @@ def get_campaigns_by_creator(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response({"error": "User is not a campaign creator"}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET'])
+def get_all_campaigns(request):
+    campaigns = Campaign.objects.all()
+    serializer = CampaignSerializer(campaigns, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+#-------------------------------------------------Donations---------------------------------------------------------------
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def donate(request):
+    user = get_object_or_404(UserAccount, username=request.user.username)
+    if user.is_donator:
+        donator = get_object_or_404(Donator, user=user)
+        campaign_id = request.data.get('campaign_id')
+        amount = request.data.get('amount')
+        campaign = get_object_or_404(Campaign, id=campaign_id)
+        campaign.current_amount += amount
+        campaign.total_donators += 1
+        campaign.save()
+        donator.donation_value += amount
+        donator.donation_count += 1
+        donator.save()
+        return Response({"message": "Donation successful"}, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": "User is not a donator"}, status=status.HTTP_400_BAD_REQUEST)
