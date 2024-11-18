@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path
+from django.conf import settings
+from django.conf.urls.static import static
 from DHopeNation import views
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,4 +25,12 @@ urlpatterns = [
     re_path('register',views.register),
     re_path('profile/donator',views.profile_donator),
     re_path('profile/campign-creator',views.profile_campaign_creator),
+    re_path('profile/campaign-creator/my_campaigns',views.get_campaigns_by_creator),
+    re_path('campaign/create',views.create_campaign),
+    re_path('campaign/get',views.get_campaigns),
+    re_path('donator_get',views.donar_count),
+   
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
