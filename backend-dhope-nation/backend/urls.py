@@ -21,22 +21,32 @@ from django.conf.urls.static import static
 from DHopeNation import views
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('login',views.login),
-    path('register',views.register),
-    path('profile/donator',views.profile_donator),
-    path('profile/donator/delete',views.delete_account),#BRO esta aqui o delete do donator
-    path('profile/donator/edit',views.edit_profile),
-    path('profile/campign-creator',views.profile_campaign_creator),
-    path('profile/campaign-creator/edit',views.edit_profile),
-    path('profile/campaign-creator/my_campaigns',views.get_campaigns_by_creator),
-    path('profile/campaign-creator/delete',views.delete_account), #BRO esta aqui o delete do campaign creator
-    path('campaign/create',views.create_campaign),
-    path('campaign/get',views.get_campaigns),
-    path('donator_get',views.donar_count),
-    path('campaign/donate',views.donate),#BRO esta qui o donate
-    path('get_all_donators',views.get_all_donators),
-    path('get_all_campaign_creators',views.get_all_campaign_creators),
-    path('get_all_campaigns',views.get_all_campaigns),
+    
+    
+    path('login/', views.login, name='login'),
+    path('register/', views.register, name='register'),
+
+    
+    path('profile/donator/', views.profile_donator, name='profile_donator'),
+    path('profile/donator/edit/', views.edit_profile, name='edit_donator_profile'),
+    path('profile/donator/delete/', views.delete_account, name='delete_donator'),
+
+   
+    path('profile/campaign-creator/', views.profile_campaign_creator, name='profile_campaign_creator'),
+    path('profile/campaign-creator/edit/', views.edit_profile, name='edit_campaign_creator_profile'),
+    path('profile/campaign-creator/my-campaigns/', views.get_campaigns_by_creator, name='my_campaigns'),
+    path('profile/campaign-creator/delete/', views.delete_account, name='delete_campaign_creator'),
+
+    
+    path('campaign/create/', views.create_campaign, name='create_campaign'),
+    path('campaigns', views.get_campaigns, name='get_campaigns'),
+    path('campaign/donate/', views.donate, name='donate_campaign'),
+
+   
+    path('stats/donators/', views.donar_count, name='donar_count'),
+    path('donators/', views.get_all_donators, name='get_all_donators'),
+    path('campaign-creators/', views.get_all_campaign_creators, name='get_all_campaign_creators'),
+    path('all-campaigns/', views.get_all_campaigns, name='get_all_campaigns'),
    
 ]
 
