@@ -148,6 +148,7 @@ def donate(request):
         campaign.save()
         donator.donation_value += amount
         donator.donation_count += 1
+        donator.xp += amount * 10
         donator.save()
         return Response({"message": "Donation successful"}, status=status.HTTP_200_OK)
     else:

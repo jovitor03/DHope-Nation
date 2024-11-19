@@ -118,10 +118,11 @@ function CampaignDetails() {
             <LinearProgressBar
               width="100%"
               height={40}
-              fillColor={"#ffffff"}
+              fillColor={"#C8E5B3"}
               xp={campaign.current_amount}
               xpToNextLevel={campaign.goal}
               minXpLevel={0}
+              radius={15}
             />
           </div>
           <div className="flex flex-row justify-center space-x-16 text-[#35473A] text-xl">
