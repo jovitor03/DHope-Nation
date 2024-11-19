@@ -9,6 +9,7 @@ import LinearProgressBar from "../../components/LevelProgressBar.js";
 import { getProfile } from "../../api/Profile";
 import LevelSystem from "../../utils/LevelSystem";
 import { format } from "date-fns";
+import { deleteProfile } from "../../api/Profile";
 
 function DonatorProfile() {
   const [profileStats, setProfileStats] = useState({});
@@ -68,30 +69,16 @@ function DonatorProfile() {
       return;
     }
     try {
-      const response = await fetch(
-        "http://localhost:8000/profile/donator/delete/",
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.ok) {
-        localStorage.removeItem("authToken");
-        alert("Conta excluída com sucesso.");
-      } else {
-        const errorData = await response.json();
-        alert(
-          errorData.error ||
-            "Erro ao excluir a conta. Por favor, tente novamente."
-        );
-      }
+      await deleteProfile(token);
+      localStorage.removeItem("authToken");
+      alert("Conta excluída com sucesso.");
+      window.location.href = "/login";
     } catch (error) {
       console.error("Erro ao excluir a conta:", error);
-      alert("Erro ao excluir a conta. Por favor, tente novamente.");
+      alert(
+        error.response?.data?.error ||
+          "Erro ao excluir a conta. Por favor, tente novamente."
+      );
     }
   };
 

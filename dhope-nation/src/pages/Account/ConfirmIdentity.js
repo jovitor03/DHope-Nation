@@ -22,7 +22,13 @@ function CreateAccount3() {
   }, [type, name, surname, email, username, password]);
 
   const handleSignUp = async () => {
-    let donator = type === "donator";
+    let donator = false;
+
+    if (type === "donator") {
+      donator = true;
+    } else if (type === "campaignCreator") {
+      donator = false;
+    }
 
     const formData = new FormData();
     formData.append("first_name", name);
