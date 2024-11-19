@@ -188,7 +188,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getCampaignById, donateToCampaign } from "../../api/Campaign";
 import "../../styles/Campaigns.css";
-import Layout from "../../layouts/DonatorLayout.js";
+import Layout from "../../layouts/DonorLayout.js";
 
 function CampaignDonation() {
   const [campaign, setCampaign] = useState(null);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CampaignCreatorLayout from "../../layouts/CampaignCreatorLayout";
-import DonatorLayout from "../../layouts/DonatorLayout";
+import DonorLayout from "../../layouts/DonorLayout";
 import "../../styles/Campaigns.css";
 import shareIcon from "../../assets/images/share.png";
 import { getCampaignById } from "../../api/Campaign";
@@ -80,7 +80,7 @@ function CampaignDetails() {
       })
     : "Data indisponível";
 
-  const Layout = profileData.is_donator ? DonatorLayout : CampaignCreatorLayout;
+  const Layout = profileData.is_donator ? DonorLayout : CampaignCreatorLayout;
 
   const navigateToDonation = () => {
     navigate(`/campaign/${campaignId}/donate`);

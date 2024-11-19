@@ -49,7 +49,7 @@ function CreateAccount1() {
               value={"donator"}
               onChange={(e) => setType(e.target.value)}
             />
-            <label className="text-left text-lg mt-0 ml-2">Donator</label>
+            <label className="text-left text-lg mt-0 ml-2">Donor</label>
           </div>
           <div className="flex items-center">
             <input

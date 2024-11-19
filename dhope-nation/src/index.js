@@ -6,7 +6,7 @@ import Login from "./pages/Account/Login.js";
 import CreateAccount1 from "./pages/Account/CreateAccount1.js";
 import CreateAccount2 from "./pages/Account/CreateAccount2.js";
 import ConfirmIdentity from "./pages/Account/ConfirmIdentity.js";
-import DonatorProfile from "./pages/Profile/DonatorProfile.js";
+import DonorProfile from "./pages/Profile/DonorProfile.js";
 import CreateCampaign from "./pages/Campaigns/CreateCampaign.js";
 import Campaign from "./pages/Campaigns/Campaign.js";
 import CampaignDonation from "./pages/Campaigns/CampaignDonation.js";
@@ -25,7 +25,7 @@ root.render(
         <Route path="/confirm-identity" element={<ConfirmIdentity />} />
         <Route
           path="/profile"
-          element={<ProtectedRoute element={<DonatorProfile />} />}
+          element={<ProtectedRoute element={<DonorProfile />} />}
         />
         <Route
           path="/create-campaign"

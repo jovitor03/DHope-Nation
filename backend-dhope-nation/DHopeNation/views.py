@@ -16,9 +16,9 @@ def register(request):
     if serializer.is_valid():
         user = serializer.save()
 
-        if request.data.get('is_donator'):
+        if request.data.get('is_donator') == "true":
             Donator.objects.create(user=user)
-        elif request.data.get('is_campaign_creator'):
+        elif request.data.get('is_campaign_creator') == "true":
             CampaignCreator.objects.create(user=user)
 
         token = Token.objects.create(user=user)

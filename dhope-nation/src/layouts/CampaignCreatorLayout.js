@@ -2,7 +2,7 @@ import React from "react";
 import CampaignCreatorHeader from "../components/CampaignCreatorHeader";
 import Footer from "../components/Footer";
 
-function DonatorLayout({ children }) {
+function CampaignCreatorLayout({ children }) {
   return (
     <div className="bg-[#A0C0A2] flex flex-col min-h-screen">
       <CampaignCreatorHeader />
@@ -12,4 +12,4 @@ function DonatorLayout({ children }) {
   );
 }
 
-export default DonatorLayout;
+export default CampaignCreatorLayout;

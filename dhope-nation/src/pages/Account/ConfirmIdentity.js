@@ -22,12 +22,12 @@ function CreateAccount3() {
   }, [type, name, surname, email, username, password]);
 
   const handleSignUp = async () => {
-    let donator = false;
+    let donor = false;
 
     if (type === "donator") {
-      donator = true;
+      donor = true;
     } else if (type === "campaignCreator") {
-      donator = false;
+      donor = false;
     }
 
     const formData = new FormData();
@@ -36,8 +36,8 @@ function CreateAccount3() {
     formData.append("email", email);
     formData.append("username", username);
     formData.append("password", password);
-    formData.append("is_campaign_creator", !donator);
-    formData.append("is_donator", donator);
+    formData.append("is_campaign_creator", !donor);
+    formData.append("is_donator", donor);
     formData.append("identification", file);
 
     try {

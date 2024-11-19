@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import DonatorLayout from "../../layouts/DonatorLayout";
+import DonorLayout from "../../layouts/DonorLayout";
 import profileIcon from "../../assets/images/profile-big-icon.png";
 import medalIcon from "../../assets/images/medal.png";
 import hexagon from "../../assets/images/hexagon.png";
 import LevelBorder from "../../components/LevelBorder.js";
 import Hexagon from "../../components/Hexagon.js";
 import LinearProgressBar from "../../components/LevelProgressBar.js";
-import { getProfile } from "../../api/Profile";
-import LevelSystem from "../../utils/LevelSystem";
+import { getProfile } from "../../api/Profile.js";
+import LevelSystem from "../../utils/LevelSystem.js";
 import { format } from "date-fns";
-import { deleteProfile } from "../../api/Profile";
+import { deleteProfile } from "../../api/Profile.js";
 
-function DonatorProfile() {
+function DonorProfile() {
   const [profileStats, setProfileStats] = useState({});
   const [profileData, setProfileData] = useState({});
 
@@ -88,7 +88,7 @@ function DonatorProfile() {
   }, [profileStats.xp]);
 
   return (
-    <DonatorLayout>
+    <DonorLayout>
       <div className="flex flex-row items-center justify-between pr-24 pl-24 2xl:pl-48 2xl:pr-48">
         <div className="text-[#303934] flex flex-row">
           <div className="flex items-center gap-3">
@@ -230,8 +230,8 @@ function DonatorProfile() {
           </div>
         </div>
       </div>
-    </DonatorLayout>
+    </DonorLayout>
   );
 }
 
-export default DonatorProfile;
+export default DonorProfile;
