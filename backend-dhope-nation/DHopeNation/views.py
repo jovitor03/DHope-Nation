@@ -70,13 +70,25 @@ def donar_count(request):
     donator_count = Donator.objects.count()
     return Response({"donator_count": donator_count}, status=status.HTTP_200_OK)
 
-@api_view(['POST'])
+@api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_account(request):
     user = get_object_or_404(UserAccount, username=request.user.username)
+    
+    # Eliminar relaciones asociadas
+    if user.is_donator:
+        donator = get_object_or_404(Donator, user=user)
+        donator.delete()
+    if user.is_campaign_creator:
+        campaign_creator = get_object_or_404(CampaignCreator, user=user)
+        campaign_creator.delete()
+    
+    # Eliminar la cuenta del usuario
     user.delete()
+    
     return Response({"message": "Account deleted successfully"}, status=status.HTTP_200_OK)
+
 @api_view(['GET'])
 def get_all_donators(request):
     donators = Donator.objects.all()
@@ -87,6 +99,26 @@ def get_all_campaign_creators(request):
     campaign_creators = CampaignCreator.objects.all()
     serializer = CampaignCreatorSerializer(campaign_creators, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def edit_profile(request):
+    user = get_object_or_404(UserAccount, username=request.user.username)
+    if user.is_donator:
+        donator = get_object_or_404(Donator, user=user)
+        serializer = DonatorSerializer(donator, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif user.is_campaign_creator:
+        campaign_creator = get_object_or_404(CampaignCreator, user=user)
+        serializer = CampaignCreatorSerializer(campaign_creator, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 #------------------------------------------------Campaigns-----------------------------------------------------------------
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
