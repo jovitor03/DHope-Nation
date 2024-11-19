@@ -1,34 +1,31 @@
-import "../styles/CreateAccount.css";
-import logo from "../assets/logo.png";
-import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
-import { register } from "../api/Accounts";
+import "../../styles/Account.css";
+import logo from "../../assets/images/logo.png";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 function CreateAccount2() {
   const location = useLocation();
-  const { name, surname, email } = location.state || {};
+  const { type, name, surname, email } = location.state || {};
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleSignUp = async () => {
-    try {
-      const data = {
-        first_name: name,
-        last_name: surname,
-        email: email,
-        username,
-        password,
-      };
-      await register(data);
-      alert("Account created successfully!");
-    } catch (error) {
-      console.error("Error creating account: ", error);
-      alert("An error occurred. Please try again.");
+  const handleNextPage = () => {
+    if (!username || !password) {
+      alert("Please fill in all required fields.");
+      return;
     }
+    navigate(`/confirm-identity`, {
+      state: { type, name, surname, email, username, password },
+    });
   };
 
+  useEffect(() => {
+    console.log("Details: ", type, name, surname, email);
+  }, [type, name, surname, email]);
+
   return (
-    <div className="login text-black">
+    <div className="account-page text-black">
       <div className="flex flex-col align-middle bg-[#F7FFFD] rounded-[50px] text-center p-12 w-1/3  2xl:w-[30vw] h-auto mx-auto relative transform 2xl:scale-[1.2] mt-16">
         <img
           src={logo}
@@ -70,8 +67,11 @@ function CreateAccount2() {
           >
             <button>Go Back</button>
           </Link>
-          <button onClick={handleSignUp} className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8 w-[12vw]">
-            Sign Up
+          <button
+            onClick={handleNextPage}
+            className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8 w-[12vw]"
+          >
+            Next
           </button>
         </div>
         <label className="text-[#8C8C8C] font-semibold mt-8 ">

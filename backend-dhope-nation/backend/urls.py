@@ -47,7 +47,6 @@ urlpatterns = [
     path('donators/', views.get_all_donators, name='get_all_donators'),
     path('campaign-creators/', views.get_all_campaign_creators, name='get_all_campaign_creators'),
     path('all-campaigns/', views.get_all_campaigns, name='get_all_campaigns'),
-   
 ]
 
 if settings.DEBUG:
