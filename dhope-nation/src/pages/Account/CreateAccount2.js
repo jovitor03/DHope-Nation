@@ -12,7 +12,6 @@ function CreateAccount2() {
 
   const handleNextPage = () => {
     if (!username || !password) {
-      alert("Please fill in all required fields.");
       return;
     }
     navigate(`/confirm-identity`, {

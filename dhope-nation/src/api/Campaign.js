@@ -22,7 +22,7 @@ export const createCampaign = async (token, data) => {
 export const getCampaignById = async (campaignId, token) => {
   try {
     const response = await axios.get(
-      `http://127.0.0.1:8000/campaign/get?id=${campaignId}`,
+      `http://127.0.0.1:8000/campaigns?id=${campaignId}`,
       {
         headers: {
           Authorization: `Token ${token}`,

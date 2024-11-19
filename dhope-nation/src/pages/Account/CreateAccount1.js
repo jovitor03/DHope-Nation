@@ -12,7 +12,6 @@ function CreateAccount1() {
 
   const handleNextPage = () => {
     if (!type || !name || !surname || !email) {
-      alert("Please fill in all required fields.");
       return;
     }
     navigate(`/create-account/page-2`, {
