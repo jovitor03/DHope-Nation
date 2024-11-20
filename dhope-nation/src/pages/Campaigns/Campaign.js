@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import CampaignCreatorLayout from "../../layouts/CampaignCreatorLayout";
 import DonorLayout from "../../layouts/DonorLayout";
 import "../../styles/Campaigns.css";
-import shareIcon from "../../assets/images/share.png";
+// import shareIcon from "../../assets/images/share.png";
 import { getCampaignById } from "../../api/Campaign";
 import LinearProgressBar from "../../components/LevelProgressBar.js";
 import { useParams, useNavigate } from "react-router-dom";
@@ -101,7 +101,7 @@ function CampaignDetails() {
                 <h3 className="text-2xl font-semibold">Deadline: </h3>
                 <label className="text-2xl ml-1">{formattedDeadline}</label>
               </div>
-              <img src={shareIcon} className="h-9" alt="share"></img>
+              {/* <img src={shareIcon} className="h-9" alt="share"></img> */}
             </div>
           </div>
           <div className="flex flex-col w-full text-[#28372C] mt-[-20px]">

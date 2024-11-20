@@ -142,7 +142,10 @@ function DonorProfile() {
               <div className="flex flex-row items-center ml-6 mt-3">
                 <img src={hexagon} alt="hexagon" className="w-12"></img>
                 <label className="ml-2 text-2xl 2xl:text-3xl">
-                  {profileStats.donation_value.toFixed(2)}€ donated
+                  {profileStats.donation_value !== undefined
+                    ? profileStats.donation_value.toFixed(2)
+                    : "0,00"}
+                  € donated
                 </label>
               </div>
               {/* <div className="flex flex-row items-center ml-6 mt-3">

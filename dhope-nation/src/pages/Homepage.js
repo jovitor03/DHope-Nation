@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import HomepageLayout from "../layouts/DonatorLayout";
+import HomepageLayout from "../layouts/DonorLayout";
 import homepageSlogan from "../assets/images/homepage-slogan.png"; // Importa a imagem desejada
 
 function HomePage() {
@@ -61,7 +60,7 @@ function Section({ title, data, isCampaigns = false }) {
           <div
             key={index}
             //Aqui colocar caminho da campanha escolhida
-            onClick={() => window.location.href = "/profile"}
+            // onClick={() => window.location.href = "/profile"}
             className="bg-[#E4F0EA] rounded-md p-4 shadow-md text-center flex flex-col justify-center"
           >
             <h3 className="text-2xl font-bold text-[#2D2D2D] mb-6 text-center">
