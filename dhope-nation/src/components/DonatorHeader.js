@@ -31,12 +31,16 @@ function Header() {
     setIsModalOpen(false);
   };
 
+  const goToCampaigns = () => {
+    navigate("/homepage");
+  };
+
   return (
     <div>
       <div className="flex flex-row items-center justify-between">
         <img src={logo} alt="logo" className="w-1/4 mt-4"></img>
         <div className="flex flex-row items-center gap-12 mr-16">
-          <label className="text-3xl text-[#062134] font-semibold hover:cursor-pointer">
+          <label className="text-3xl text-[#062134] font-semibold hover:cursor-pointer" onClick={goToCampaigns}>
             CAMPAIGNS
           </label>
           <label className="text-3xl text-[#062134] font-semibold hover:cursor-pointer">
