@@ -114,6 +114,11 @@ function CampaignDetails() {
               </p>
             </div>
           </div>
+          <div className="text-center">
+            <label className="text-[#35473A] text-xl font-semibold">
+              Raised: {campaign.current_amount}€
+            </label>
+          </div>
           <div className="ml-2 mr-2">
             <LinearProgressBar
               width="100%"
