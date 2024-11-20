@@ -18,13 +18,13 @@ function CampaignDetails() {
   useEffect(() => {
     const updateTextareaHeight = () => {
       if (window.innerHeight > 800 && window.innerHeight <= 900) {
-        setTextareaHeight("350px");
+        setTextareaHeight("100px");
       } else if (window.innerHeight > 900 && window.innerHeight <= 1000) {
-        setTextareaHeight("360px");
+        setTextareaHeight("100px");
       } else if (window.innerHeight > 1000) {
-        setTextareaHeight("450px");
+        setTextareaHeight("100px");
       } else {
-        setTextareaHeight("200px");
+        setTextareaHeight("100px");
       }
     };
 
@@ -41,7 +41,7 @@ function CampaignDetails() {
         localStorage.getItem("authToken")
       );
       if (!data) {
-        navigate("/campaigns");
+        navigate("/homepage");
       } else {
         setCampaign(data);
       }
@@ -93,7 +93,7 @@ function CampaignDetails() {
           {campaign.title}
         </h1>
       </div>
-      <div className="flex flex-row justify-center ml-10 mr-8">
+      <div className="flex-grow flex flex-col justify-center items-center ml-10 mr-8">
         <div className="flex flex-col w-1/2 gap-2">
           <div className="flex flex-row mb-6 w-full items-center mt-4 space-x-12 justify-center">
             <div className="flex flex-row justify-between items-center w-full">
@@ -134,7 +134,7 @@ function CampaignDetails() {
           <div className="flex w-full">
             <button
               onClick={navigateToDonation}
-              className="flex-grow h-12 border-2 border-white rounded-md bg-[#4A6B53] text-white text-2xl font-semibold mb-[-10px] shadow-y"
+              className="flex-grow h-20 border-2 border-white rounded-md bg-[#4A6B53] text-white text-3xl font-semibold mb-[-10px] shadow-y"
             >
               DONATE HERE!
             </button>
