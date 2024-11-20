@@ -133,7 +133,7 @@ function DonorProfile() {
           </div>
           <div className="flex flex-row">
             <div className="flex flex-col">
-              <div className="flex flex-row items-center ml-6 mt-4">
+              <div className="flex flex-row items-center ml-6 mt-8">
                 <img src={hexagon} alt="hexagon" className="w-12"></img>
                 <label className="ml-2 text-2xl 2xl:text-3xl">
                   {profileStats.donation_count} donations
@@ -142,18 +142,23 @@ function DonorProfile() {
               <div className="flex flex-row items-center ml-6 mt-3">
                 <img src={hexagon} alt="hexagon" className="w-12"></img>
                 <label className="ml-2 text-2xl 2xl:text-3xl">
-                  {profileStats.donation_value}€ donated
+                  {profileStats.donation_value.toFixed(2)}€ donated
                 </label>
               </div>
-              <div className="flex flex-row items-center ml-6 mt-3">
+              {/* <div className="flex flex-row items-center ml-6 mt-3">
                 <img src={hexagon} alt="hexagon" className="w-12"></img>
                 <div className="flex ml-2 flex-row items-center">
                   <label className="text-lg 2xl:text-xl">
                     Biggest donation:<label> </label>
                   </label>
-                  <label className="text-xl ml-1 2xl:text-2xl">€</label>
+                  <label className="text-lg ml-1 2xl:text-xl">
+                    {profileStats.biggest_donation
+                      ? profileStats.biggest_donation.toFixed(2)
+                      : "0.00"}
+                    €
+                  </label>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
