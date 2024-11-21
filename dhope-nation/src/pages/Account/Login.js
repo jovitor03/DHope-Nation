@@ -97,7 +97,7 @@ function Login() {
 
       if (response.status === 200 && response.data.token) {
         localStorage.setItem("authToken", response.data.token);
-        navigate("/profile");
+        navigate("/homepage");
       } else {
         setErrorMessage("Invalid username or password.");
       }

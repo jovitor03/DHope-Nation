@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import CampaignCreatorLayout from "../../layouts/CampaignCreatorLayout";
 import "../../styles/Campaigns.css";
 import { createCampaign } from "../../api/Campaign";
+import { useNavigate } from "react-router-dom";
 
 function CreateCampaign() {
   const [title, setTitle] = useState("");
@@ -14,6 +15,7 @@ function CreateCampaign() {
   const [isOpen, setIsOpen] = useState(false);
   const [textareaHeight, setTextareaHeight] = useState("150px");
   const [showAlert, setShowAlert] = useState(false);
+  const navigate = useNavigate();
 
   const dropdownRef = useRef(null);
 
@@ -106,6 +108,7 @@ function CreateCampaign() {
     try {
       const responseData = await createCampaign(token, data);
       console.log(responseData);
+      navigate("/campaign/" + responseData.id);
     } catch (error) {
       console.error("Erro ao criar campanha:", error);
     }
