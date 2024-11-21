@@ -1,5 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
+import CampaignDetails from "../pages/Campaigns";
+import HomePage from "../pages/HomePage";
 
 function App() {
   return (
@@ -19,6 +21,7 @@ function App() {
         </a>
       </header>
     </div>
+    
   );
 }
 

@@ -47,6 +47,11 @@ urlpatterns = [
     path('donators/', views.get_all_donators, name='get_all_donators'),
     path('campaign-creators/', views.get_all_campaign_creators, name='get_all_campaign_creators'),
     path('all-campaigns/', views.get_all_campaigns, name='get_all_campaigns'),
+    
+    path('top-donations/', views.get_top_donations, name='top-donations'),
+    path('latest-donations/', views.get_latest_donations, name='latest-donations'),
+    path('new-campaigns/', views.get_new_campaigns, name='new-campaigns'),
+    
 ]
 
 if settings.DEBUG:
