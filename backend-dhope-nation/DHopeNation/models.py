@@ -76,6 +76,10 @@ class Campaign(models.Model):
     def complete_campaign(self):
         self.is_completed = True
         self.is_active = False
-    
+
+class CampaignImage(models.Model):
+    campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='campaign-images/')
+
 
     
