@@ -192,7 +192,23 @@ def get_images(request):
     serializer = CampaignImageSerializer(images, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+def get_new_campaigns(request):
+    campaigns = Campaign.objects.filter(is_active=True).order_by('-start_date')[:3]  # Filtra campanhas ativas e ordena
+    serializer = CampaignSerializer(campaigns, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+def get_top_donations(request):
+    campaigns = Campaign.objects.order_by('-current_amount')[:3]  # Ordena pelas maiores doações
+    serializer = CampaignSerializer(campaigns, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def get_latest_donations(request):
+    campaigns = Campaign.objects.order_by('-start_date')[:3]  # Ordena pelas mais recentes
+    serializer = CampaignSerializer(campaigns, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
     
 
 #-------------------------------------------------Donations---------------------------------------------------------------
