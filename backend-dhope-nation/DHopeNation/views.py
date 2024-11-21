@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import UserAccountSerializer, DonatorSerializer, CampaignCreatorSerializer, CampaignSerializer
-from .models import UserAccount, Donator, CampaignCreator, Campaign
+from .serializers import UserAccountSerializer, DonatorSerializer, CampaignCreatorSerializer, CampaignSerializer, CampaignImageSerializer
+from .models import UserAccount, Donator, CampaignCreator, Campaign, CampaignImage
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from rest_framework import status
@@ -16,9 +16,9 @@ def register(request):
     if serializer.is_valid():
         user = serializer.save()
 
-        if request.data.get('is_donator') == "true":
+        if request.data.get('is_donator')=="true":
             Donator.objects.create(user=user)
-        elif request.data.get('is_campaign_creator') == "true":
+        elif request.data.get('is_campaign_creator')=="true":
             CampaignCreator.objects.create(user=user)
 
         token = Token.objects.create(user=user)
@@ -163,25 +163,37 @@ def get_all_campaigns(request):
     campaigns = Campaign.objects.all()
     serializer = CampaignSerializer(campaigns, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
-
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def upload_image(request):
+    user = get_object_or_404(UserAccount, username=request.user.username)
+    if user.is_campaign_creator:
+        campaign_creator = get_object_or_404(CampaignCreator, user=user)
+        campaign_id = request.data.get('campaign_id')
+        campaign = get_object_or_404(Campaign, id=campaign_id)
+        if campaign.campaign_creator == campaign_creator:
+            image = request.data.get('image')
+            CampaignImage.objects.create(campaign=campaign, image=image)
+            return Response({"message": "Image uploaded successfully"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Campaign does not belong to the user"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({"error": "User is not a campaign creator"}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-def get_new_campaigns(request):
-    campaigns = Campaign.objects.filter(is_active=True).order_by('-start_date')[:3]  # Filtra campanhas ativas e ordena
-    serializer = CampaignSerializer(campaigns, many=True)
+def get_images(request):
+    campaign_id = request.query_params.get('id')
+    if not campaign_id:
+        return Response({"error": "Campaign ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+    
+    campaign = get_object_or_404(Campaign, id=campaign_id)
+    images = CampaignImage.objects.filter(campaign=campaign)
+    serializer = CampaignImageSerializer(images, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
-def get_top_donations(request):
-    campaigns = Campaign.objects.order_by('-current_amount')[:3]  # Ordena pelas maiores doações
-    serializer = CampaignSerializer(campaigns, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
-def get_latest_donations(request):
-    campaigns = Campaign.objects.order_by('-start_date')[:3]  # Ordena pelas mais recentes
-    serializer = CampaignSerializer(campaigns, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    
 
 #-------------------------------------------------Donations---------------------------------------------------------------
 @api_view(['POST'])
@@ -209,3 +221,4 @@ def donate(request):
 
     else:
         return Response({"error": "User is not a donator"}, status=status.HTTP_400_BAD_REQUEST)
+     

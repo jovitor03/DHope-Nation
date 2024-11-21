@@ -41,8 +41,9 @@ urlpatterns = [
     path('campaign/create/', views.create_campaign, name='create_campaign'),
     path('campaigns', views.get_campaigns, name='get_campaigns'),
     path('campaign/donate/', views.donate, name='donate_campaign'),
-
-   
+    path('campaign/upload-image/', views.upload_image, name='upload-image'),
+    path('image/campaigns', views.get_images, name='get_images'),
+    
     path('stats/donators/', views.donar_count, name='donar_count'),
     path('donators/', views.get_all_donators, name='get_all_donators'),
     path('campaign-creators/', views.get_all_campaign_creators, name='get_all_campaign_creators'),
