@@ -1,22 +1,27 @@
-import "../styles/CreateAccount.css";
-import logo from "../assets/logo.png";
+import "../../styles/Account.css";
+import logo from "../../assets/images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 function CreateAccount1() {
+  const [type, setType] = useState("");
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
   const handleNextPage = () => {
+    if (!type || !name || !surname || !email) {
+      alert("Please fill in all required fields.");
+      return;
+    }
     navigate(`/create-account/page-2`, {
-      state: { name, surname, email },
+      state: { type, name, surname, email },
     });
   };
 
   return (
-    <div className="login text-black">
+    <div className="account-page text-black">
       <div className="flex flex-col align-middle bg-[#F7FFFD] rounded-[50px] text-center p-12 w-1/3 2xl:w-[30vw] h-auto mx-auto relative transform 2xl:scale-[1.2] mt-16">
         <img
           src={logo}
@@ -42,6 +47,8 @@ function CreateAccount1() {
               type="radio"
               name="userType"
               className="appearance-none w-5 h-5 bg-white border-2 rounded-full relative border-gray-400"
+              value={"donator"}
+              onChange={(e) => setType(e.target.value)}
             />
             <label className="text-left text-lg mt-0 ml-2">Donator</label>
           </div>
@@ -50,6 +57,8 @@ function CreateAccount1() {
               type="radio"
               name="userType"
               className="appearance-none w-5 h-5 bg-white border-2 rounded-full relative border-gray-400"
+              value={"campaignCreator"}
+              onChange={(e) => setType(e.target.value)}
             />
             <label className="text-left text-lg mt-0 ml-2">
               Campaign Creator

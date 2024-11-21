@@ -204,6 +204,7 @@ def donate(request):
         campaign_id = request.data.get('campaign_id')
         amount = request.data.get('amount')
         campaign = get_object_or_404(Campaign, id=campaign_id)
+
         if campaign.is_active and campaign.is_verified:
             campaign.current_amount += amount
             campaign.total_donators += 1
@@ -215,6 +216,7 @@ def donate(request):
             return Response({"message": "Donation successful"}, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Campaign is not active or verified"}, status=status.HTTP_400_BAD_REQUEST)
+
     else:
         return Response({"error": "User is not a donator"}, status=status.HTTP_400_BAD_REQUEST)
     
