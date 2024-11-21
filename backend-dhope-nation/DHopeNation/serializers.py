@@ -18,7 +18,7 @@ class DonatorSerializer(serializers.ModelSerializer):
     user=UserAccountSerializer()
     class Meta:
         model = Donator
-        fields = ['user','xp', 'donation_value', 'donation_count', 'honor', 'is_verified', 'level', 'rank', 'donation_history']
+        fields = ['id','user','xp', 'donation_value', 'donation_count', 'honor', 'is_verified', 'level', 'rank', 'donation_history']
     
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -31,7 +31,7 @@ class CampaignCreatorSerializer(serializers.ModelSerializer):
     user=UserAccountSerializer()
     class Meta:
         model = CampaignCreator
-        fields = ['user','is_verified']
+        fields = ['id','user','is_verified']
         
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -56,7 +56,7 @@ class CampaignSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Campaign
-        fields = ['campaign_creator', 'title', 'description', 'category', 'goal', 'current_amount', 'total_donators', 'start_date', 'end_date','ratio','sentence', 'is_verified', 'is_completed', 'is_active','images']
+        fields = ['id','campaign_creator', 'title', 'description', 'category', 'goal', 'current_amount', 'total_donators', 'start_date', 'end_date','ratio','sentence', 'is_verified', 'is_completed', 'is_active','images']
     
     def create(self, validated_data):
         campaign_creator = validated_data.pop('campaign_creator')

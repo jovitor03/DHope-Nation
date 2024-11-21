@@ -193,6 +193,8 @@ def get_images(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+    
+
 #-------------------------------------------------Donations---------------------------------------------------------------
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
@@ -219,4 +221,4 @@ def donate(request):
 
     else:
         return Response({"error": "User is not a donator"}, status=status.HTTP_400_BAD_REQUEST)
-    
+     
