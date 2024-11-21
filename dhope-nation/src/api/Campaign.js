@@ -64,3 +64,72 @@ export const donateToCampaign = async (data, authToken) => {
     throw error.response?.data || error.message;
   }
 };
+
+export const getTopDonations = async (token) => {
+  try {
+    const response = await axios.get(
+      `http://127.0.0.1:8000/top-donations`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+          Accept: "*/*",
+        },
+      }
+    );
+
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error("Erro ao buscar campanhas com maiores doações");
+    }
+
+    return response.data; // O backend retorna um array de campanhas ordenadas
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+export const getLatestDonations = async (token) => {
+  try {
+    const response = await axios.get(
+      `http://127.0.0.1:8000/latest-donations`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+          Accept: "*/*",
+        },
+      }
+    );
+
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error("Erro ao buscar campanhas com últimas doações");
+    }
+
+    return response.data; // O backend retorna um array de campanhas ordenadas
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+export const getNewCampaigns = async (token) => {
+  try {
+    const response = await axios.get(
+      `http://127.0.0.1:8000/new-campaigns`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+          Accept: "*/*",
+        },
+      }
+    );
+
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error("Erro ao buscar campanhas mais recentes");
+    }
+
+    return response.data; // O backend retorna um array de campanhas ordenadas
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
