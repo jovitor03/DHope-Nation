@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getTopDonations } from "../api/Campaign";
 import { getLatestDonations } from "../api/Campaign";
 import { getNewCampaigns } from "../api/Campaign";
-import HomepageLayout from "../layouts/DonatorLayout";
+import HomepageLayout from "../layouts/DonorLayout";
 import homepageSlogan from "../assets/images/homepage-slogan.png"; // Importa a imagem desejada
 
 function HomePage() {
