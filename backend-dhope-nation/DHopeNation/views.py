@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import UserAccountSerializer, DonatorSerializer, CampaignCreatorSerializer, CampaignSerializer, CampaignImageSerializer
-from .models import UserAccount, Donator, CampaignCreator, Campaign, CampaignImage
+from .serializers import UserAccountSerializer, DonorSerializer, CampaignCreatorSerializer, CampaignSerializer, CampaignImageSerializer, DonationSerializer
+from .models import UserAccount, Donor, CampaignCreator, Campaign, CampaignImage, Donation
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from rest_framework import status
@@ -16,8 +16,8 @@ def register(request):
     if serializer.is_valid():
         user = serializer.save()
 
-        if request.data.get('is_donator')=="true":
-            Donator.objects.create(user=user)
+        if request.data.get('is_donor')=="true":
+            Donor.objects.create(user=user)
         elif request.data.get('is_campaign_creator')=="true":
             CampaignCreator.objects.create(user=user)
 
@@ -40,17 +40,17 @@ def login(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def profile_donator(request):
+def profile_donor(request):
     user = get_object_or_404(UserAccount, username=request.user.username)
-    if user.is_donator:
-        donator = get_object_or_404(Donator, user=user)
+    if user.is_donor:
+        donor = get_object_or_404(Donor, user=user)
         
-        donator_serializer = DonatorSerializer(donator)
+        donor_serializer = DonorSerializer(donor)
         return Response({
-            "donator": donator_serializer.data
+            "donor": donor_serializer.data
         }, status=status.HTTP_200_OK)
     else:
-        return Response({"error": "User is not a donator"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "User is not a donor"}, status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
@@ -67,8 +67,8 @@ def profile_campaign_creator(request):
         return Response({"error": "User is not a campaign creator"}, status=status.HTTP_400_BAD_REQUEST)
 @api_view(['GET'])
 def donar_count(request):
-    donator_count = Donator.objects.count()
-    return Response({"donator_count": donator_count}, status=status.HTTP_200_OK)
+    donor_count = Donor.objects.count()
+    return Response({"donor_count": donor_count}, status=status.HTTP_200_OK)
 
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
@@ -77,9 +77,9 @@ def delete_account(request):
     user = get_object_or_404(UserAccount, username=request.user.username)
     
     # Eliminar relaciones asociadas
-    if user.is_donator:
-        donator = get_object_or_404(Donator, user=user)
-        donator.delete()
+    if user.is_donor:
+        donor = get_object_or_404(Donor, user=user)
+        donor.delete()
     if user.is_campaign_creator:
         campaign_creator = get_object_or_404(CampaignCreator, user=user)
         campaign_creator.delete()
@@ -90,9 +90,9 @@ def delete_account(request):
     return Response({"message": "Account deleted successfully"}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-def get_all_donators(request):
-    donators = Donator.objects.all()
-    serializer = DonatorSerializer(donators, many=True)
+def get_all_donors(request):
+    donors = Donor.objects.all()
+    serializer = DonorSerializer(donors, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 @api_view(['GET'])
 def get_all_campaign_creators(request):
@@ -105,9 +105,9 @@ def get_all_campaign_creators(request):
 @permission_classes([IsAuthenticated])
 def edit_profile(request):
     user = get_object_or_404(UserAccount, username=request.user.username)
-    if user.is_donator:
-        donator = get_object_or_404(Donator, user=user)
-        serializer = DonatorSerializer(donator, data=request.data, partial=True)
+    if user.is_donor:
+        donor = get_object_or_404(Donor, user=user)
+        serializer = DonorSerializer(donor, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -193,23 +193,16 @@ def get_images(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-def get_new_campaigns(request):
-    campaigns = Campaign.objects.filter(is_active=True).order_by('-start_date')[:3]  # Filtra campanhas ativas e ordena
+def get_recently_campaigns (request):
+    campaigns = Campaign.objects.filter(is_active=True).reverse().order_by('start_date')
     serializer = CampaignSerializer(campaigns, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-def get_top_donations(request):
-    campaigns = Campaign.objects.order_by('-current_amount')[:3]  # Ordena pelas maiores doações
+def get_campaigns_higher_current_amount (request):
+    campaigns = Campaign.objects.reverse().order_by('current_amount')
     serializer = CampaignSerializer(campaigns, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
-
-@api_view(['GET'])
-def get_latest_donations(request):
-    campaigns = Campaign.objects.order_by('-start_date')[:3]  # Ordena pelas mais recentes
-    serializer = CampaignSerializer(campaigns, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-    
 
 #-------------------------------------------------Donations---------------------------------------------------------------
 @api_view(['POST'])
@@ -217,24 +210,92 @@ def get_latest_donations(request):
 @permission_classes([IsAuthenticated])
 def donate(request):
     user = get_object_or_404(UserAccount, username=request.user.username)
-    if user.is_donator:
-        donator = get_object_or_404(Donator, user=user)
+    if user.is_donor:
+        donor = get_object_or_404(Donor, user=user)
         campaign_id = request.data.get('campaign_id')
-        amount = request.data.get('amount')
         campaign = get_object_or_404(Campaign, id=campaign_id)
-
-        if campaign.is_active and campaign.is_verified:
-            campaign.current_amount += amount
-            campaign.total_donators += 1
-            campaign.save()
-            donator.donation_value += amount
-            donator.donation_count += 1
-            donator.xp += amount * 10
-            donator.save()
-            return Response({"message": "Donation successful"}, status=status.HTTP_200_OK)
+        amount = request.data.get('amount')
+        if amount > 0: 
+            if campaign.is_active: 
+                if campaign.is_verified:
+                    goal=campaign.goal
+                    if campaign.current_amount+amount<goal:
+                        campaign.current_amount += amount
+                        campaign.total_donors += 1
+                        campaign.save()
+                        donor.donation_value += amount
+                        donor.donation_count += 1
+                        donor.xp += amount * 10
+                        donor.save()
+                    elif campaign.current_amount+amount>goal:
+                        x=goal-campaign.current_amount
+                        value=amount-x
+                        if value>0:
+                            amount=x
+                            campaign.current_amount += amount
+                            campaign.total_donors += 1
+                            campaign.save()
+                            donor.donation_value += amount
+                            donor.donation_count += 1
+                            donor.xp += amount * 10
+                            donor.save()
+                        else:
+                            campaign.current_amount = goal
+                            campaign.total_donors += 1
+                            campaign.is_completed = True
+                            campaign.save()
+                            donor.donation_value += amount
+                            donor.donation_count += 1
+                            donor.xp += amount * 10
+                            donor.save()
+                    if campaign.current_amount == campaign.goal:
+                        campaign.is_completed = True
+                        campaign.is_active = False
+                        campaign.save()
+                    Donation.objects.create(donor=donor, campaign=campaign, amount=amount)
+                    return Response({"message": "Donation made successfully"}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"error": "Campaign is not verified"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({"error": "Campaign is not active"}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({"error": "Campaign is not active or verified"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Invalid amount"}, status=status.HTTP_400_BAD_REQUEST)
 
     else:
-        return Response({"error": "User is not a donator"}, status=status.HTTP_400_BAD_REQUEST)
-     
+        return Response({"error": "User is not a donor"}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_last_donations(request):
+    donations = Donation.objects.all().reverse().order_by('date')
+    serializer = DonationSerializer(donations, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def get_top_donations(request):
+    donations = Donation.objects.all().reverse().order_by('amount')
+    serializer = DonationSerializer(donations, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_donations_by_donor(request):
+    user = get_object_or_404(UserAccount, username=request.user.username)
+    if user.is_donor:
+        donor = get_object_or_404(Donor, user=user)
+        donations = Donation.objects.all().reverse().order_by('date').filter(donor=donor)
+        serializer = DonationSerializer(donations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": "User is not a donor"}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_top_donations_by_donor(request):
+    user = get_object_or_404(UserAccount, username=request.user.username)
+    if user.is_donor:
+        donor = get_object_or_404(Donor, user=user)
+        donations = Donation.objects.all().reverse().order_by('amount').filter(donor=donor)
+        serializer = DonationSerializer(donations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": "User is not a donor"}, status=status.HTTP_400_BAD_REQUEST)
