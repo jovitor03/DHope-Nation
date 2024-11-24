@@ -18,6 +18,8 @@ def register(request):
 
         if request.data.get('is_donor')=="true":
             Donor.objects.create(user=user)
+           # donor_count = Donor.objects.count()
+            #user.rank = donor_count
         elif request.data.get('is_campaign_creator')=="true":
             CampaignCreator.objects.create(user=user)
 
