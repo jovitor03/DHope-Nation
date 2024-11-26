@@ -122,7 +122,10 @@ def get_top_donors(request):
     donors = Donor.objects.all().reverse().order_by('donation_value')
     serializer = DonorSerializer(donors, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def get_user_type(request):
     user = get_object_or_404(UserAccount, username=request.user.username)
     if user.is_donor:

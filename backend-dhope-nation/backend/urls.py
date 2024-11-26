@@ -25,6 +25,7 @@ urlpatterns = [
     
     path('login/', views.login, name='login'),
     path('register/', views.register, name='register'),
+    path('user-type/', views.get_user_type, name='user_type'),
 
     
     path('profile/donor/', views.profile_donor, name='profile_donor'),
