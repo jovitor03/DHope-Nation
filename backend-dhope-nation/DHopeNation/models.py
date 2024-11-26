@@ -16,7 +16,7 @@ class Donor(models.Model):
     is_verified = models.BooleanField(default=False)
     level = models.IntegerField(default=1)
     rank = models.IntegerField(default=0)
-    donation_history = models.TextField(default='[]')
+   
     
     def save(self, *args, **kwargs):
         if self.user.is_campaign_creator:
@@ -86,8 +86,6 @@ class Donation(models.Model):
     campaign = models.ForeignKey(Campaign, on_delete=models.CASCADE)
     amount = models.FloatField()
     date = models.DateTimeField(auto_now_add=True)
-    donor_username = models.CharField(max_length=100, null=True, blank=True) 
-    campaign_title = models.CharField(max_length=100, null=True, blank=True) 
     def save(self, *args, **kwargs):
         if self.amount < 0:
             raise ValueError("Donation amount must be positive")

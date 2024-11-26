@@ -18,7 +18,7 @@ class DonorSerializer(serializers.ModelSerializer):
     user=UserAccountSerializer()
     class Meta:
         model = Donor
-        fields = ['id','user','xp', 'donation_value', 'donation_count', 'honor', 'is_verified', 'level', 'rank', 'donation_history']
+        fields = ['id','user','xp', 'donation_value', 'donation_count', 'honor', 'is_verified', 'level', 'rank']
     
     def create(self, validated_data):
         user_data = validated_data.pop('user')
