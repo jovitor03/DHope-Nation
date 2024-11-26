@@ -6,7 +6,7 @@ import hexagon from "../../assets/images/hexagon.png";
 import LevelBorder from "../../components/LevelBorder.js";
 import Hexagon from "../../components/Hexagon.js";
 import LinearProgressBar from "../../components/LevelProgressBar.js";
-import { getProfile } from "../../api/Profile";
+import { getDonorProfile } from "../../api/Profile";
 import LevelSystem from "../../utils/LevelSystem";
 import { format } from "date-fns";
 import { deleteProfile } from "../../api/Profile";
@@ -22,7 +22,7 @@ function CampaignCreatorProfile() {
       return;
     }
     try {
-      const response = await getProfile(token);
+      const response = await getDonorProfile(token);
       setProfileStats(response.data.donator);
     } catch (error) {
       console.error("Erro ao obter os dados do perfil:", error);
@@ -36,7 +36,7 @@ function CampaignCreatorProfile() {
       return;
     }
     try {
-      const response = await getProfile(token);
+      const response = await getDonorProfile(token);
       setProfileData(response.data.donator.user);
     } catch (error) {
       console.error("Erro ao obter os dados do perfil:", error);

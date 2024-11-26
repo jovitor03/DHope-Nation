@@ -6,7 +6,7 @@ import "../../styles/Campaigns.css";
 import { getCampaignById } from "../../api/Campaign";
 import LinearProgressBar from "../../components/LevelProgressBar.js";
 import { useParams, useNavigate } from "react-router-dom";
-import { getProfile } from "../../api/Profile";
+import { getDonorProfile } from "../../api/Profile";
 
 function CampaignDetails() {
   const [textareaHeight, setTextareaHeight] = useState("150px");
@@ -58,7 +58,7 @@ function CampaignDetails() {
         return;
       }
       try {
-        const response = await getProfile(token);
+        const response = await getDonorProfile(token);
         setProfileData(response.data.donator.user);
       } catch (error) {
         console.error("Erro ao obter os dados do perfil:", error);
