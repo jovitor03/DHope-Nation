@@ -15,3 +15,12 @@ export const login = (data) => {
     },
   });
 };
+
+export const accountType = (token) => {
+  return axios.get("http://127.0.0.1:8000/user-type/", {
+    headers: {
+      Authorization: `Token ${token}`,
+      Accept: "*/*",
+    },
+  });
+};

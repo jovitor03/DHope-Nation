@@ -59,7 +59,7 @@ function CampaignDetails() {
       }
       try {
         const response = await getDonorProfile(token);
-        setProfileData(response.data.donator.user);
+        setProfileData(response.data.donor.user);
       } catch (error) {
         console.error("Erro ao obter os dados do perfil:", error);
       }
@@ -80,7 +80,7 @@ function CampaignDetails() {
       })
     : "Data indisponível";
 
-  const Layout = profileData.is_donator ? DonorLayout : CampaignCreatorLayout;
+  const Layout = profileData.is_donor ? DonorLayout : CampaignCreatorLayout;
 
   const navigateToDonation = () => {
     navigate(`/campaign/${campaignId}/donate`);
@@ -133,7 +133,7 @@ function CampaignDetails() {
           <div className="flex flex-row justify-center space-x-16 text-[#35473A] text-xl">
             <label className="font-semibold">Goal: {campaign.goal}€</label>
             <label className="font-semibold">
-              Donations: {campaign.total_donators}
+              Donations: {campaign.total_donors}
             </label>
           </div>
           <div className="flex w-full">

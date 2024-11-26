@@ -23,7 +23,7 @@ function DonorProfile() {
     }
     try {
       const response = await getDonorProfile(token);
-      setProfileStats(response.data.donator);
+      setProfileStats(response.data.donor);
     } catch (error) {
       console.error("Erro ao obter os dados do perfil:", error);
     }
@@ -37,7 +37,7 @@ function DonorProfile() {
     }
     try {
       const response = await getDonorProfile(token);
-      setProfileData(response.data.donator.user);
+      setProfileData(response.data.donor.user);
     } catch (error) {
       console.error("Erro ao obter os dados do perfil:", error);
     }

@@ -46,7 +46,7 @@ function CreateAccount1() {
               type="radio"
               name="userType"
               className="appearance-none w-5 h-5 bg-white border-2 rounded-full relative border-gray-400"
-              value={"donator"}
+              value={"donor"}
               onChange={(e) => setType(e.target.value)}
             />
             <label className="text-left text-lg mt-0 ml-2">Donor</label>

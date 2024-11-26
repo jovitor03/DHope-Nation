@@ -1,7 +1,16 @@
 import axios from "axios";
 
 export const getDonorProfile = (token) => {
-  return axios.get("http://127.0.0.1:8000/profile/donator/", {
+  return axios.get("http://127.0.0.1:8000/profile/donor/", {
+    headers: {
+      Authorization: `Token ${token}`,
+      Accept: "*/*",
+    },
+  });
+};
+
+export const getCampaignCreatorProfile = (token) => {
+  return axios.get("http://127.0.0.1:8000/profile/campaign-creator/", {
     headers: {
       Authorization: `Token ${token}`,
       Accept: "*/*",
@@ -10,7 +19,7 @@ export const getDonorProfile = (token) => {
 };
 
 export const deleteProfile = (token) => {
-  return axios.delete("http://127.0.0.1:8000/profile/donator/delete/", {
+  return axios.delete("http://127.0.0.1:8000/profile/donor/delete/", {
     headers: {
       Authorization: `Token ${token}`,
       Accept: "*/*",
@@ -19,7 +28,7 @@ export const deleteProfile = (token) => {
 };
 
 export const updateLevel = (token, level) => {
-  return axios.post("http:/127.0.0.1:8000/profile/donator/edit/", {
+  return axios.post("http:/127.0.0.1:8000/profile/donor/edit/", {
     level: level,
   });
 };

@@ -3,6 +3,8 @@ import logo from "../../assets/images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { login } from "../../api/Accounts";
+import { accountType } from "../../api/Accounts";
+import { getDonorProfile, getCampaignCreatorProfile } from "../../api/Profile";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -15,14 +17,37 @@ function Login() {
       const data = { username, password };
       const response = await login(data);
 
+      const accountTypeData = await accountType(response.data.token);
+
       if (response.status === 200 && response.data.token) {
-        localStorage.setItem("authToken", response.data.token);
-        navigate("/homepage");
+        if (accountTypeData.data.user_type === "Donor") {
+          const donorProfile = await getDonorProfile(response.data.token);
+          const donorVerified = donorProfile.data.donor.is_verified;
+          if (donorVerified) {
+            localStorage.setItem("authToken", response.data.token);
+            localStorage.setItem("user_type", "Donor");
+            navigate("/homepage");
+          } else {
+            setErrorMessage("Your account is not verified yet.");
+          }
+        } else if (accountTypeData.data.user_type === "Campaign Creator") {
+          const campaignCreatorProfile = await getCampaignCreatorProfile(
+            response.data.token
+          );
+          const campaignCreatorVerified =
+            campaignCreatorProfile.data.campaign_creator.is_verified;
+          if (campaignCreatorVerified) {
+            localStorage.setItem("authToken", response.data.token);
+            localStorage.setItem("user_type", "Campaign Creator");
+            navigate("/homepage");
+          } else {
+            setErrorMessage("Your account is not verified yet.");
+          }
+        }
       } else {
         setErrorMessage("Invalid username or password.");
       }
     } catch (error) {
-      console.error("Error logging in: ", error);
       setErrorMessage("Invalid username or password.");
     }
   };

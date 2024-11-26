@@ -2,7 +2,7 @@ import "../../styles/Account.css";
 import logo from "../../assets/images/logo.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { register } from "../../api/Accounts";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 function CreateAccount3() {
   const location = useLocation();
@@ -17,14 +17,10 @@ function CreateAccount3() {
     }
   };
 
-  useEffect(() => {
-    console.log("Details: ", type, name, surname, email, username, password);
-  }, [type, name, surname, email, username, password]);
-
   const handleSignUp = async () => {
     let donor = false;
 
-    if (type === "donator") {
+    if (type === "donor") {
       donor = true;
     } else if (type === "campaignCreator") {
       donor = false;
@@ -37,7 +33,7 @@ function CreateAccount3() {
     formData.append("username", username);
     formData.append("password", password);
     formData.append("is_campaign_creator", !donor);
-    formData.append("is_donator", donor);
+    formData.append("is_donor", donor);
     formData.append("identification", file);
 
     try {

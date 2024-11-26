@@ -1,7 +1,7 @@
 import "../../styles/Account.css";
 import logo from "../../assets/images/logo.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function CreateAccount2() {
   const location = useLocation();
@@ -18,10 +18,6 @@ function CreateAccount2() {
       state: { type, name, surname, email, username, password },
     });
   };
-
-  useEffect(() => {
-    console.log("Details: ", type, name, surname, email);
-  }, [type, name, surname, email]);
 
   return (
     <div className="account-page text-black">
