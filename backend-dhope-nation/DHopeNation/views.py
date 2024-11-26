@@ -220,12 +220,14 @@ def get_campaigns_higher_current_amount (request):
     campaigns = Campaign.objects.reverse().order_by('current_amount')
     serializer = CampaignSerializer(campaigns, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
-@api_view(['GET'])
-def get_campaigns_by_category(request,categories):
-    campaigns = Campaign.objects.filter(category=categories)
+@api_view(['POST']) 
+def get_campaigns_by_category(request):
+    category = request.data.get('category')
+    if not category:
+        return Response({"error": "Category is required"}, status=status.HTTP_400_BAD_REQUEST)
+    campaigns = Campaign.objects.filter(category__icontains=category)
     serializer = CampaignSerializer(campaigns, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
-    
 #-------------------------------------------------Donations---------------------------------------------------------------
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])

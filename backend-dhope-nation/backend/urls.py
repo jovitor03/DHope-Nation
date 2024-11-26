@@ -56,7 +56,7 @@ urlpatterns = [
     path('last-donations/', views.get_last_donations, name='last-donation'),
     path('top-donations/', views.get_top_donations, name='top-donation'),
     path('top-donors/', views.get_top_donors, name='top-donors'),
-    path('campaign/category/<str:category>/', views.get_campaigns_by_category, name='campaigns-by-category'),
+    path('campaigns-by-category/', views.get_campaigns_by_category, name='campaigns-by-category'),
 ]
 
 if settings.DEBUG:
