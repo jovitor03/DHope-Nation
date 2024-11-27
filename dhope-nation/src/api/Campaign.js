@@ -81,7 +81,7 @@ export const getTopDonations = async (token) => {
       throw new Error("Erro ao buscar campanhas com maiores doações");
     }
 
-    return response.data; // O backend retorna um array de campanhas ordenadas
+    return response.data;
   } catch (error) {
     console.error(error);
     return null;
@@ -91,7 +91,7 @@ export const getTopDonations = async (token) => {
 export const getLatestDonations = async (token) => {
   try {
     const response = await axios.get(
-      `http://127.0.0.1:8000/latest-donations`,
+      `http://127.0.0.1:8000/last-donations/`,
       {
         headers: {
           Authorization: `Token ${token}`,
@@ -104,7 +104,7 @@ export const getLatestDonations = async (token) => {
       throw new Error("Erro ao buscar campanhas com últimas doações");
     }
 
-    return response.data; // O backend retorna um array de campanhas ordenadas
+    return response.data;
   } catch (error) {
     console.error(error);
     return null;
@@ -114,7 +114,7 @@ export const getLatestDonations = async (token) => {
 export const getNewCampaigns = async (token) => {
   try {
     const response = await axios.get(
-      `http://127.0.0.1:8000/new-campaigns`,
+      `http://127.0.0.1:8000/recently-campaigns-create/`,
       {
         headers: {
           Authorization: `Token ${token}`,
@@ -127,7 +127,7 @@ export const getNewCampaigns = async (token) => {
       throw new Error("Erro ao buscar campanhas mais recentes");
     }
 
-    return response.data; // O backend retorna um array de campanhas ordenadas
+    return response.data;
   } catch (error) {
     console.error(error);
     return null;

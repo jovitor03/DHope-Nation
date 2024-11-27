@@ -35,6 +35,10 @@ function Header() {
     navigate("/homepage");
   };
 
+  const goToCreateCampaign = () => {
+    navigate("/create-campaign");
+  };
+
   return (
     <div className="flex flex-row items-center justify-between">
       <img
@@ -44,7 +48,10 @@ function Header() {
         onClick={goToHomepage}
       ></img>
       <div className="flex flex-row items-center gap-12 mr-16">
-        <label className="text-3xl text-[#062134] font-semibold hover:cursor-pointer">
+        <label
+          className="text-3xl text-[#062134] font-semibold hover:cursor-pointer"
+          onClick={goToCreateCampaign}
+        >
           CAMPAIGNS
         </label>
         <label className="text-3xl text-[#062134] font-semibold hover:cursor-pointer">
