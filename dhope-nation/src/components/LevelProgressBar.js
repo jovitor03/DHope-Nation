@@ -48,7 +48,7 @@ function LinearProgressBar({
         width={progressWidth}
         height={height}
         fill={fillColor}
-        rx={14}
+        rx={radius}
         style={{ transition: "width 0.1s ease-in-out" }}
       />
       <text

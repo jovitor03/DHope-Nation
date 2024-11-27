@@ -187,7 +187,7 @@ def upload_image(request):
     user = get_object_or_404(UserAccount, username=request.user.username)
     if user.is_campaign_creator:
         campaign_creator = get_object_or_404(CampaignCreator, user=user)
-        campaign_id = request.data.get('campaign_id')
+        campaign_id = request.query_params.get('campaign_id')
         campaign = get_object_or_404(Campaign, id=campaign_id)
         if campaign.campaign_creator == campaign_creator:
             image = request.data.get('image')

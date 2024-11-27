@@ -3,39 +3,17 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getCampaignById, donateToCampaign } from "../../api/Campaign";
 import "../../styles/Campaigns.css";
 import Layout from "../../layouts/DonorLayout.js";
+import { getCampaignImages } from "../../api/Campaign";
 
 function CampaignDonation() {
   const [campaign, setCampaign] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [donationAmount, setDonationAmount] = useState("");
   const [itemsProvided, setItemsProvided] = useState(0);
-  const [userXP, setUserXP] = useState(0); // Estado para armazenar o XP do usuário
+  const [userXP, setUserXP] = useState(0);
+  const [images, setImages] = useState([]);
   const { id: campaignId } = useParams();
   const navigate = useNavigate();
-
-  // function generateLevelThresholds(maxLevel) {
-  //   const thresholds = [];
-  //   let xp = 0;
-  //   let xpIncrement = 100;
-
-  //   for (let level = 1; level <= maxLevel; level++) {
-  //     thresholds.push({ level, xp });
-  //     xp += xpIncrement * level;
-  //   }
-
-  //   return thresholds;
-  // }
-
-  // function calculateLevel(xp, levelThresholds) {
-  //   for (let i = levelThresholds.length - 1; i >= 0; i--) {
-  //     if (xp >= levelThresholds[i].xp) {
-  //       return levelThresholds[i].level;
-  //     }
-  //   }
-  //   return 1;
-  // }
-
-  // const levelThresholds = generateLevelThresholds(999);
 
   useEffect(() => {
     const fetchCampaign = async () => {
@@ -57,6 +35,20 @@ function CampaignDonation() {
 
     fetchCampaign();
   }, [campaignId, navigate]);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      const data = await getCampaignImages(campaignId);
+      if (!data) {
+        console.error("Erro ao obter as imagens da campanha.");
+      } else {
+        console.log(data);
+        setImages(data);
+      }
+    };
+
+    fetchImages();
+  }, [campaignId]);
 
   const handlePaymentMethodChange = (event) => {
     setPaymentMethod(event.target.value);
@@ -89,11 +81,7 @@ function CampaignDonation() {
       const xpGained = amount * 10;
       setUserXP(userXP + xpGained);
 
-      // const newLevel = calculateLevel(userXP + xpGained, levelThresholds);
-
-      alert(
-        `Donation successful! XP Gained: ${xpGained}.`
-      );
+      alert(`Donation successful! XP Gained: ${xpGained}.`);
 
       await donateToCampaign(
         {
@@ -123,9 +111,40 @@ function CampaignDonation() {
           {campaign.title}
         </h1>
       </div>
-      <div className="flex flex-row justify-center ml-10 mr-8 mt-8">
-        <div className="flex flex-col w-1/2 gap-2">
-          <div className="w-full bg-white flex flex-col items-center border border-[#28372C]">
+      <div className="flex flex-row justify-between">
+        <div className="flex flex-col justify-start mr-16 ml-20 items-center w-5/12">
+          {images.length > 0 ? (
+            <div className="flex flex-col mt-32 2xl:mt-40 items-center mb-[-40px] border-r border-l border-b border-black">
+              <div className="w-7/12 items-center flex flex-col text-center justify-center mb-4 scale-171">
+                <img
+                  src={`http://127.0.0.1:8000${images[0].image}`}
+                  alt="Main"
+                  className="h-36 w-full 2xl:h-[191px] object-cover border-t border-black"
+                />
+              </div>
+              <div className="flex flex-row justify-between mt-9 2xl:mt-12 z-10">
+                {images.slice(1).map((image, index) => (
+                  <div
+                    key={index}
+                    className={`flex justify-center items-center bg-white ${
+                      index !== 0 ? "border-l border-black" : ""
+                    }`}
+                  >
+                    <img
+                      src={`http://127.0.0.1:8000${image.image}`}
+                      alt={`Preview ${index + 2}`}
+                      className="w-40 h-24 2xl:h-36 2xl:w-52 object-cover border-t border-black"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div></div>
+          )}
+        </div>
+        <div className="flex flex-row justify-end ml-16 mt-12 mr-8 w-2/3 h-full text-center">
+          <div className="flex flex-col gap-2 w-full bg-white p-4 border border-[#28372C]">
             <label className="text-[#28372C] font-semibold text-3xl mt-6">
               Your donation
             </label>
@@ -170,7 +189,7 @@ function CampaignDonation() {
                 </p>
               </div>
             )}
-            <div className="mb-6 mt-6 flex flex-row justify-between space-x-4">
+            <div className="mb-6 mt-6 flex flex-row justify-center space-x-8">
               <button
                 className="h-12 px-4 border-2 rounded-sm border-[#4A6B53] bg-[#D9D9D9] text-[#4A6B53] text-2xl font-semibold shadow-y whitespace-nowrap"
                 onClick={() => navigate(`/campaign/${campaignId}`)}
