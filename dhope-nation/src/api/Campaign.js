@@ -67,15 +67,12 @@ export const donateToCampaign = async (data, authToken) => {
 
 export const getTopDonations = async (token) => {
   try {
-    const response = await axios.get(
-      `http://127.0.0.1:8000/top-donations`,
-      {
-        headers: {
-          Authorization: `Token ${token}`,
-          Accept: "*/*",
-        },
-      }
-    );
+    const response = await axios.get(`http://127.0.0.1:8000/top-donations`, {
+      headers: {
+        Authorization: `Token ${token}`,
+        Accept: "*/*",
+      },
+    });
 
     if (response.status < 200 || response.status >= 300) {
       throw new Error("Erro ao buscar campanhas com maiores doações");
@@ -90,15 +87,12 @@ export const getTopDonations = async (token) => {
 
 export const getLatestDonations = async (token) => {
   try {
-    const response = await axios.get(
-      `http://127.0.0.1:8000/last-donations/`,
-      {
-        headers: {
-          Authorization: `Token ${token}`,
-          Accept: "*/*",
-        },
-      }
-    );
+    const response = await axios.get(`http://127.0.0.1:8000/last-donations/`, {
+      headers: {
+        Authorization: `Token ${token}`,
+        Accept: "*/*",
+      },
+    });
 
     if (response.status < 200 || response.status >= 300) {
       throw new Error("Erro ao buscar campanhas com últimas doações");
@@ -131,5 +125,46 @@ export const getNewCampaigns = async (token) => {
   } catch (error) {
     console.error(error);
     return null;
+  }
+};
+
+export const postCampaignImages = async (token, campaignId, data) => {
+  try {
+    const response = await axios.post(
+      `http://127.0.0.1:8000/campaign/upload-image/`,
+      data,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+        params: {
+          campaign_id: campaignId,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error uploading campaign images:", error);
+    throw error;
+  }
+};
+
+export const getCampaignImages = async (campaignId) => {
+  try {
+    const response = await axios.get(
+      `http://127.0.0.1:8000/image/campaigns`,
+      {
+        params: {
+          id: campaignId,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error uploading campaign images:", error);
+    throw error;
   }
 };

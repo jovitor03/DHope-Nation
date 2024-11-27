@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import CampaignCreatorLayout from "../../layouts/CampaignCreatorLayout";
 import "../../styles/Campaigns.css";
-import { createCampaign } from "../../api/Campaign";
+import { createCampaign, postCampaignImages } from "../../api/Campaign";
 import { useNavigate } from "react-router-dom";
 import plusIcon from "../../assets/images/plus.png";
 import imageIcon from "../../assets/images/image.png";
@@ -24,19 +24,20 @@ function CreateCampaign() {
   const [imagePreviews, setImagePreviews] = useState([]);
 
   const handleImageChange = (event) => {
-    const selectedFiles = event.target.files;
-    const selectedImages = [];
-    const imagePreviewsArr = [];
+    const files = Array.from(event.target.files);
 
-    for (let i = 0; i < selectedFiles.length; i++) {
-      const file = selectedFiles[i];
-      if (file && file.type.startsWith("image/")) {
-        selectedImages.push(file);
-        imagePreviewsArr.push(URL.createObjectURL(file));
-      }
+    if (files.length !== 4) {
+      return;
     }
 
-    setImagePreviews(imagePreviewsArr);
+    const maxSize = 10 * 1024 * 1024;
+    const validFiles = files.filter((file) => file.size <= maxSize);
+    if (validFiles.length < files.length) {
+      return;
+    }
+
+    const previews = validFiles.map((file) => URL.createObjectURL(file));
+    setImagePreviews(previews);
   };
 
   useEffect(() => {
@@ -119,8 +120,17 @@ function CreateCampaign() {
 
     try {
       const responseData = await createCampaign(token, data);
-      console.log(responseData);
-      navigate("/campaign/" + responseData.id);
+      const campaignId = responseData.id;
+
+      const images = Array.from(document.getElementById("image-upload").files);
+
+      for (const image of images) {
+        const imageData = new FormData();
+        imageData.append("image", image);
+        await postCampaignImages(token, campaignId, imageData);
+      }
+
+      navigate("/homepage");
     } catch (error) {
       console.error("Erro ao criar campanha:", error);
     }
@@ -128,7 +138,6 @@ function CreateCampaign() {
 
   return (
     <CampaignCreatorLayout>
-      {/* Título - centrado */}
       <div className="flex flex-row justify-center mt-[-20px]">
         <input
           type="text"
@@ -140,24 +149,37 @@ function CreateCampaign() {
         />
       </div>
       <div className="flex flex-row justify-between">
-        <div className="flex flex-col mt-4 justify-start mr-16 ml-20 items-center justify-center w-5/12">
+        <div className="flex flex-col justify-start mr-16 ml-20 items-center w-5/12">
           {imagePreviews.length > 0 ? (
-            imagePreviews.map((image, index) => (
-              <div
-                key={index}
-                className="w-1/4 h-1/5 bg-white items-center flex flex-col text-center justify-center scale-325 m-2"
-              >
+            <div className="flex flex-col mt-32 2xl:mt-40 items-center mb-[-40px] border-r border-l border-b border-black">
+              <div className="w-7/12 items-center flex flex-col text-center justify-center mb-4 scale-171">
                 <img
-                  src={image}
-                  alt={`Campaign image: ${index + 1}`}
-                  className="w-full h-full object-cover"
+                  src={imagePreviews[0]}
+                  alt="Main"
+                  className="h-36 w-full 2xl:h-[191px] object-cover border-t border-black"
                 />
               </div>
-            ))
+              <div className="flex flex-row justify-between mt-9 2xl:mt-12 z-10">
+                {imagePreviews.slice(1).map((image, index) => (
+                  <div
+                    key={index}
+                    className={`flex justify-center items-center bg-white ${
+                      index !== 0 ? "border-l border-black" : ""
+                    }`}
+                  >
+                    <img
+                      src={image}
+                      alt={`Preview ${index + 2}`}
+                      className="w-40 h-24 2xl:h-36 2xl:w-52 object-cover border-t border-black"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
           ) : (
-            <div className="flex flex-col items-center mb-[-40px]">
+            <div className="flex flex-col items-center mt-32 2xl:mt-44 mb-[-40px]">
               <div
-                className="px-11 py-7 bg-white items-center flex flex-col text-center justify-center cursor-pointer mb-4 scale-171 2xl:scale-200 border border-black"
+                className="px-7 py-7 bg-white items-center flex flex-col text-center justify-center cursor-pointer mb-4 scale-167 2xl:scale-217 border border-black"
                 onClick={() => document.getElementById("image-upload").click()}
               >
                 <img
@@ -166,13 +188,13 @@ function CreateCampaign() {
                   className="w-14 h-14 cursor-pointer"
                 />
                 <label className="text-[#A3A3A3] font-semibold text-sm mt-1 cursor-pointer">
-                  Add your images here (Max. 4)
+                  Please add 4 campaign images here!
                 </label>
                 <label className="text-[#A3A3A3] font-semibold text-[10px] cursor-pointer">
                   Maximum size: 10 MB
                 </label>
               </div>
-              <div className="flex flex-row w-full justify-between mt-9 2xl:mt-16 border border-black">
+              <div className="flex flex-row w-full justify-between mt-8 2xl:mt-16 border border-black">
                 <div className="w-40 h-24 2xl:h-36 2xl:w-52 flex justify-center items-center bg-white border border-black">
                   <img alt="+2" src={imageIcon} className="w-12 h-12" />
                 </div>
@@ -194,7 +216,8 @@ function CreateCampaign() {
             multiple
           />
         </div>
-        <div className="flex flex-row mt-4 justify-end ml-16 mr-8 w-1/2">
+
+        <div className="flex flex-row mt-4 justify-end ml-16 mr-8 w-2/3">
           <div className="flex flex-col w-full gap-2">
             <div className="flex flex-row mb-6 w-full items-center mt-6 space-x-12 justify-center">
               <div className="flex flex-col items-start w-[180px] ml-5 mt-[-30px]">
@@ -290,6 +313,7 @@ function CreateCampaign() {
                   onChange={(e) => setMotivationAmount(e.target.value)}
                   className="bg-transparent focus:outline-none border-b border-b-green-800 text-[#28372C] w-1/4 md:w-24 text-xl placeholder-gray-500 text-center"
                   placeholder="10"
+                  maxLength={4}
                 />
                 <input
                   type="text"
