@@ -228,6 +228,16 @@ def get_campaigns_by_category(request):
     campaigns = Campaign.objects.filter(category__icontains=category)
     serializer = CampaignSerializer(campaigns, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def get_campaigns_by_title(request):
+    title = request.data.get('title')
+    if not title:
+        return Response({"error": "Title is required"}, status=status.HTTP_400_BAD_REQUEST)
+    campaigns = Campaign.objects.filter(title__icontains=title)
+    serializer = CampaignSerializer(campaigns, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 #-------------------------------------------------Donations---------------------------------------------------------------
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
