@@ -22,7 +22,7 @@ function DonorProfile() {
   const [profileStats, setProfileStats] = useState({});
   const [profileData, setProfileData] = useState({});
   const [donorDonations, setDonorDonations] = useState([]);
-  const [topDonations, setTopDonations] = useState([]); // New state variable for top donations
+  const [topDonations, setTopDonations] = useState([]);
   const [imageUrls, setImageUrls] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const donationsPerPage = 4;
@@ -267,11 +267,14 @@ function DonorProfile() {
                 width={250}
                 height={20}
                 fillColor={getLevelBorderColor(profileStats.level)}
-                xp={profileStats.xp}
-                xpToNextLevel={LevelSystem.getMaxXPForLevel(
-                  LevelSystem.getLevel(profileStats.xp)
-                )}
-                minXpLevel={LevelSystem.getMaxXPForLevel(profileStats.level)}
+                xp={
+                  profileStats.xp -
+                  LevelSystem.getMaxXPForLevel(profileStats.level - 1)
+                }
+                xpToNextLevel={
+                  LevelSystem.getMaxXPForLevel(profileStats.level) -
+                  LevelSystem.getMaxXPForLevel(profileStats.level - 1)
+                }
                 radius={10}
               />
             </div>
@@ -388,15 +391,18 @@ function DonorProfile() {
                             : index === 2
                             ? "3xl"
                             : "md"
-                        } bg-${
-                          index === 0
-                            ? "[#d4af37]"
-                            : index === 1
-                            ? "[#c0c0c0]"
-                            : index === 2
-                            ? "[#b87333]"
-                            : "[#4E6A56]"
+                        }
                         } px-${index === 9 ? "3" : "4"} py-3 rounded-full z-10`}
+                        style={{
+                          backgroundColor:
+                            index === 0
+                              ? "#d4af37"
+                              : index === 1
+                              ? "#c0c0c0"
+                              : index === 2
+                              ? "#b87333"
+                              : "#4E6A56",
+                        }}
                       >
                         {index + 1}º
                       </label>

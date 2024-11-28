@@ -29,10 +29,9 @@ const getMaxXPForLevel = (level) => {
 
 const getXPForNextLevel = (xp) => {
   const currentLevel = getLevel(xp);
-  const currentXP = getMaxXPForLevel(currentLevel);
   const nextLevelXP = getMaxXPForLevel(currentLevel + 1);
 
-  return nextLevelXP - currentXP;
+  return nextLevelXP - xp;
 };
 
 const LevelSystem = { getLevel, getMaxXPForLevel, getXPForNextLevel };

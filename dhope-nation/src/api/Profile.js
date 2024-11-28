@@ -27,10 +27,19 @@ export const deleteProfile = (token) => {
   });
 };
 
-export const updateLevel = (token, level) => {
-  return axios.post("http://127.0.0.1:8000/profile/donor/edit/", {
-    level: level,
-  });
+export const updateLevel = (token, newLevel) => {
+  return axios.post(
+    "http://127.0.0.1:8000/profile/donor/edit/",
+    {
+      level: newLevel,
+    },
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+        Accept: "*/*",
+      },
+    }
+  );
 };
 
 export const getDonations = (token) => {
