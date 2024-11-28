@@ -143,8 +143,8 @@ function CreateCampaign() {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Write your campaign's title here (Max. 70 characters)"
-          maxLength={70}
+          placeholder="Write your campaign's title here (Max. 50 characters)"
+          maxLength={50}
           className="bg-transparent focus:outline-none border-b border-black text-[#28372C] font-semibold w-3/4 text-center text-3xl 2xl:text-4xl placeholder-gray-500"
         />
       </div>

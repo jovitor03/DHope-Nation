@@ -6,14 +6,26 @@ import hexagon from "../../assets/images/hexagon.png";
 import LevelBorder from "../../components/LevelBorder.js";
 import Hexagon from "../../components/Hexagon.js";
 import LinearProgressBar from "../../components/LevelProgressBar.js";
-import { getDonorProfile } from "../../api/Profile.js";
+import Pagination from "../../components/Pagination";
+import {
+  getDonorProfile,
+  deleteProfile,
+  getDonations,
+  getTopDonationsFromDonor,
+} from "../../api/Profile.js";
 import LevelSystem from "../../utils/LevelSystem.js";
 import { format } from "date-fns";
-import { deleteProfile } from "../../api/Profile.js";
+import { getCampaignImages } from "../../api/Campaign.js";
+import "../../styles/Profile.css";
 
 function DonorProfile() {
   const [profileStats, setProfileStats] = useState({});
   const [profileData, setProfileData] = useState({});
+  const [donorDonations, setDonorDonations] = useState([]);
+  const [topDonations, setTopDonations] = useState([]); // New state variable for top donations
+  const [imageUrls, setImageUrls] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const donationsPerPage = 4;
 
   const getProfileStats = async () => {
     const token = localStorage.getItem("authToken");
@@ -38,6 +50,34 @@ function DonorProfile() {
     try {
       const response = await getDonorProfile(token);
       setProfileData(response.data.donor.user);
+    } catch (error) {
+      console.error("Erro ao obter os dados do perfil:", error);
+    }
+  };
+
+  const getDonorDonations = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.error("Token de autenticação não encontrado.");
+      return;
+    }
+    try {
+      const response = await getDonations(token);
+      setDonorDonations(response.data);
+    } catch (error) {
+      console.error("Erro ao obter os dados do perfil:", error);
+    }
+  };
+
+  const getTopDonations = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.error("Token de autenticação não encontrado.");
+      return;
+    }
+    try {
+      const response = await getTopDonationsFromDonor(token);
+      setTopDonations(response.data.slice(0, 10));
     } catch (error) {
       console.error("Erro ao obter os dados do perfil:", error);
     }
@@ -82,10 +122,58 @@ function DonorProfile() {
     }
   };
 
+  const getFirstImageCampaing = async (campaignId) => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.error("Token de autenticação não encontrado.");
+      return;
+    }
+    try {
+      const response = await getCampaignImages(campaignId);
+      return response[0].image;
+    } catch (error) {
+      console.error("Erro ao obter os dados do perfil:", error);
+    }
+  };
+
+  const navigateToCampaign = (campaignId) => {
+    return () => {
+      window.location.href = `/campaign/${campaignId}`;
+    };
+  };
+
+  useEffect(() => {
+    const fetchImageUrls = async () => {
+      const urls = {};
+      for (const donation of donorDonations) {
+        const url = await getFirstImageCampaing(donation.campaign);
+        urls[donation.id] = `http://127.0.0.1:8000${url}`;
+      }
+      setImageUrls(urls);
+    };
+
+    fetchImageUrls();
+  }, [donorDonations]);
+
   useEffect(() => {
     getProfileStats();
     getProfileData();
-  }, [profileStats.xp]);
+    getDonorDonations();
+    getTopDonations(); // Fetch top donations
+  }, []);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const indexOfLastDonation = currentPage * donationsPerPage;
+  const indexOfFirstDonation = indexOfLastDonation - donationsPerPage;
+  const currentDonations = donorDonations.slice(
+    indexOfFirstDonation,
+    indexOfLastDonation
+  );
+
+  const totalPages = Math.ceil(donorDonations.length / donationsPerPage);
 
   return (
     <DonorLayout>
@@ -141,27 +229,13 @@ function DonorProfile() {
               </div>
               <div className="flex flex-row items-center ml-6 mt-3">
                 <img src={hexagon} alt="hexagon" className="w-12"></img>
-                <label className="ml-2 text-2xl 2xl:text-3xl">
+                <label className="ml-2 text-xl 2xl:text-2xl">
                   {profileStats.donation_value !== undefined
                     ? profileStats.donation_value.toFixed(2)
                     : "0,00"}
                   € donated
                 </label>
               </div>
-              {/* <div className="flex flex-row items-center ml-6 mt-3">
-                <img src={hexagon} alt="hexagon" className="w-12"></img>
-                <div className="flex ml-2 flex-row items-center">
-                  <label className="text-lg 2xl:text-xl">
-                    Biggest donation:<label> </label>
-                  </label>
-                  <label className="text-lg ml-1 2xl:text-xl">
-                    {profileStats.biggest_donation
-                      ? profileStats.biggest_donation.toFixed(2)
-                      : "0.00"}
-                    €
-                  </label>
-                </div>
-              </div> */}
             </div>
           </div>
         </div>
@@ -234,6 +308,133 @@ function DonorProfile() {
                   <label className="ml-2 text-xl">Level 100+</label>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-row justify-between gap-x-10">
+        <div className="flex flex-col ml-24 mt-12 mb-8 w-7/12">
+          <div className="flex flex-col text-[#303934] text-center">
+            <label className="font-semibold text-2xl">Donations History</label>
+            <label className="text-lg mt-[-5px]">(From latest to oldest)</label>
+          </div>
+          <div className="flex flex-row text-[#303934] justify-center">
+            <div className="flex flex-col w-full">
+              {currentDonations.length > 0 ? (
+                <>
+                  {currentDonations.map((donation) => (
+                    <div
+                      key={donation.id}
+                      className="flex flex-row items-center gap-4 mt-4 cursor-pointer"
+                      onClick={navigateToCampaign(donation.campaign)}
+                    >
+                      <div className="relative cursor-pointer">
+                        <img
+                          src={imageUrls[donation.id]}
+                          alt={imageUrls[donation.id]}
+                          className="h-32 w-48 object-cover rounded-[6px] cursor-pointer"
+                        />
+                        <div className="image-cover cursor-pointer">
+                          <span className="donation-amount cursor-pointer">
+                            +{donation.amount}€
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex flex-col cursor-pointer">
+                        <label className="text-lg font-semibold underline cursor-pointer">
+                          {donation.title}
+                        </label>
+                        <label className="text-md cursor-pointer">
+                          {formatDate(donation.date)}
+                        </label>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="mt-4">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={handlePageChange}
+                    />
+                  </div>
+                </>
+              ) : (
+                <label className="text-lg mt-2">No donations yet.</label>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col mr-16 mt-12 mb-8 w-5/12">
+          <div className="flex flex-col text-[#303934] text-center">
+            <label className="font-semibold text-2xl">
+              Your All-time Top 10 Donations
+            </label>
+          </div>
+          <div className="flex flex-row text-[#303934] justify-center">
+            <div className="flex flex-col">
+              {topDonations.length > 0 ? (
+                topDonations.map((donation, index) => (
+                  <div
+                    key={donation.id}
+                    className="flex flex-row items-center gap-4 mt-4"
+                  >
+                    <div className="flex flex-row text-white font-semibold">
+                      <label
+                        className={`text-${
+                          index === 0
+                            ? "3xl"
+                            : index === 1
+                            ? "3xl"
+                            : index === 2
+                            ? "3xl"
+                            : "md"
+                        } bg-${
+                          index === 0
+                            ? "[#d4af37]"
+                            : index === 1
+                            ? "[#c0c0c0]"
+                            : index === 2
+                            ? "[#b87333]"
+                            : "[#4E6A56]"
+                        } px-${index === 9 ? "3" : "4"} py-3 rounded-full z-10`}
+                      >
+                        {index + 1}º
+                      </label>
+                    </div>
+                    <div
+                      className={`bg-[#35473A] text-white w-full z-0 rounded-full
+                    ${
+                      index < 3
+                        ? "h-14 ml-[-78px] px-12"
+                        : "h-10 flex items-center justify-center"
+                    }
+                      `}
+                    >
+                      <div
+                        className={`relative text-xl font-semibold ${
+                          index < 3 ? "ml-6" : "justify-center"
+                        }
+                      `}
+                      >
+                        <div>
+                          <span>+{donation.amount}€</span>
+                        </div>
+                      </div>
+                      <div>
+                        {index < 3 && (
+                          <div>
+                            <label className="text-md  ml-6">
+                              {formatDate(donation.date)}
+                            </label>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <label className="text-lg mt-2">No top donations yet.</label>
+              )}
             </div>
           </div>
         </div>
