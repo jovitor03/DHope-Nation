@@ -37,12 +37,16 @@ class CampaignCreator(models.Model):
         self.user.is_campaign_creator = True
         self.user.save()
         super().save(*args, **kwargs)
+class CampaignCategory(models.Model):
+    name = models.CharField(max_length=100)
+    def __str__(self):
+        return self.name
     
 class Campaign(models.Model):
     campaign_creator = models.ForeignKey(CampaignCreator, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     description = models.TextField()
-    category = models.JSONField(blank=True, null=True, default=list)
+    category = models.ManyToManyField(CampaignCategory)
     goal = models.FloatField()
     current_amount = models.FloatField(default=0)
     total_donors = models.IntegerField(default=0)

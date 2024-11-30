@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import UserAccountSerializer, DonorSerializer, CampaignCreatorSerializer, CampaignSerializer, CampaignImageSerializer, DonationSerializer
-from .models import UserAccount, Donor, CampaignCreator, Campaign, CampaignImage, Donation
+from .serializers import UserAccountSerializer, DonorSerializer, CampaignCreatorSerializer, CampaignSerializer, CampaignImageSerializer, DonationSerializer,CampaignCategorySerializer
+from .models import UserAccount, Donor, CampaignCreator, Campaign, CampaignImage, Donation, CampaignCategory
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from rest_framework import status
@@ -156,12 +156,11 @@ def get_campaigns(request):
     campaign_id = request.query_params.get('id')
     if not campaign_id:
         return Response({"error": "Campaign ID is required"}, status=status.HTTP_400_BAD_REQUEST)
-
+    
     campaign = get_object_or_404(Campaign, id=campaign_id)
     if campaign.is_verified:
         serializer = CampaignSerializer(campaign)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
@@ -187,7 +186,7 @@ def upload_image(request):
     user = get_object_or_404(UserAccount, username=request.user.username)
     if user.is_campaign_creator:
         campaign_creator = get_object_or_404(CampaignCreator, user=user)
-        campaign_id = request.data.get('campaign_id')
+        campaign_id = request.query_params.get('campaign_id')
         campaign = get_object_or_404(Campaign, id=campaign_id)
         if campaign.campaign_creator == campaign_creator:
             image = request.data.get('image')
@@ -220,15 +219,23 @@ def get_campaigns_higher_current_amount (request):
     campaigns = Campaign.objects.reverse().order_by('current_amount')
     serializer = CampaignSerializer(campaigns, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
 @api_view(['POST']) 
 def get_campaigns_by_category(request):
-    category = request.data.get('category')
+    category =request.data.get('category')
     if not category:
         return Response({"error": "Category is required"}, status=status.HTTP_400_BAD_REQUEST)
-    campaigns = Campaign.objects.filter(category__icontains=category)
-    serializer = CampaignSerializer(campaigns, many=True)
+    category = get_object_or_404(CampaignCategory, name=category) 
+    campaigns = Campaign.objects.filter(category=category) 
+    serializer = CampaignSerializer(campaigns, many=True) 
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+@api_view(['POST'])
+def get_categories(request):
+    categories = CampaignCategory.objects.all()
+    serializer = CampaignCategorySerializer(categories, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def get_campaigns_by_title(request):

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Donor, CampaignCreator, UserAccount, Campaign, CampaignImage, Donation
+from .models import Donor, CampaignCreator, UserAccount, Campaign, CampaignImage, Donation, CampaignCategory
 
 class UserAccountSerializer(serializers.ModelSerializer):
     class Meta:
@@ -48,10 +48,18 @@ class CampaignImageSerializer(serializers.ModelSerializer):
         campaign = validated_data.pop('campaign')
         campaign_image = CampaignImage.objects.create(campaign=campaign, **validated_data)
         return campaign_image
+class CampaignCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CampaignCategory
+        fields = ['name']
+        
+    def create(self, validated_data):
+        category = CampaignCategory.objects.create(**validated_data)
+        return category
 
 class CampaignSerializer(serializers.ModelSerializer):
     campaign_creator = serializers.PrimaryKeyRelatedField(queryset=CampaignCreator.objects.all())
-    category=serializers.JSONField()
+    category=CampaignCategorySerializer(many=True)
     images = CampaignImageSerializer(many=True, read_only=True, source='campaignimage_set')
     
     class Meta:
@@ -59,8 +67,19 @@ class CampaignSerializer(serializers.ModelSerializer):
         fields = ['id','campaign_creator', 'title', 'description', 'category', 'goal', 'current_amount', 'total_donors', 'start_date', 'end_date','ratio','sentence', 'is_verified', 'is_completed', 'is_active','images']
     
     def create(self, validated_data):
-        campaign_creator = validated_data.pop('campaign_creator')
+        # Extraemos las categorías (una lista de diccionarios)
+        category_data = validated_data.pop('category')
+        # Extraemos el creador de la campaña si se incluye (opcional)
+        campaign_creator = validated_data.pop('campaign_creator', None)
+        # Creamos la campaña
         campaign = Campaign.objects.create(campaign_creator=campaign_creator, **validated_data)
+        # Asignamos categorías existentes basadas en los nombres
+        category_names = [cat['name'] for cat in category_data]
+        categories = CampaignCategory.objects.filter(name__in=category_names)
+        if len(categories) != len(category_names):
+            missing = set(category_names) - set(categories.values_list('name', flat=True))
+            raise serializers.ValidationError(f"Las categorías no existen: {', '.join(missing)}")
+        campaign.category.set(categories)  # Establece relaciones many-to-many
         return campaign
     
 class DonationSerializer(serializers.ModelSerializer):
