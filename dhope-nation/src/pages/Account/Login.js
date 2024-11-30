@@ -28,7 +28,9 @@ function Login() {
             localStorage.setItem("user_type", "Donor");
             navigate("/homepage");
           } else {
-            setErrorMessage("Your account is not verified yet.");
+            setErrorMessage(
+              "Your account has not yet been verified by an admin."
+            );
           }
         } else if (accountTypeData.data.user_type === "Campaign Creator") {
           const campaignCreatorProfile = await getCampaignCreatorProfile(
