@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import UserAccountSerializer, DonorSerializer, CampaignCreatorSerializer, CampaignSerializer, CampaignImageSerializer, DonationSerializer
@@ -6,6 +7,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from rest_framework import status
 from django.shortcuts import get_object_or_404, render
+from django.db.models import Sum
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -332,5 +334,20 @@ def get_top_donations_by_donor(request):
         donations = Donation.objects.all().reverse().order_by('amount').filter(donor=donor)
         serializer = DonationSerializer(donations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": "User is not a donor"}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_donations_last_30_days(request):
+    user = get_object_or_404(UserAccount, username=request.user.username)
+    if user.is_donor:
+        donor = get_object_or_404(Donor, user=user)
+        # Obtener la fecha de hace 30 días
+        thirty_days_ago = datetime.now() - timedelta(days=30)
+        # Filtrar las donaciones del usuario en los últimos 30 días
+        donations = Donation.objects.filter(donor=donor, date__gte=thirty_days_ago)
+        total_donated = donations.aggregate(total=Sum('amount'))['total'] or 0
+        return Response({"total_donated_last_30_days": total_donated}, status=status.HTTP_200_OK)
     else:
         return Response({"error": "User is not a donor"}, status=status.HTTP_400_BAD_REQUEST)
