@@ -208,11 +208,15 @@ function DonorProfile() {
             <label
               className={`text-2xl 2xl:text-3xl font-semibold mt-2 ${
                 profileStats.honor === "Super High Honor"
-                  ? "text-[#00EEFF]"
+                  ? "text-[#fc6075]"
                   : profileStats.honor === "High Honor"
                   ? "text-[#0dcd0d]"
                   : profileStats.honor === "Neutral Honor"
                   ? "text-[#f7c23c]"
+                  : profileStats.honor === "Epic Honor"
+                  ? "text-[#9F84FF]"
+                  : profileStats.honor === "Legendary Honor"
+                  ? "text-[#00EEFF]"
                   : ""
               }`}
             >
@@ -375,7 +379,7 @@ function DonorProfile() {
           </div>
           <div className="flex flex-row text-[#303934] justify-center">
             <div className="flex flex-col">
-              {topDonations.length > 0 ? (
+              {topDonations.length > 9 ? (
                 topDonations.map((donation, index) => (
                   <div
                     key={donation.id}

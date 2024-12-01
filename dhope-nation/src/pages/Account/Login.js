@@ -4,13 +4,52 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { login } from "../../api/Accounts";
 import { accountType } from "../../api/Accounts";
-import { getDonorProfile, getCampaignCreatorProfile } from "../../api/Profile";
+import {
+  getDonorProfile,
+  getCampaignCreatorProfile,
+  getDonationsLast30Days,
+  updateHonor,
+} from "../../api/Profile";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+
+  const verifyIfHowMuchDonatedLast30Days = async (token, honor) => {
+    const response = await getDonationsLast30Days(token);
+    const donationsLast30Days = response.data.total_donated_last_30_days;
+
+    if (donationsLast30Days < 10 && honor !== "Neutral Honor") {
+      await updateHonor(token, "Neutral Honor");
+      alert("Your honor is now Neutral Honor");
+    } else if (
+      donationsLast30Days < 25 &&
+      donationsLast30Days >= 10 &&
+      honor !== "High Honor"
+    ) {
+      await updateHonor(token, "High Honor");
+      alert("Your honor is now High Honor");
+    } else if (
+      donationsLast30Days < 50 &&
+      donationsLast30Days >= 25 &&
+      honor !== "Super High Honor"
+    ) {
+      await updateHonor(token, "Super High Honor");
+      alert("Your honor is now Super High Honor");
+    } else if (
+      donationsLast30Days < 100 &&
+      donationsLast30Days >= 50 &&
+      honor !== "Epic Honor"
+    ) {
+      await updateHonor(token, "Epic Honor");
+      alert("Your honor is now Epic Honor");
+    } else if (donationsLast30Days >= 100 && honor !== "Legendary Honor") {
+      await updateHonor(token, "Legendary Honor");
+      alert("Your honor is now Legendary Honor");
+    }
+  };
 
   const handleLogin = async () => {
     try {
@@ -23,10 +62,13 @@ function Login() {
         if (accountTypeData.data.user_type === "Donor") {
           const donorProfile = await getDonorProfile(response.data.token);
           const donorVerified = donorProfile.data.donor.is_verified;
+          const honor = donorProfile.data.donor.honor;
+          console.log(honor);
           if (donorVerified) {
             localStorage.setItem("authToken", response.data.token);
             localStorage.setItem("user_type", "Donor");
             navigate("/homepage");
+            verifyIfHowMuchDonatedLast30Days(response.data.token, honor);
           } else {
             setErrorMessage(
               "Your account has not yet been verified by an admin."

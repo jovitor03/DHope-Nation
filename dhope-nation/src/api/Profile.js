@@ -59,3 +59,27 @@ export const getTopDonationsFromDonor = (token) => {
     },
   });
 };
+
+export const getDonationsLast30Days = (token) => {
+  return axios.get("http://127.0.0.1:8000/donations/last-30-days/", {
+    headers: {
+      Authorization: `Token ${token}`,
+      Accept: "*/*",
+    },
+  });
+};
+
+export const updateHonor = (token, newHonor) => {
+  return axios.post(
+    "http://127.0.0.1:8000/profile/donor/edit/",
+    {
+      honor: newHonor,
+    },
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+        Accept: "*/*",
+      },
+    }
+  );
+};
