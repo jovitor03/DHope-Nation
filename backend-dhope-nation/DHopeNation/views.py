@@ -247,12 +247,10 @@ def get_campaigns_higher_current_amount (request):
 @api_view(['POST']) 
 def get_campaigns_by_category(request):
     category = request.data.get('category')
-    print(category)
     campaigns = Campaign.objects.all()
     campaigns_category = []
     for campaign in campaigns:  
         campaign_category = campaign.category
-        print(campaign_category)
         if all(word in campaign_category for word in category):
             serializer = CampaignSerializer(campaign)
             campaigns_category.append(serializer.data)
