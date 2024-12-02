@@ -134,13 +134,14 @@ def get_top_10_donors(request):
 @api_view(['GET'])
 
 def get_top_10_donors_last_30_days(request):
-    thirty_days_ago = datetime.now() - timedelta(days=1)
+    thirty_days_ago = datetime.now() - timedelta(days=30)
     donors = Donor.objects.all()
     donor_donations = []
 
     for donor in donors:
         total_donated = Donation.objects.filter(donor=donor, date__gte=thirty_days_ago).aggregate(total=Sum('amount'))['total'] or 0
-        donor_donations.append({'donor': donor.user.username,'total_donated': total_donated})
+        serializer = DonorSerializer(donor)
+        donor_donations.append({'donor': serializer.data,'total_donated': total_donated})
 
     top_donors = sorted(donor_donations, key=lambda x: x['total_donated'], reverse=True)[:10]
 
