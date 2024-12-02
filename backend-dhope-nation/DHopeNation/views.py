@@ -141,6 +141,7 @@ def get_top_10_donors_last_30_days(request):
     for donor in donors:
         total_donated = Donation.objects.filter(donor=donor, date__gte=thirty_days_ago).aggregate(total=Sum('amount'))['total'] or 0
         donor_donations.append({'donor': donor.user.username,'total_donated': total_donated})
+
     top_donors = sorted(donor_donations, key=lambda x: x['total_donated'], reverse=True)[:10]
 
     return Response(top_donors, status=status.HTTP_200_OK)
