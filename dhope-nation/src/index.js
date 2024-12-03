@@ -12,6 +12,7 @@ import HomePage from "./pages/Homepage.js";
 import Campaign from "./pages/Campaigns/Campaign.js";
 import CampaignDonation from "./pages/Campaigns/CampaignDonation.js";
 import CampaignSearch from "./pages/Campaigns/CampaignSearch.js";
+import Leaderboards from "./pages/Leaderboards.js";
 import ProtectedRoute from "./utils/ProtectedRoute.js";
 import reportWebVitals from "./reportWebVitals";
 
@@ -29,7 +30,7 @@ root.render(
           element={<ProtectedRoute element={<DonorProfile />} />}
         />
         <Route
-          path="/homepage" 
+          path="/homepage"
           element={<ProtectedRoute element={<HomePage />} />}
         />
         <Route
@@ -48,6 +49,7 @@ root.render(
           path="/campaigns"
           element={<ProtectedRoute element={<CampaignSearch />} />}
         />
+        <Route path="/leaderboards" element={<ProtectedRoute element={<Leaderboards />} />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
