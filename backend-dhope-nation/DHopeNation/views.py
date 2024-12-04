@@ -123,12 +123,14 @@ def edit_profile(request):
 def get_top_donors(request):
     donors = Donor.objects.all().reverse().order_by('donation_value')
     serializer = DonorSerializer(donors, many=True)
+    update_rank()
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def get_top_10_donors(request):
     donors = Donor.objects.all().reverse().order_by('donation_value')[:10]
     serializer = DonorSerializer(donors, many=True)
+    update_rank()
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
@@ -244,7 +246,7 @@ def get_campaigns_higher_current_amount (request):
     campaigns = Campaign.objects.reverse().order_by('current_amount')
     serializer = CampaignSerializer(campaigns, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
-@api_view(['POST']) 
+@api_view(['GET']) 
 def get_campaigns_by_category(request):
     category = request.data.get('category')
     campaigns = Campaign.objects.all()
@@ -257,7 +259,7 @@ def get_campaigns_by_category(request):
     return Response(campaigns_category, status=status.HTTP_200_OK)
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 def get_campaigns_by_title(request):
     title = request.data.get('title')
     if not title:
@@ -314,6 +316,7 @@ def donate(request):
                         campaign.is_active = False
                         campaign.save()
                     Donation.objects.create(donor=donor, campaign=campaign, amount=amount)
+                    update_rank()
 
                     return Response({"message": "Donation made successfully"}, status=status.HTTP_200_OK)
                 else:
@@ -376,3 +379,20 @@ def get_donations_last_30_days(request):
         return Response({"total_donated_last_30_days": total_donated}, status=status.HTTP_200_OK)
     else:
         return Response({"error": "User is not a donor"}, status=status.HTTP_400_BAD_REQUEST)
+
+def update_rank():
+    donors = Donor.objects.all()
+    donor_donations = []
+    for donor in donors:
+        total_donated = Donation.objects.filter(donor=donor).aggregate(total=Sum('amount'))['total'] or 0
+        donor_donations.append({
+            'donor': donor,
+            'total_donated': total_donated
+        })
+    sorted_donors = sorted(donor_donations, key=lambda x: x['total_donated'], reverse=True)
+    for rank, donor_data in enumerate(sorted_donors, start=1):
+        donor = donor_data['donor']
+        donor.rank = rank
+        donor.save()
+
+    return Response({"success": "Ranks updated successfully"}, status=status.HTTP_200_OK)
