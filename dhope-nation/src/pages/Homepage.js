@@ -59,7 +59,9 @@ function HomePage() {
         for (const campaign of campaigns) {
           const campaignImages = await getCampaignImages(campaign.id);
           if (campaignImages && campaignImages.length > 0) {
-            imagesMap[campaign.id] = `http://127.0.0.1:8000${campaignImages[0].image}`;
+            imagesMap[
+              campaign.id
+            ] = `http://127.0.0.1:8000${campaignImages[0].image}`;
           }
         }
         setImageState(imagesMap);
@@ -98,7 +100,7 @@ function HomePage() {
         </div>
       );
     }
-  
+
     return (
       <div className="mb-6">
         <h2 className="text-xl font-bold text-[#2D2D2D] mb-4">{title}</h2>
@@ -125,14 +127,20 @@ function HomePage() {
               >
                 {/* Texto */}
                 <div className="text-center">
-                  <h3 className="text-4xl font-bold text-white mb-2">{item.title}</h3>
+                  <h3 className="text-4xl font-bold text-white mb-2">
+                    {item.title}
+                  </h3>
                   {isCampaigns ? (
                     <>
                       <p className="text-2xl text-white font-medium">Goal:</p>
-                      <p className="text-xl text-white font-medium">{item.goal}</p>
+                      <p className="text-xl text-white font-medium">
+                        {item.goal}
+                      </p>
                     </>
                   ) : (
-                    <p className="text-3xl text-white font-medium">{item.value}</p>
+                    <p className="text-3xl text-white font-medium">
+                      {item.value}
+                    </p>
                   )}
                 </div>
               </div>
@@ -142,7 +150,7 @@ function HomePage() {
       </div>
     );
   }
-  
+
   const Layout = userType === "Donor" ? DonorLayout : CampaignCreatorLayout;
 
   return (
@@ -156,24 +164,24 @@ function HomePage() {
       </div>
 
       <div className="bg-[#A0C0A2] px-8 pb-6 mt-8">
-      <Section
-        title="New Campaigns"
-        data={newCampaigns}
-        isCampaigns={true}
-        images={newCampaignsImages}
-      />
-      <Section
-        title="Top Donations - October"
-        data={topDonations}
-        isCampaigns={true}
-        images={topDonationsImages}
-      />
-      <Section
-        title="Latest Donations"
-        data={latestDonations}
-        isCampaigns={true}
-        images={latestDonationsImages}
-      />
+        <Section
+          title="New Campaigns"
+          data={newCampaigns}
+          isCampaigns={true}
+          images={newCampaignsImages}
+        />
+        <Section
+          title="Top Donations - October"
+          data={topDonations}
+          isCampaigns={true}
+          images={topDonationsImages}
+        />
+        <Section
+          title="Latest Donations"
+          data={latestDonations}
+          isCampaigns={true}
+          images={latestDonationsImages}
+        />
       </div>
     </Layout>
   );
