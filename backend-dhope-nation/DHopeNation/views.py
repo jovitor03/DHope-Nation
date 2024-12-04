@@ -136,7 +136,7 @@ def get_top_10_donors(request):
 @api_view(['GET'])
 
 def get_top_10_donors_last_30_days(request):
-    thirty_days_ago = datetime.now() - timedelta(days=1)
+    thirty_days_ago = datetime.now() - timedelta(days=30)
     donors = Donor.objects.all()
     donor_donations = []
 
@@ -176,7 +176,7 @@ def create_campaign(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({"error": "User is not a campaign creator"}, status=status.HTTP_400_BAD_REQUEST)
-
+    
 @api_view(['GET'])
 def get_campaigns(request):
     campaign_id = request.query_params.get('id')
@@ -371,15 +371,28 @@ def get_donations_last_30_days(request):
     user = get_object_or_404(UserAccount, username=request.user.username)
     if user.is_donor:
         donor = get_object_or_404(Donor, user=user)
-        # Obtener la fecha de hace 30 días
+        
         thirty_days_ago = datetime.now() - timedelta(days=30)
-        # Filtrar las donaciones del usuario en los últimos 30 días
+   
         donations = Donation.objects.filter(donor=donor, date__gte=thirty_days_ago)
         total_donated = donations.aggregate(total=Sum('amount'))['total'] or 0
         return Response({"total_donated_last_30_days": total_donated}, status=status.HTTP_200_OK)
     else:
         return Response({"error": "User is not a donor"}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET'])
+def get_top_donations_last_30_days(request):
+    thirty_days_ago = datetime.now() - timedelta(days=30)
+    donations = Donation.objects.filter(date__gte=thirty_days_ago).reverse().order_by('amount')
+    serializer = DonationSerializer(donations, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+@api_view(['GET'])
+def get_top_10_donations_last_30_days(request):
+    thirty_days_ago = datetime.now() - timedelta(days=30)
+    donations = Donation.objects.filter(date__gte=thirty_days_ago).reverse().order_by('amount')[:10]
+    serializer = DonationSerializer(donations, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
+#-------------------------------------------------Ranks---------------------------------------------------------------
 def update_rank():
     donors = Donor.objects.all()
     donor_donations = []
@@ -396,3 +409,4 @@ def update_rank():
         donor.save()
 
     return Response({"success": "Ranks updated successfully"}, status=status.HTTP_200_OK)
+
