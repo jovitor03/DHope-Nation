@@ -55,20 +55,12 @@ function CreateAccount2() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <div className="flex flex-row justify-between">
-          <Link
-            to="/create-account/page-1"
-            className="btn btn-primary bg-white border-2 border-[#34A77F] text-[#34A77F] rounded-md text-lg hover:bg-[#ebebeb] hover:border-[#34A77F] mt-8 w-[12vw]"
-          >
-            <button>Go Back</button>
-          </Link>
-          <button
-            onClick={handleNextPage}
-            className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8 w-[12vw]"
-          >
-            Next
-          </button>
-        </div>
+        <button
+          onClick={handleNextPage}
+          className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8 w-[12vw] w-full"
+        >
+          Next
+        </button>
         <label className="text-[#8C8C8C] font-semibold mt-8 ">
           Copyright © [2024] DHope Nation. <br /> All rights reserved.
         </label>

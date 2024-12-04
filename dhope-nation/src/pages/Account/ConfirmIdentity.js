@@ -84,20 +84,12 @@ function CreateAccount3() {
             {file ? file.name : "No file selected"}
           </span>
         </div>
-        <div className="flex flex-row justify-between">
-          <Link
-            to="/create-account/page-2"
-            className="btn btn-primary bg-white border-2 border-[#34A77F] text-[#34A77F] rounded-md text-lg hover:bg-[#ebebeb] hover:border-[#34A77F] mt-8 w-[12vw]"
-          >
-            Go Back
-          </Link>
-          <button
-            onClick={handleSignUp}
-            className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8 w-[12vw]"
-          >
-            Sign Up
-          </button>
-        </div>
+        <button
+          onClick={handleSignUp}
+          className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8 w-[12vw] w-full"
+        >
+          Sign Up
+        </button>
         <label className="text-[#8C8C8C] font-semibold mt-8 ">
           Copyright © [2024] DHope Nation. <br /> All rights reserved.
         </label>
