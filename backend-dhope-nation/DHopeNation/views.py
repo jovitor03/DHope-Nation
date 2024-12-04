@@ -134,7 +134,7 @@ def get_top_10_donors(request):
 @api_view(['GET'])
 
 def get_top_10_donors_last_30_days(request):
-    thirty_days_ago = datetime.now() - timedelta(days=30)
+    thirty_days_ago = datetime.now() - timedelta(days=1)
     donors = Donor.objects.all()
     donor_donations = []
 
@@ -247,11 +247,14 @@ def get_campaigns_higher_current_amount (request):
 @api_view(['POST']) 
 def get_campaigns_by_category(request):
     category = request.data.get('category')
-    if not category:
-        return Response({"error": "Category is required"}, status=status.HTTP_400_BAD_REQUEST)
-    campaigns = Campaign.objects.filter(category__icontains=category)
-    serializer = CampaignSerializer(campaigns, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    campaigns = Campaign.objects.all()
+    campaigns_category = []
+    for campaign in campaigns:  
+        campaign_category = campaign.category
+        if all(word in campaign_category for word in category):
+            serializer = CampaignSerializer(campaign)
+            campaigns_category.append(serializer.data)
+    return Response(campaigns_category, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
