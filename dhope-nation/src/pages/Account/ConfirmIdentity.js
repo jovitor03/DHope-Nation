@@ -1,6 +1,6 @@
 import "../../styles/Account.css";
 import logo from "../../assets/images/logo.png";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { register } from "../../api/Accounts";
 import { useState } from "react";
 
