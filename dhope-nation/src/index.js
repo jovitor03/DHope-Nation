@@ -49,7 +49,11 @@ root.render(
           path="/campaigns"
           element={<ProtectedRoute element={<CampaignSearch />} />}
         />
-        <Route path="/leaderboards" element={<ProtectedRoute element={<Leaderboards />} />} />
+        <Route
+          path="/leaderboards"
+          element={<ProtectedRoute element={<Leaderboards />} />}
+        />
+        <Route path="*" element={<Login />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

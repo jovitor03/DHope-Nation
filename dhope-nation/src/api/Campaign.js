@@ -153,14 +153,11 @@ export const postCampaignImages = async (token, campaignId, data) => {
 
 export const getCampaignImages = async (campaignId) => {
   try {
-    const response = await axios.get(
-      `http://127.0.0.1:8000/image/campaigns`,
-      {
-        params: {
-          id: campaignId,
-        },
-      }
-    );
+    const response = await axios.get(`http://127.0.0.1:8000/image/campaigns`, {
+      params: {
+        id: campaignId,
+      },
+    });
 
     return response.data;
   } catch (error) {
