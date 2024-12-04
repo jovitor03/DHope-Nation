@@ -244,7 +244,7 @@ def get_campaigns_higher_current_amount (request):
     campaigns = Campaign.objects.reverse().order_by('current_amount')
     serializer = CampaignSerializer(campaigns, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
-@api_view(['POST']) 
+@api_view(['GET']) 
 def get_campaigns_by_category(request):
     category = request.data.get('category')
     campaigns = Campaign.objects.all()
@@ -257,7 +257,7 @@ def get_campaigns_by_category(request):
     return Response(campaigns_category, status=status.HTTP_200_OK)
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 def get_campaigns_by_title(request):
     title = request.data.get('title')
     if not title:
