@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import CampaignCreatorLayout from "../../layouts/CampaignCreatorLayout";
 import DonorLayout from "../../layouts/DonorLayout";
 import "../../styles/Campaigns.css";
@@ -8,6 +8,8 @@ import LinearProgressBar from "../../components/LevelProgressBar.js";
 import { useParams, useNavigate } from "react-router-dom";
 import { getDonorProfile } from "../../api/Profile";
 import crossIcon from "../../assets/images/cross.png";
+import { NotificationContext } from "../../context/NotificationContext.js";
+import Notification from "../../components/Notification.js";
 
 function CampaignDetails() {
   const [textareaHeight, setTextareaHeight] = useState("150px");
@@ -16,6 +18,7 @@ function CampaignDetails() {
   const [profileData, setProfileData] = useState({});
   const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
+  const { notifications } = useContext(NotificationContext);
 
   const navigate = useNavigate();
 
@@ -114,6 +117,9 @@ function CampaignDetails() {
 
   return (
     <Layout>
+      {notifications.length > 0 && (
+        <Notification notifications={notifications} />
+      )}
       <div className="flex flex-row justify-center mt-[-20px]">
         <h1 className="text-3xl 2xl:text-4xl text-[#28372C] font-semibold">
           {campaign.title}

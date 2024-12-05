@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getCampaignById, donateToCampaign } from "../../api/Campaign";
 import "../../styles/Campaigns.css";
@@ -11,6 +11,7 @@ import {
   getDonationsLast30Days,
   updateHonor,
 } from "../../api/Profile";
+import { NotificationContext } from "../../context/NotificationContext.js";
 
 function CampaignDonation() {
   const [campaign, setCampaign] = useState(null);
@@ -21,6 +22,7 @@ function CampaignDonation() {
   const [userLevel, setUserLevel] = useState(1);
   const [images, setImages] = useState([]);
   const { id: campaignId } = useParams();
+  const { showNotification } = useContext(NotificationContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -80,18 +82,24 @@ function CampaignDonation() {
     const donationsLast30Days = response.data.total_donated_last_30_days;
     const totalDonations = donationsLast30Days + parseFloat(donationAmount);
 
+    const profileResponse = await getDonorProfile(token);
+    const currentHonor = profileResponse.data.donor.honor;
+
+    let newHonor = currentHonor;
+
     if (totalDonations >= 100) {
-      await updateHonor(token, "Legendary Honor");
-      alert("Your honor is now Legendary Honor");
+      newHonor = "Legendary Honor";
     } else if (totalDonations >= 50) {
-      await updateHonor(token, "Epic Honor");
-      alert("Your honor is now Epic Honor");
+      newHonor = "Epic Honor";
     } else if (totalDonations >= 25) {
-      await updateHonor(token, "Super High Honor");
-      alert("Your honor is now Super High Honor");
+      newHonor = "Super High Honor";
     } else if (totalDonations >= 10) {
-      await updateHonor(token, "High Honor");
-      alert("Your honor is now High Honor");
+      newHonor = "High Honor";
+    }
+
+    if (newHonor !== currentHonor) {
+      await updateHonor(token, newHonor);
+      showNotification(`Your honor is now ${newHonor}`, "honor");
     }
   };
 
@@ -135,11 +143,14 @@ function CampaignDonation() {
 
       if (newLevel > userLevel) {
         setUserLevel(newLevel);
-        alert(`Congratulations! You've leveled up to level ${newLevel}!`);
+        showNotification(
+          `Congratulations! You've leveled up to level ${newLevel}!`,
+          "level"
+        );
         await updateLevel(localStorage.getItem("authToken"), newLevel);
       }
 
-      alert(`Donation successful! XP Gained: ${xpGained}.`);
+      showNotification(`Donation successful! XP Gained: ${xpGained}.`, "xp");
 
       await donateToCampaign(
         {

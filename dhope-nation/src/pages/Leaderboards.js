@@ -66,6 +66,7 @@ const Leaderboards = () => {
     try {
       const response = await getDonorProfile(token);
       setProfileStats(response.data.donor);
+      console.log("Donation value:", response.data.donor.donation_value);
     } catch (error) {
       console.error("Erro ao obter os dados do perfil:", error);
     }
@@ -164,7 +165,7 @@ const Leaderboards = () => {
                         {leaderboardStats.xp} XP
                       </label>
                     </div>
-                    <label className="text-3xl font-bold ml-auto">
+                    <label className="text-2xl font-bold ml-auto">
                       {leaderboardStats.total_donated.toFixed(2)}€
                     </label>
                   </div>
@@ -195,11 +196,11 @@ const Leaderboards = () => {
                       <label className="text-2xl">{profileStats.honor}</label>
                       <label className="text-xl">{profileStats.xp} XP</label>
                     </div>
-                    {profileStats.donation_value && (
-                      <label className="text-4xl font-bold ml-auto mr-14">
-                        {profileStats.donation_value.toFixed(2)}€
-                      </label>
-                    )}
+                    <label className="text-2xl font-bold ml-auto mr-14">
+                      {profileStats.donation_value != null
+                        ? `${profileStats.donation_value.toFixed(2)}€`
+                        : "0.00€"}
+                    </label>
                   </div>
                 </li>
               )}
@@ -269,7 +270,7 @@ const Leaderboards = () => {
                         {leaderboardStats.xp} XP
                       </label>
                     </div>
-                    <label className="text-3xl font-bold ml-auto">
+                    <label className="text-2xl font-bold ml-auto">
                       {leaderboardStats.total_donated.toFixed(2)}€
                     </label>
                   </div>
@@ -300,11 +301,11 @@ const Leaderboards = () => {
                       <label className="text-2xl">{profileStats.honor}</label>
                       <label className="text-xl">{profileStats.xp} XP</label>
                     </div>
-                    {profileStats.donation_value && (
-                      <label className="text-4xl font-bold ml-auto mr-14">
-                        {profileStats.donation_value.toFixed(2)}€
-                      </label>
-                    )}
+                    <label className="text-2xl font-bold ml-auto mr-14">
+                      {profileStats.donation_value != null
+                        ? `${profileStats.donation_value.toFixed(2)}€`
+                        : "0.00€"}
+                    </label>
                   </div>
                 </li>
               )}
