@@ -163,8 +163,8 @@ function CampaignDetails() {
             <div></div>
           )}
         </div>
-        <div className="flex flex-row mt-4 justify-end ml-16 mr-8 w-2/3">
-          <div className="flex flex-col gap-y-4">
+        <div className="flex flex-row mt-4 justify-end ml-16 mr-8 w-1/2">
+          <div className="flex flex-col justify-between gap-y-4 w-full">
             <div className="flex flex-row mb-6 w-full items-center mt-4 space-x-12 justify-center">
               <div className="flex flex-row justify-between items-center w-full">
                 <div className="flex flex-row text-[#35473A]">
@@ -186,7 +186,7 @@ function CampaignDetails() {
             </div>
             <div className="text-center mt-8">
               <label className="text-[#35473A] text-xl font-semibold">
-                Raised: {campaign.current_amount}€
+                Raised: {campaign.current_amount.toFixed(2)}€
               </label>
             </div>
             <div className="ml-2 mr-2">
@@ -201,15 +201,17 @@ function CampaignDetails() {
               />
             </div>
             <div className="flex flex-row justify-center space-x-16 text-[#35473A] text-xl">
-              <label className="font-semibold">Goal: {campaign.goal}€</label>
+              <label className="font-semibold">Goal: {campaign.goal.toFixed(2)}€</label>
               <label className="font-semibold">
                 Donations: {campaign.total_donors}
               </label>
             </div>
             <div className="flex w-full">
               <button
-                onClick={navigateToDonation}
-                className="flex-grow h-14 border-2 border-white rounded-md bg-[#4A6B53] text-white text-3xl font-semibold mb-[-10px] shadow-y"
+                onClick={profileData.is_donor ? navigateToDonation : null}
+                className={`${
+                  profileData.is_donor ? "disabled" : "bg-gray-500 cursor-not-allowed"
+                } flex-grow h-14 border-2 border-white rounded-md bg-[#4A6B53] text-white text-3xl font-semibold mb-[-10px] shadow-y`}
               >
                 DONATE HERE!
               </button>

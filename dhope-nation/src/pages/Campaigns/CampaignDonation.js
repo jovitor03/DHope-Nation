@@ -119,22 +119,84 @@ function CampaignDonation() {
     }
   };
 
+  // const handleConfirmDonation = async () => {
+  //   const amount = parseFloat(donationAmount);
+
+  //   if (!amount || amount <= 0) {
+  //     return;
+  //   }
+
+  //   if (!paymentMethod) {
+  //     return;
+  //   }
+
+  //   try {
+  //     showNotification("Sucessfull donation!", "donation");
+
+  //     await updateHonorOnProfile();
+
+  //     const xpGained = amount * 10;
+  //     const newXP = userXP + xpGained;
+  //     const newLevel = LevelSystem.getLevel(newXP);
+
+  //     setUserXP(newXP);
+
+  //     if (newLevel > userLevel) {
+  //       setUserLevel(newLevel);
+  //       showNotification(
+  //         `Congratulations! You've leveled up to level ${newLevel}!`,
+  //         "level"
+  //       );
+  //       await updateLevel(localStorage.getItem("authToken"), newLevel);
+  //     }
+
+  //     showNotification(`XP Gained: ${xpGained}.`, "xp");
+
+  //     await donateToCampaign(
+  //       {
+  //         campaign_id: campaignId,
+  //         amount,
+  //         payment_method: paymentMethod,
+  //         items_provided: itemsProvided,
+  //       },
+  //       localStorage.getItem("authToken")
+  //     );
+
+  //     navigate(`/campaign/${campaignId}`);
+  //   } catch (error) {
+  //     console.error("Donation failed:", error);
+  //     showNotification("Failed to process your donation.", "error");
+
+  //     navigate(`/campaign/${campaignId}`);
+  //   }
+  // };
+
   const handleConfirmDonation = async () => {
     const amount = parseFloat(donationAmount);
 
     if (!amount || amount <= 0) {
-      alert("Please enter a valid donation amount.");
       return;
     }
 
     if (!paymentMethod) {
-      alert("Please select a payment method.");
       return;
     }
 
     try {
       await updateHonorOnProfile();
 
+      // Process the donation
+      await donateToCampaign(
+        {
+          campaign_id: campaignId,
+          amount,
+          payment_method: paymentMethod,
+          items_provided: itemsProvided,
+        },
+        localStorage.getItem("authToken")
+      );
+
+      // Calculate XP and level after successful donation
       const xpGained = amount * 10;
       const newXP = userXP + xpGained;
       const newLevel = LevelSystem.getLevel(newXP);
@@ -150,22 +212,16 @@ function CampaignDonation() {
         await updateLevel(localStorage.getItem("authToken"), newLevel);
       }
 
-      showNotification(`Donation successful! XP Gained: ${xpGained}.`, "xp");
+      showNotification(`Gained: ${xpGained} XP.`, "xp");
 
-      await donateToCampaign(
-        {
-          campaign_id: campaignId,
-          amount,
-          payment_method: paymentMethod,
-          items_provided: itemsProvided,
-        },
-        localStorage.getItem("authToken")
-      );
+      showNotification("Successful donation!", "donation");
 
       navigate(`/campaign/${campaignId}`);
     } catch (error) {
       console.error("Donation failed:", error);
-      alert("Failed to process your donation.");
+      showNotification("Failed to process your donation.", "error");
+
+      navigate(`/campaign/${campaignId}`);
     }
   };
 

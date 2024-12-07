@@ -2,12 +2,16 @@ import React from "react";
 import honorIcon from "../assets/images/medal.png";
 import rankUpIcon from "../assets/images/rank-up.png";
 import xpIcon from "../assets/images/xp.png";
+import donationIcon from "../assets/images/donated.png";
+import crossIcon from "../assets/images/red-cross.png";
 
 const Notification = ({ notifications }) => {
   const typeImages = {
     honor: honorIcon,
     level: rankUpIcon,
     xp: xpIcon,
+    donation: donationIcon,
+    error: crossIcon,
   };
 
   return (

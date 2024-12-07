@@ -298,7 +298,7 @@ function CreateCampaign() {
                 placeholder="Write your campaign's description here! (Max. 250 characters)"
                 style={{ height: textareaHeight }}
                 className="bg-transparent focus:outline-none border border-green-800 text-[#28372C] w-full text-xl p-4 placeholder-gray-500 resize-none"
-                maxLength={250}
+                maxLength={350}
               ></textarea>
             </div>
 

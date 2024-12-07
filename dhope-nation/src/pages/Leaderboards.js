@@ -101,7 +101,7 @@ const Leaderboards = () => {
     <Layout>
       <div className="container mx-auto">
         <div className="flex justify-between mt-2 mb-12">
-          <div className="w-1/2 pr-2 text-center">
+          <div className="w-1/2 pr-2 text-center 2xl:ml-36">
             <h2 className="text-3xl font-semibold text-[#28372C] mb-4">
               Global Leaderboards
             </h2>
@@ -206,7 +206,7 @@ const Leaderboards = () => {
               )}
             </ul>
           </div>
-          <div className="w-1/2 pl-2 text-center">
+          <div className="w-1/2 pl-2 text-center 2xl:mr-36">
             <h2 className="text-3xl font-semibold text-[#28372C] mb-4">
               Last 30 Days Leaderboards
             </h2>
