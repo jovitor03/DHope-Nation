@@ -23,7 +23,33 @@ function CampaignDonation() {
   const [images, setImages] = useState([]);
   const { id: campaignId } = useParams();
   const { showNotification } = useContext(NotificationContext);
+  const [profileData, setProfileData] = useState({});
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        console.error("Token de autenticação não encontrado.");
+        return;
+      }
+      try {
+        const response = await getDonorProfile(token);
+        const user = response.data.donor.user;
+        if (response.data.donor.level === 999) {
+          console.warn(
+            "User has reached the maximum level. They can still receive XP but won't level up."
+          );
+        }
+        setProfileData(user);
+      } catch (error) {
+        console.error("Erro ao obter os dados do perfil:", error);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
 
   useEffect(() => {
     const fetchCampaign = async () => {
@@ -119,58 +145,6 @@ function CampaignDonation() {
     }
   };
 
-  // const handleConfirmDonation = async () => {
-  //   const amount = parseFloat(donationAmount);
-
-  //   if (!amount || amount <= 0) {
-  //     return;
-  //   }
-
-  //   if (!paymentMethod) {
-  //     return;
-  //   }
-
-  //   try {
-  //     showNotification("Sucessfull donation!", "donation");
-
-  //     await updateHonorOnProfile();
-
-  //     const xpGained = amount * 10;
-  //     const newXP = userXP + xpGained;
-  //     const newLevel = LevelSystem.getLevel(newXP);
-
-  //     setUserXP(newXP);
-
-  //     if (newLevel > userLevel) {
-  //       setUserLevel(newLevel);
-  //       showNotification(
-  //         `Congratulations! You've leveled up to level ${newLevel}!`,
-  //         "level"
-  //       );
-  //       await updateLevel(localStorage.getItem("authToken"), newLevel);
-  //     }
-
-  //     showNotification(`XP Gained: ${xpGained}.`, "xp");
-
-  //     await donateToCampaign(
-  //       {
-  //         campaign_id: campaignId,
-  //         amount,
-  //         payment_method: paymentMethod,
-  //         items_provided: itemsProvided,
-  //       },
-  //       localStorage.getItem("authToken")
-  //     );
-
-  //     navigate(`/campaign/${campaignId}`);
-  //   } catch (error) {
-  //     console.error("Donation failed:", error);
-  //     showNotification("Failed to process your donation.", "error");
-
-  //     navigate(`/campaign/${campaignId}`);
-  //   }
-  // };
-
   const handleConfirmDonation = async () => {
     const amount = parseFloat(donationAmount);
 
@@ -185,7 +159,6 @@ function CampaignDonation() {
     try {
       await updateHonorOnProfile();
 
-      // Process the donation
       await donateToCampaign(
         {
           campaign_id: campaignId,
@@ -196,20 +169,28 @@ function CampaignDonation() {
         localStorage.getItem("authToken")
       );
 
-      // Calculate XP and level after successful donation
       const xpGained = amount * 10;
       const newXP = userXP + xpGained;
       const newLevel = LevelSystem.getLevel(newXP);
 
       setUserXP(newXP);
 
-      if (newLevel > userLevel) {
-        setUserLevel(newLevel);
+      if (newLevel === 999) {
         showNotification(
-          `Congratulations! You've leveled up to level ${newLevel}!`,
+          "Congratulations! You've reached the maximum level!",
           "level"
         );
-        await updateLevel(localStorage.getItem("authToken"), newLevel);
+      }
+
+      if (userLevel !== 999) {
+        if (newLevel > userLevel) {
+          setUserLevel(newLevel);
+          showNotification(
+            `Congratulations! You've leveled up to level ${newLevel}!`,
+            "level"
+          );
+          await updateLevel(localStorage.getItem("authToken"), newLevel);
+        }
       }
 
       showNotification(`Gained: ${xpGained} XP.`, "xp");
@@ -322,8 +303,12 @@ function CampaignDonation() {
                 CANCEL
               </button>
               <button
-                className="h-12 px-4 border-2 rounded-sm border-white bg-[#4A6B53] text-white text-2xl font-semibold shadow-y whitespace-nowrap"
-                onClick={handleConfirmDonation}
+                onClick={profileData.is_donor ? handleConfirmDonation : null}
+                className={`${
+                  profileData.is_donor
+                    ? "disabled"
+                    : "bg-gray-500 cursor-not-allowed"
+                } h-12 px-4 border-2 rounded-sm border-white bg-[#4A6B53] text-white text-2xl font-semibold shadow-y whitespace-nowrap`}
               >
                 CONFIRM DONATION
               </button>

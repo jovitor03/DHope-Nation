@@ -38,9 +38,6 @@ function CreateAccount3() {
 
     try {
       await register(formData);
-      alert(
-        "Account created successfully! Wait for your account to be validated."
-      );
       navigate("/login");
     } catch (error) {
       console.error("Error creating account: ", error);
@@ -63,7 +60,7 @@ function CreateAccount3() {
           valid government-issued ID (e.g., passport, driver's license) with
           your date of birth to confirm your age.
         </label>
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-y-2">
           <div>
             <input
               type="file"
@@ -81,7 +78,11 @@ function CreateAccount3() {
           </div>
           <span className="text-lg ml-4">
             <span className="font-semibold">File:</span>{" "}
-            {file ? file.name : "No file selected"}
+            {file
+              ? file.name.length > 30
+                ? `${file.name.substring(0, 30)}...`
+                : file.name
+              : "No file selected"}
           </span>
         </div>
         <button

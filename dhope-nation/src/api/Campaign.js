@@ -165,3 +165,17 @@ export const getCampaignImages = async (campaignId) => {
     throw error;
   }
 };
+
+export const getAllCampaigns = async (token) => {
+  try {
+    const response = await axios.get("http://127.0.0.1:8000/all-campaigns/", {
+      headers: {
+        Authorization: `Token ${token}`,
+        Accept: "*/*",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao buscar campanhas:", error);
+  }
+};

@@ -33,6 +33,11 @@ function CreateCampaign() {
     const maxSize = 10 * 1024 * 1024;
     const validFiles = files.filter((file) => file.size <= maxSize);
     if (validFiles.length < files.length) {
+      alert("One or more files are too large. Maximum size is 10 MB.");
+      return;
+    }
+    if (validFiles.length < 4) {
+      alert("Please select 4 images.");
       return;
     }
 

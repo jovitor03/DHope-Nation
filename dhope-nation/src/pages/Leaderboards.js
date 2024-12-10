@@ -193,7 +193,23 @@ const Leaderboards = () => {
                       <label className="text-3xl font-bold">
                         {profileData.username} ({profileStats.rank}º)
                       </label>
-                      <label className="text-2xl">{profileStats.honor}</label>
+                      <label
+                        className={`text-2xl font-semibold ${
+                          profileStats.honor === "Super High Honor"
+                            ? "text-[#fc6075]"
+                            : profileStats.honor === "High Honor"
+                            ? "text-[#0dcd0d]"
+                            : profileStats.honor === "Neutral Honor"
+                            ? "text-[#f7c23c]"
+                            : profileStats.honor === "Epic Honor"
+                            ? "text-[#9F84FF]"
+                            : profileStats.honor === "Legendary Honor"
+                            ? "text-[#00EEFF]"
+                            : ""
+                        }`}
+                      >
+                        {profileStats.honor}
+                      </label>
                       <label className="text-xl">{profileStats.xp} XP</label>
                     </div>
                     <label className="text-2xl font-bold ml-auto mr-14">
@@ -298,7 +314,23 @@ const Leaderboards = () => {
                       <label className="text-3xl font-bold">
                         {profileData.username} ({profileStats.rank}º)
                       </label>
-                      <label className="text-2xl">{profileStats.honor}</label>
+                      <label
+                        className={`text-2xl font-semibold ${
+                          profileStats.honor === "Super High Honor"
+                            ? "text-[#fc6075]"
+                            : profileStats.honor === "High Honor"
+                            ? "text-[#0dcd0d]"
+                            : profileStats.honor === "Neutral Honor"
+                            ? "text-[#f7c23c]"
+                            : profileStats.honor === "Epic Honor"
+                            ? "text-[#9F84FF]"
+                            : profileStats.honor === "Legendary Honor"
+                            ? "text-[#00EEFF]"
+                            : ""
+                        }`}
+                      >
+                        {profileStats.honor}
+                      </label>
                       <label className="text-xl">{profileStats.xp} XP</label>
                     </div>
                     <label className="text-2xl font-bold ml-auto mr-14">

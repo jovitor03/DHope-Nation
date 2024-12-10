@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./index.css";
 import Login from "./pages/Account/Login.js";
 import CreateAccount1 from "./pages/Account/CreateAccount1.js";
@@ -55,7 +55,7 @@ root.render(
             path="/leaderboards"
             element={<ProtectedRoute element={<Leaderboards />} />}
           />
-          <Route path="*" element={<Login />} />
+          <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
       </BrowserRouter>
     </NotificationProvider>

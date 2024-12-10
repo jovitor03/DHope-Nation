@@ -26,6 +26,8 @@ function DonorProfile() {
   const [imageUrls, setImageUrls] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const donationsPerPage = 4;
+  const maxXP = 25024950;
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getProfileStats = async () => {
     const token = localStorage.getItem("authToken");
@@ -111,7 +113,6 @@ function DonorProfile() {
     try {
       await deleteProfile(token);
       localStorage.removeItem("authToken");
-      alert("Conta excluída com sucesso.");
       window.location.href = "/login";
     } catch (error) {
       console.error("Erro ao excluir a conta:", error);
@@ -140,6 +141,14 @@ function DonorProfile() {
     return () => {
       window.location.href = `/campaign/${campaignId}`;
     };
+  };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCancelDelete = () => {
+    setIsModalOpen(false);
   };
 
   useEffect(() => {
@@ -177,7 +186,7 @@ function DonorProfile() {
 
   return (
     <DonorLayout>
-      <div className="flex flex-row items-center justify-between pr-24 pl-24 2xl:pl-48 2xl:pr-48">
+      <div className="flex flex-row items-center justify-between pr-12 pl-12 2xl:pl-48 2xl:pr-48">
         <div className="text-[#303934] flex flex-row">
           <div className="flex items-center gap-3">
             <img src={profileIcon} alt="profile-icon" className="w-48"></img>
@@ -195,7 +204,7 @@ function DonorProfile() {
               </label>
               <button
                 className="bg-[#CA0404] rounded rounded-md text-white border-2 border-[#303934] font-semibold p-1 text-lg mt-2 2xl:mt-3"
-                onClick={handleDeleteAccount}
+                onClick={openModal}
               >
                 Delete Account
               </button>
@@ -225,13 +234,13 @@ function DonorProfile() {
           </div>
           <div className="flex flex-row">
             <div className="flex flex-col">
-              <div className="flex flex-row items-center ml-6 mt-8">
+              <div className="flex flex-row items-center ml-12 mt-8">
                 <img src={hexagon} alt="hexagon" className="w-12"></img>
                 <label className="ml-2 text-2xl 2xl:text-3xl">
                   {profileStats.donation_count} donations
                 </label>
               </div>
-              <div className="flex flex-row items-center ml-6 mt-3">
+              <div className="flex flex-row items-center ml-12 mt-3">
                 <img src={hexagon} alt="hexagon" className="w-12"></img>
                 <label className="ml-2 text-xl 2xl:text-2xl">
                   {profileStats.donation_value !== undefined
@@ -266,28 +275,45 @@ function DonorProfile() {
                 />
               </div>
             </div>
-            <div className="mt-2">
-              <LinearProgressBar
-                width={250}
-                height={20}
-                fillColor={getLevelBorderColor(profileStats.level)}
-                xp={
-                  profileStats.xp -
-                  LevelSystem.getMaxXPForLevel(profileStats.level - 1)
-                }
-                xpToNextLevel={
-                  LevelSystem.getMaxXPForLevel(profileStats.level) -
-                  LevelSystem.getMaxXPForLevel(profileStats.level - 1)
-                }
-                radius={10}
-              />
-            </div>
-            <label className="mt-1">
-              {LevelSystem.getMaxXPForLevel(
-                LevelSystem.getLevel(profileStats.xp)
-              ) - profileStats.xp}{" "}
-              XP to next level
-            </label>
+            {profileStats.xp < maxXP ? (
+              <div className="mt-2">
+                <LinearProgressBar
+                  width={250}
+                  height={20}
+                  fillColor={getLevelBorderColor(profileStats.level)}
+                  xp={
+                    profileStats.xp -
+                    LevelSystem.getMaxXPForLevel(profileStats.level - 1)
+                  }
+                  xpToNextLevel={
+                    LevelSystem.getMaxXPForLevel(profileStats.level) -
+                    LevelSystem.getMaxXPForLevel(profileStats.level - 1)
+                  }
+                  radius={10}
+                />
+              </div>
+            ) : (
+              <div className="mt-2">
+                <LinearProgressBar
+                  width={250}
+                  height={20}
+                  fillColor={getLevelBorderColor(profileStats.level)}
+                  xp={maxXP}
+                  xpToNextLevel={maxXP}
+                  radius={10}
+                />
+              </div>
+            )}
+            {profileStats.xp < maxXP ? (
+              <label className="mt-1">
+                {LevelSystem.getMaxXPForLevel(
+                  LevelSystem.getLevel(profileStats.xp)
+                ) - profileStats.xp}{" "}
+                XP to next level
+              </label>
+            ) : (
+              <label className="mt-1 text-xl">Maximum level reached!</label>
+            )}
           </div>
           <div className="h-64 w-48 text-white flex flex-col items-center">
             <label className="text-2xl font-semibold mt-2">Level System</label>
@@ -320,7 +346,7 @@ function DonorProfile() {
         </div>
       </div>
       <div className="flex flex-row justify-between gap-x-10">
-        <div className="flex flex-col ml-24 mt-12 mb-8 w-7/12">
+        {/* <div className="flex flex-col ml-24 mt-12 mb-8 w-7/12">
           <div className="flex flex-col text-[#303934] text-center">
             <label className="font-semibold text-2xl">Donations History</label>
             <label className="text-lg mt-[-5px]">(From latest to oldest)</label>
@@ -367,6 +393,59 @@ function DonorProfile() {
                 </>
               ) : (
                 <label className="text-lg mt-2">No donations yet.</label>
+              )}
+            </div>
+          </div>
+        </div> */}
+        <div className="flex flex-col ml-24 mt-12 mb-8 w-7/12">
+          <div className="flex flex-col text-[#303934] text-center">
+            <label className="font-semibold text-2xl">Donations History</label>
+            <label className="text-lg mt-[-5px]">(From latest to oldest)</label>
+          </div>
+          <div className="flex flex-row text-[#303934] justify-center">
+            <div className="flex flex-col w-full">
+              {currentDonations.length > 0 ? (
+                <>
+                  {currentDonations.map((donation) => (
+                    <div
+                      key={donation.id}
+                      className="flex flex-row items-center gap-4 mt-4 cursor-pointer"
+                      onClick={navigateToCampaign(donation.campaign)}
+                    >
+                      <div className="relative cursor-pointer">
+                        <img
+                          src={imageUrls[donation.id]}
+                          alt={imageUrls[donation.id]}
+                          className="h-32 w-48 object-cover rounded-[6px] cursor-pointer"
+                        />
+                        <div className="image-cover cursor-pointer">
+                          <span className="donation-amount cursor-pointer">
+                            +{donation.amount}€
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex flex-col cursor-pointer">
+                        <label className="text-lg font-semibold underline cursor-pointer">
+                          {donation.title}
+                        </label>
+                        <label className="text-md cursor-pointer">
+                          {formatDate(donation.date)}
+                        </label>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="mt-4">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={handlePageChange}
+                    />
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center mt-2">
+                  <label className="text-lg">No donations yet.</label>
+                </div>
               )}
             </div>
           </div>
@@ -449,6 +528,29 @@ function DonorProfile() {
           </div>
         </div>
       </div>
+      {isModalOpen && (
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-20">
+          <div className="bg-[#f1f5f0] p-8 rounded-lg shadow-lg max-w-lg w-full text-center">
+            <h2 className="text-2xl font-semibold mb-4 text-[#516158]">
+              Are you sure you want to delete your account?
+            </h2>
+            <div className="flex justify-center space-x-12">
+              <button
+                className="bg-[#34A77F] text-white px-6 py-2 rounded-md hover:bg-[#2e8063] text-xl "
+                onClick={handleDeleteAccount}
+              >
+                Yes, I want to delete my account
+              </button>
+              <button
+                className="bg-[#CA0404] text-white px-6 py-2 rounded-md hover:bg-red-700 text-xl font-semibold"
+                onClick={handleCancelDelete}
+              >
+                No, I want to stay with you
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DonorLayout>
   );
 }
