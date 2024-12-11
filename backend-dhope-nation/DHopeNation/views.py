@@ -282,7 +282,7 @@ def donate(request):
             if donor.is_verified: 
                 if campaign.is_verified and campaign.is_active:
                     goal=campaign.goal
-                    if campaign.current_amount+amount<goal:
+                    if campaign.current_amount+amount<=goal:
                         campaign.current_amount += amount
                         campaign.total_donors += 1
                         campaign.save()

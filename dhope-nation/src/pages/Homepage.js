@@ -80,7 +80,7 @@ function HomePage() {
             New Campaigns
           </h2>
           <div className="flex flex-row justify-between space-x-12 mt-2">
-            {newCampaigns.map((campaign) => (
+            {newCampaigns.slice(0, 3).map((campaign) => (
               <div
                 key={campaign.id}
                 className="relative mb-8 mr-4 w-1/3 h-64 flex flex-col items-center justify-center rounded-lg overflow-hidden cursor-pointer"

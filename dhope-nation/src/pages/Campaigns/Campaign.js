@@ -50,6 +50,7 @@ function CampaignDetails() {
       if (!data) {
         navigate("/homepage");
       } else {
+        console.log(data);
         setCampaign(data);
       }
     };
@@ -63,7 +64,6 @@ function CampaignDetails() {
       if (!data) {
         console.error("Erro ao obter as imagens da campanha.");
       } else {
-        console.log(data);
         setImages(data);
       }
     };
@@ -201,16 +201,24 @@ function CampaignDetails() {
               />
             </div>
             <div className="flex flex-row justify-center space-x-16 text-[#35473A] text-xl">
-              <label className="font-semibold">Goal: {campaign.goal.toFixed(2)}€</label>
+              <label className="font-semibold">
+                Goal: {campaign.goal.toFixed(2)}€
+              </label>
               <label className="font-semibold">
                 Donations: {campaign.total_donors}
               </label>
             </div>
             <div className="flex w-full">
               <button
-                onClick={profileData.is_donor ? navigateToDonation : null}
+                onClick={
+                  profileData.is_donor && !campaign.is_completed
+                    ? navigateToDonation
+                    : null
+                }
                 className={`${
-                  profileData.is_donor ? "disabled" : "bg-gray-500 cursor-not-allowed"
+                  profileData.is_donor && !campaign.is_completed
+                    ? "disabled"
+                    : "bg-gray-500 cursor-not-allowed"
                 } flex-grow h-14 border-2 border-white rounded-md bg-[#4A6B53] text-white text-3xl font-semibold mb-[-10px] shadow-y`}
               >
                 DONATE HERE!

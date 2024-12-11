@@ -57,9 +57,6 @@ function Header() {
         <label className="text-3xl text-[#062134] font-semibold hover:cursor-pointer">
           LEADERBOARDS
         </label>
-        <label className="text-3xl text-[#062134] font-semibold hover:cursor-pointer">
-          REQUESTS
-        </label>
         <img
           alt="logo"
           src={profileIcon}
