@@ -11,6 +11,7 @@ from django.db.models import Sum
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
+import pytz
 #----------------------------------------------Account--------------------------------------------------------
 @api_view(['POST'])
 def register(request):
@@ -185,6 +186,11 @@ def get_campaigns(request):
 
     campaign = get_object_or_404(Campaign, id=campaign_id)
     if campaign.is_verified:
+        now_aware = datetime.now(pytz.utc)
+        end_date_aware = campaign.end_date.astimezone(pytz.utc)
+        if end_date_aware < now_aware:
+            campaign.is_active = False
+            campaign.save()
         serializer = CampaignSerializer(campaign)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
