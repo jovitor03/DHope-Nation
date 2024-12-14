@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext } from "react";
 import CampaignCreatorLayout from "../../layouts/CampaignCreatorLayout";
 import DonorLayout from "../../layouts/DonorLayout";
 import "../../styles/Campaigns.css";
-import shareIcon from "../../assets/images/share.png";
 import { getCampaignById, getCampaignImages } from "../../api/Campaign";
 import LinearProgressBar from "../../components/LevelProgressBar.js";
 import { useParams, useNavigate } from "react-router-dom";
@@ -166,12 +165,11 @@ function CampaignDetails() {
         <div className="flex flex-row mt-4 justify-end ml-16 mr-8 w-1/2">
           <div className="flex flex-col justify-between gap-y-4 w-full">
             <div className="flex flex-row mb-6 w-full items-center mt-4 space-x-12 justify-center">
-              <div className="flex flex-row justify-between items-center w-full">
+              <div className="flex flex-row justify-center items-center w-full">
                 <div className="flex flex-row text-[#35473A]">
                   <h3 className="text-2xl font-semibold">Deadline: </h3>
                   <label className="text-2xl ml-1">{formattedDeadline}</label>
                 </div>
-                <img src={shareIcon} className="h-9" alt="share"></img>
               </div>
             </div>
             <div className="flex flex-col w-full text-[#28372C] mt-[-20px]">

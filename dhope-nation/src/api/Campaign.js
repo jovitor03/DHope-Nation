@@ -179,3 +179,24 @@ export const getAllCampaigns = async (token) => {
     console.error("Erro ao buscar campanhas:", error);
   }
 };
+
+export const getCampaignsByCategory = async (token, category) => {
+  try {
+    const response = await axios.post(
+      `http://127.0.0.1:8000/campaigns-by-category/`,
+      {
+        category: category,
+      },
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+          Accept: "*/*",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching campaigns by category:", error);
+    throw error;
+  }
+};

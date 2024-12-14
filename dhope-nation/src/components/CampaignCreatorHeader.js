@@ -35,8 +35,8 @@ function Header() {
     navigate("/homepage");
   };
 
-  const goToCreateCampaign = () => {
-    navigate("/create-campaign");
+  const goToCampaigns = () => {
+    navigate("/campaigns");
   };
 
   return (
@@ -50,7 +50,7 @@ function Header() {
       <div className="flex flex-row items-center gap-12 mr-16">
         <label
           className="text-3xl text-[#062134] font-semibold hover:cursor-pointer"
-          onClick={goToCreateCampaign}
+          onClick={goToCampaigns}
         >
           CAMPAIGNS
         </label>
