@@ -1,7 +1,7 @@
 import "../../styles/Account.css";
 import logo from "../../assets/images/logo.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 function CreateAccount2() {
   const location = useLocation();
@@ -10,14 +10,28 @@ function CreateAccount2() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleNextPage = () => {
+  const handleNextPage = useCallback(() => {
     if (!username || !password) {
       return;
     }
     navigate(`/confirm-identity`, {
       state: { type, name, surname, email, username, password },
     });
-  };
+  }, [type, name, surname, email, username, password, navigate]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Enter") {
+        handleNextPage();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleNextPage]);
 
   return (
     <div className="account-page text-black">

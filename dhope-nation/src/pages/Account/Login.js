@@ -1,7 +1,7 @@
 import "../../styles/Account.css";
 import logo from "../../assets/images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { login } from "../../api/Accounts";
 import { accountType } from "../../api/Accounts";
 import {
@@ -51,7 +51,7 @@ function Login() {
     }
   };
 
-  const handleLogin = async () => {
+  const handleLogin = useCallback(async () => {
     try {
       const data = { username, password };
       const response = await login(data);
@@ -94,7 +94,21 @@ function Login() {
     } catch (error) {
       setErrorMessage("Invalid username or password.");
     }
-  };
+  }, [username, password, navigate]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Enter") {
+        handleLogin();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleLogin]);
 
   return (
     <div className="account-page text-black">

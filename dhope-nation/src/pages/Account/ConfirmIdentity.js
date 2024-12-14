@@ -2,7 +2,7 @@ import "../../styles/Account.css";
 import logo from "../../assets/images/logo.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import { register } from "../../api/Accounts";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 function CreateAccount3() {
   const location = useLocation();
@@ -17,7 +17,7 @@ function CreateAccount3() {
     }
   };
 
-  const handleSignUp = async () => {
+  const handleSignUp = useCallback(async () => {
     let donor = false;
 
     if (type === "donor") {
@@ -43,7 +43,21 @@ function CreateAccount3() {
       console.error("Error creating account: ", error);
       alert("An error occurred. Please try again.");
     }
-  };
+  }, [type, name, surname, email, username, password, file, navigate]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Enter") {
+        handleSignUp();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleSignUp]);
 
   return (
     <div className="account-page text-black">

@@ -37,7 +37,12 @@ root.render(
           />
           <Route
             path="/create-campaign"
-            element={<ProtectedRoute element={<CreateCampaign />} />}
+            element={
+              <ProtectedRoute
+                path="/create-campaign"
+                element={<CreateCampaign />}
+              />
+            }
           />
           <Route
             path="/campaign/:id"
@@ -53,7 +58,12 @@ root.render(
           />
           <Route
             path="/leaderboards"
-            element={<ProtectedRoute element={<Leaderboards />} />}
+            element={
+              <ProtectedRoute
+                path="/leaderboards"
+                element={<Leaderboards />}
+              />
+            }
           />
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>
