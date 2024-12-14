@@ -85,7 +85,7 @@ function Login() {
             localStorage.setItem("user_type", "Campaign Creator");
             navigate("/homepage");
           } else {
-            setErrorMessage("Your account is not verified yet.");
+            setErrorMessage("Your account has not been verified yet by an admin.");
           }
         }
       } else {

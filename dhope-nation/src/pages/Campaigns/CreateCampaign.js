@@ -237,7 +237,7 @@ function CreateCampaign() {
                 />
               </div>
 
-              <div className="relative w-[330px]">
+              <div className="relative w-[330px] z-10">
                 <button
                   type="button"
                   onClick={toggleDropdown}
@@ -306,7 +306,7 @@ function CreateCampaign() {
                   className="bg-transparent focus:outline-none border border-green-800 text-[#28372C] w-full text-xl p-4 placeholder-gray-500 resize-none text-justify"
                   maxLength={350}
                 ></textarea>
-                <div className="absolute bottom-2 right-2 text-gray-500 text-xl z-10">
+                <div className="absolute bottom-2 right-2 text-gray-500 text-xl">
                   {description.length}/350
                 </div>
               </div>
