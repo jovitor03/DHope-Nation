@@ -210,7 +210,7 @@ def get_campaigns_by_creator(request):
         return Response({"error": "User is not a campaign creator"}, status=status.HTTP_400_BAD_REQUEST)
 @api_view(['GET'])
 def get_all_campaigns(request):
-    campaigns = Campaign.objects.all()
+    campaigns = Campaign.objects.all().filter(is_verified=True)
     serializer = CampaignSerializer(campaigns, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 @api_view(['POST'])
@@ -244,19 +244,19 @@ def get_images(request):
 
 @api_view(['GET'])
 def get_recently_campaigns (request):
-    campaigns = Campaign.objects.filter(is_active=True).reverse().order_by('start_date')
+    campaigns = Campaign.objects.filter(is_active=True,is_verified=True).reverse().order_by('start_date')
     serializer = CampaignSerializer(campaigns, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def get_campaigns_higher_current_amount (request):
-    campaigns = Campaign.objects.reverse().order_by('current_amount')
+    campaigns = Campaign.objects.reverse().order_by('current_amount').filter(is_verified=True)
     serializer = CampaignSerializer(campaigns, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 @api_view(['POST']) 
 def get_campaigns_by_category(request):
     category = request.data.get('category')
-    campaigns = Campaign.objects.all()
+    campaigns = Campaign.objects.all().filter(is_verified=True)
     campaigns_category = []
     for campaign in campaigns:  
         campaign_category = campaign.category
@@ -271,7 +271,7 @@ def get_campaigns_by_title(request):
     title = request.data.get('title')
     if not title:
         return Response({"error": "Title is required"}, status=status.HTTP_400_BAD_REQUEST)
-    campaigns = Campaign.objects.filter(title__icontains=title)
+    campaigns = Campaign.objects.filter(title__icontains=title, is_verified=True)
     serializer = CampaignSerializer(campaigns, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -284,7 +284,7 @@ def close_campain(request):
         campaign_creator = get_object_or_404(CampaignCreator, user=user)
         campaign_id = request.data.get('campaign_id')
         campaign = get_object_or_404(Campaign, id=campaign_id)
-        if campaign.campaign_creator == campaign_creator:
+        if campaign.campaign_creator == campaign_creator and campaign.is_verified:
             campaign.is_completed = True
             campaign.is_active = False
             campaign.save()
