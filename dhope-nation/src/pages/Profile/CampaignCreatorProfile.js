@@ -126,7 +126,7 @@ function CampaignCreatorProfile() {
             <img
               src={profileIcon}
               alt="profile-icon"
-              className="w-40 h-40 rounded-full"
+              className="w-40 h-40"
             />
             <div className="text-center">
               <label className="font-bold text-3xl">{profileData.username}</label>
