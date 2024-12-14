@@ -12,6 +12,7 @@ import {
   updateHonor,
 } from "../../api/Profile";
 import { NotificationContext } from "../../context/NotificationContext.js";
+import LoadingScreen from "../../components/LoadingScreen.js";
 
 function CampaignDonation() {
   const [campaign, setCampaign] = useState(null);
@@ -24,6 +25,7 @@ function CampaignDonation() {
   const { id: campaignId } = useParams();
   const { showNotification } = useContext(NotificationContext);
   const [profileData, setProfileData] = useState({});
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
@@ -35,6 +37,7 @@ function CampaignDonation() {
         return;
       }
       try {
+        setLoading(true);
         const response = await getDonorProfile(token);
         const user = response.data.donor.user;
         if (response.data.donor.level === 999) {
@@ -43,6 +46,9 @@ function CampaignDonation() {
           );
         }
         setProfileData(user);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       } catch (error) {
         console.error("Erro ao obter os dados do perfil:", error);
       }
@@ -211,112 +217,121 @@ function CampaignDonation() {
   }
 
   return (
-    <Layout>
-      <div className="flex flex-row justify-center mt-[-20px]">
-        <h1 className="text-3xl 2xl:text-4xl text-[#28372C] font-semibold">
-          {campaign.title}
-        </h1>
-      </div>
-      <div className="flex flex-row justify-between">
-        <div className="flex flex-col justify-start mr-16 ml-20 items-center w-5/12">
-          {images.length > 0 ? (
-            <div className="flex flex-col mt-32 2xl:mt-40 items-center mb-[-40px] border-r border-l border-b border-black">
-              <div className="w-7/12 items-center flex flex-col text-center justify-center mb-4 scale-171">
-                <img
-                  src={`http://127.0.0.1:8000${images[0].image}`}
-                  alt="Main"
-                  className="h-36 w-full 2xl:h-[191px] object-cover border-t border-black"
-                />
-              </div>
-              <div className="flex flex-row justify-between mt-9 2xl:mt-12 z-10">
-                {images.slice(1).map((image, index) => (
-                  <div
-                    key={index}
-                    className={`flex justify-center items-center bg-white ${
-                      index !== 0 ? "border-l border-black" : ""
-                    }`}
-                  >
-                    <img
-                      src={`http://127.0.0.1:8000${image.image}`}
-                      alt={`Preview ${index + 2}`}
-                      className="w-40 h-24 2xl:h-36 2xl:w-52 object-cover border-t border-black"
-                    />
+    <div>
+      {loading && <LoadingScreen />}
+      {!loading && (
+        <div className="fade-in">
+          <Layout>
+            <div className="flex flex-row justify-center mt-[-20px]">
+              <h1 className="text-3xl 2xl:text-4xl text-[#28372C] font-semibold">
+                {campaign.title}
+              </h1>
+            </div>
+            <div className="flex flex-row justify-between">
+              <div className="flex flex-col justify-start mr-16 ml-20 items-center w-5/12">
+                {images.length > 0 ? (
+                  <div className="flex flex-col mt-32 2xl:mt-40 items-center mb-[-40px] border-r border-l border-b border-black">
+                    <div className="w-7/12 items-center flex flex-col text-center justify-center mb-4 scale-171">
+                      <img
+                        src={`http://127.0.0.1:8000${images[0].image}`}
+                        alt="Main"
+                        className="h-36 w-full 2xl:h-[191px] object-cover border-t border-black"
+                      />
+                    </div>
+                    <div className="flex flex-row justify-between mt-9 2xl:mt-12 z-10">
+                      {images.slice(1).map((image, index) => (
+                        <div
+                          key={index}
+                          className={`flex justify-center items-center bg-white ${
+                            index !== 0 ? "border-l border-black" : ""
+                          }`}
+                        >
+                          <img
+                            src={`http://127.0.0.1:8000${image.image}`}
+                            alt={`Preview ${index + 2}`}
+                            className="w-40 h-24 2xl:h-36 2xl:w-52 object-cover border-t border-black"
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))}
+                ) : (
+                  <div></div>
+                )}
+              </div>
+              <div className="flex flex-row justify-end ml-16 mt-12 mr-8 w-2/3 h-full text-center">
+                <div className="flex flex-col gap-2 w-full bg-white p-4 border border-[#28372C]">
+                  <label className="text-[#28372C] font-semibold text-3xl mt-6">
+                    Your donation
+                  </label>
+                  <div>
+                    <label
+                      htmlFor="payment-method"
+                      className="text-[#28372C] text-xl"
+                    >
+                      Payment method:
+                    </label>
+                    <select
+                      id="payment-method"
+                      value={paymentMethod}
+                      onChange={handlePaymentMethodChange}
+                      className="p-2 border bg-[#4A6B53] border-gray-300 rounded-md ml-2 w-[200px] mt-4 text-white text-xl"
+                    >
+                      <option value="" disabled>
+                        Select a method
+                      </option>
+                      <option value="credit-card">Credit Card</option>
+                      <option value="paypal">PayPal</option>
+                      <option value="bank-transfer">Bank Transfer</option>
+                      <option value="multibanco">Multibanco</option>
+                      <option value="mbway">MB Way</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[#28372C] text-xl">Amount:</label>
+                    <input
+                      type="number"
+                      value={donationAmount}
+                      className="p-2 border bg-[#4A6B53] border-gray-300 rounded-md ml-2 w-[200px] mt-4 text-white custom-number-input placeholder-gray-400 text-center text-xl focus:outline-none"
+                      placeholder="0.50€ - 100000€"
+                      onChange={handleDonationAmountChange}
+                    ></input>
+                  </div>
+                  {campaign.ratio && (
+                    <div className="mt-4">
+                      <p className="text-[#28372C] text-xl font-semibold">
+                        Your contribution will provide {itemsProvided}{" "}
+                        {campaign.sentence}.
+                      </p>
+                    </div>
+                  )}
+                  <div className="mb-6 mt-6 flex flex-row justify-center space-x-8">
+                    <button
+                      className="h-12 px-4 border-2 rounded-sm border-[#4A6B53] bg-[#D9D9D9] text-[#4A6B53] text-2xl font-semibold shadow-y whitespace-nowrap"
+                      onClick={() => navigate(`/campaign/${campaignId}`)}
+                    >
+                      CANCEL
+                    </button>
+                    <button
+                      onClick={
+                        profileData.is_donor ? handleConfirmDonation : null
+                      }
+                      className={`${
+                        profileData.is_donor
+                          ? "disabled"
+                          : "bg-gray-500 cursor-not-allowed"
+                      } h-12 px-4 border-2 rounded-sm border-white bg-[#4A6B53] text-white text-2xl font-semibold shadow-y whitespace-nowrap`}
+                    >
+                      CONFIRM DONATION
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-          ) : (
-            <div></div>
-          )}
+          </Layout>
         </div>
-        <div className="flex flex-row justify-end ml-16 mt-12 mr-8 w-2/3 h-full text-center">
-          <div className="flex flex-col gap-2 w-full bg-white p-4 border border-[#28372C]">
-            <label className="text-[#28372C] font-semibold text-3xl mt-6">
-              Your donation
-            </label>
-            <div>
-              <label
-                htmlFor="payment-method"
-                className="text-[#28372C] text-xl"
-              >
-                Payment method:
-              </label>
-              <select
-                id="payment-method"
-                value={paymentMethod}
-                onChange={handlePaymentMethodChange}
-                className="p-2 border bg-[#4A6B53] border-gray-300 rounded-md ml-2 w-[200px] mt-4 text-white text-xl"
-              >
-                <option value="" disabled>
-                  Select a method
-                </option>
-                <option value="credit-card">Credit Card</option>
-                <option value="paypal">PayPal</option>
-                <option value="bank-transfer">Bank Transfer</option>
-                <option value="multibanco">Multibanco</option>
-                <option value="mbway">MB Way</option>
-              </select>
-            </div>
-            <div>
-              <label className="text-[#28372C] text-xl">Amount:</label>
-              <input
-                type="number"
-                value={donationAmount}
-                className="p-2 border bg-[#4A6B53] border-gray-300 rounded-md ml-2 w-[200px] mt-4 text-white custom-number-input placeholder-gray-400 text-center text-xl focus:outline-none"
-                placeholder="0.50€ - 100000€"
-                onChange={handleDonationAmountChange}
-              ></input>
-            </div>
-            {campaign.ratio && (
-              <div className="mt-4">
-                <p className="text-[#28372C] text-xl font-semibold">
-                  Your contribution will provide {itemsProvided}{" "}
-                  {campaign.sentence}.
-                </p>
-              </div>
-            )}
-            <div className="mb-6 mt-6 flex flex-row justify-center space-x-8">
-              <button
-                className="h-12 px-4 border-2 rounded-sm border-[#4A6B53] bg-[#D9D9D9] text-[#4A6B53] text-2xl font-semibold shadow-y whitespace-nowrap"
-                onClick={() => navigate(`/campaign/${campaignId}`)}
-              >
-                CANCEL
-              </button>
-              <button
-                onClick={profileData.is_donor ? handleConfirmDonation : null}
-                className={`${
-                  profileData.is_donor
-                    ? "disabled"
-                    : "bg-gray-500 cursor-not-allowed"
-                } h-12 px-4 border-2 rounded-sm border-white bg-[#4A6B53] text-white text-2xl font-semibold shadow-y whitespace-nowrap`}
-              >
-                CONFIRM DONATION
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Layout>
+      )}
+    </div>
   );
 }
 

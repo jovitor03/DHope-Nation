@@ -27,6 +27,7 @@ body {
   font-family: "Roboto", sans-serif;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  background-color: #A0C0A2;
 }
 
 body::-webkit-scrollbar {
@@ -37,4 +38,15 @@ html,
 body {
   height: 100%;
   overflow-y: auto;
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 1.5s forwards;
+}
+
+@keyframes fadeIn {
+  to {
+      opacity: 1;
+  }
 }
