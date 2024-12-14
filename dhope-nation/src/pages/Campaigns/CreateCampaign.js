@@ -115,7 +115,75 @@ function CreateCampaign() {
     });
   };
 
+  const validateFields = () => {
+    if (title.length < 10) {
+      showNotification(
+        "Please enter a title with at least 10 characters.",
+        "error"
+      );
+      return false;
+    }
+
+    if (deadline.length === 0) {
+      showNotification("Please select a deadline.", "error");
+      return false;
+    }
+    const selectedDate = new Date(deadline);
+    const currentDate = new Date();
+
+    if (selectedDate <= currentDate) {
+      showNotification(
+        "Please select a future date for the deadline.",
+        "error"
+      );
+      return false;
+    }
+
+    if (selectedCategories.length === 0) {
+      showNotification("Please select at least one category.", "error");
+      return false;
+    }
+
+    if (description.length < 200) {
+      showNotification(
+        "Please enter a description with at least 200 characters.",
+        "error"
+      );
+      return false;
+    }
+
+    if (motivationAmount.length <= 0) {
+      showNotification(
+        "Please enter a motivation amount bigger than 0.",
+        "error"
+      );
+      return false;
+    }
+    if (motivationItem.length <= 0) {
+      showNotification("Please complete the motivational sentence.", "error");
+      return false;
+    }
+
+    if (goal < 100 || goal > 1000000) {
+      showNotification(
+        "Please enter a goal between 100 and 1000000 euros.",
+        "error"
+      );
+      return false;
+    }
+
+    if (imagePreviews.length !== 4) {
+      showNotification("Please select 4 images.", "error");
+      return false;
+    }
+    return true;
+  };
+
   const handleCreateCampaign = async () => {
+    if (!validateFields()) {
+      return;
+    }
+
     const data = {
       title: title,
       category: selectedCategories,
@@ -361,7 +429,7 @@ function CreateCampaign() {
                     value={goal}
                     onChange={(e) => setGoal(e.target.value)}
                     className="bg-transparent focus:outline-none border-b border-green-800 text-[#28372C] w-full text-xl pl-8 placeholder-gray-500 custom-number-input"
-                    placeholder="Max. 1.000.000€"
+                    placeholder="Your goal here!"
                   />
                 </div>
               </div>
