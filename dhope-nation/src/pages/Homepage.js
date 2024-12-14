@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import DonorLayout from "../layouts/DonorLayout";
 import CampaignCreatorLayout from "../layouts/CampaignCreatorLayout";
 import {
@@ -8,11 +8,14 @@ import {
   getCampaignImages,
 } from "../api/Campaign";
 import homepageSlogan from "../assets/images/homepage-slogan.png";
+import Notification from "../components/Notification";
+import { NotificationContext } from "../context/NotificationContext";
 
 function HomePage() {
   const [newCampaigns, setNewCampaigns] = useState([]);
   const [topDonations, setTopDonations] = useState([]);
   const [latestDonations, setLatestDonations] = useState([]);
+  const { notifications } = useContext(NotificationContext);
 
   const userType = localStorage.getItem("user_type");
 
@@ -67,6 +70,9 @@ function HomePage() {
 
   return (
     <Layout>
+      {notifications.length > 0 && (
+        <Notification notifications={notifications} />
+      )}
       <div className="w-full mt-3">
         <img
           src={homepageSlogan}
@@ -83,7 +89,7 @@ function HomePage() {
             {newCampaigns.slice(0, 3).map((campaign) => (
               <div
                 key={campaign.id}
-                className="relative mb-8 mr-4 w-1/3 h-64 flex flex-col items-center justify-center rounded-lg overflow-hidden cursor-pointer"
+                className="relative mb-8 mr-4 w-1/3 h-64 2xl:h-80 flex flex-col items-center justify-center rounded-lg overflow-hidden cursor-pointer"
                 onClick={navigateToCampaign(campaign.id)}
               >
                 <img

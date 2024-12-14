@@ -1,7 +1,7 @@
 import "../../styles/Account.css";
 import logo from "../../assets/images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useContext } from "react";
 import { login } from "../../api/Accounts";
 import { accountType } from "../../api/Accounts";
 import {
@@ -10,6 +10,7 @@ import {
   getDonationsLast30Days,
   updateHonor,
 } from "../../api/Profile";
+import { NotificationContext } from "../../context/NotificationContext.js";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -17,41 +18,43 @@ function Login() {
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
-  const verifyIfHowMuchDonatedLast30Days = async (token, honor) => {
-    const response = await getDonationsLast30Days(token);
-    const donationsLast30Days = response.data.total_donated_last_30_days;
-
-    if (donationsLast30Days < 10 && honor !== "Neutral Honor") {
-      await updateHonor(token, "Neutral Honor");
-      alert("Your honor is now Neutral Honor");
-    } else if (
-      donationsLast30Days < 25 &&
-      donationsLast30Days >= 10 &&
-      honor !== "High Honor"
-    ) {
-      await updateHonor(token, "High Honor");
-      alert("Your honor is now High Honor");
-    } else if (
-      donationsLast30Days < 50 &&
-      donationsLast30Days >= 25 &&
-      honor !== "Super High Honor"
-    ) {
-      await updateHonor(token, "Super High Honor");
-      alert("Your honor is now Super High Honor");
-    } else if (
-      donationsLast30Days < 100 &&
-      donationsLast30Days >= 50 &&
-      honor !== "Epic Honor"
-    ) {
-      await updateHonor(token, "Epic Honor");
-      alert("Your honor is now Epic Honor");
-    } else if (donationsLast30Days >= 100 && honor !== "Legendary Honor") {
-      await updateHonor(token, "Legendary Honor");
-      alert("Your honor is now Legendary Honor");
-    }
-  };
+  const { showNotification } = useContext(NotificationContext);
 
   const handleLogin = useCallback(async () => {
+    const verifyIfHowMuchDonatedLast30Days = async (token, honor) => {
+      const response = await getDonationsLast30Days(token);
+      const donationsLast30Days = response.data.total_donated_last_30_days;
+
+      if (donationsLast30Days < 10 && honor !== "Neutral Honor") {
+        await updateHonor(token, "Neutral Honor");
+        showNotification("Your honor is now Neutral Honor", "honor");
+      } else if (
+        donationsLast30Days < 25 &&
+        donationsLast30Days >= 10 &&
+        honor !== "High Honor"
+      ) {
+        await updateHonor(token, "High Honor");
+        showNotification("Your honor is now High Honor", "honor");
+      } else if (
+        donationsLast30Days < 50 &&
+        donationsLast30Days >= 25 &&
+        honor !== "Super High Honor"
+      ) {
+        await updateHonor(token, "Super High Honor");
+        showNotification("Your honor is now Super High Honor", "honor");
+      } else if (
+        donationsLast30Days < 100 &&
+        donationsLast30Days >= 50 &&
+        honor !== "Epic Honor"
+      ) {
+        await updateHonor(token, "Epic Honor");
+        showNotification("Your honor is now Epic Honor", "honor");
+      } else if (donationsLast30Days >= 100 && honor !== "Legendary Honor") {
+        await updateHonor(token, "Legendary Honor");
+        showNotification("Your honor is now Legendary Honor", "honor");
+      }
+    };
+
     try {
       const data = { username, password };
       const response = await login(data);
@@ -63,7 +66,6 @@ function Login() {
           const donorProfile = await getDonorProfile(response.data.token);
           const donorVerified = donorProfile.data.donor.is_verified;
           const honor = donorProfile.data.donor.honor;
-          console.log(honor);
           if (donorVerified) {
             localStorage.setItem("authToken", response.data.token);
             localStorage.setItem("user_type", "Donor");
@@ -85,7 +87,9 @@ function Login() {
             localStorage.setItem("user_type", "Campaign Creator");
             navigate("/homepage");
           } else {
-            setErrorMessage("Your account has not been verified yet by an admin.");
+            setErrorMessage(
+              "Your account has not been verified yet by an admin."
+            );
           }
         }
       } else {
@@ -94,7 +98,7 @@ function Login() {
     } catch (error) {
       setErrorMessage("Invalid username or password.");
     }
-  }, [username, password, navigate]);
+  }, [username, password, navigate, showNotification]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {

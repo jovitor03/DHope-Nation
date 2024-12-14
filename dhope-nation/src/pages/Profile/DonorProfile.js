@@ -116,10 +116,6 @@ function DonorProfile() {
       window.location.href = "/login";
     } catch (error) {
       console.error("Erro ao excluir a conta:", error);
-      alert(
-        error.response?.data?.error ||
-          "Erro ao excluir a conta. Por favor, tente novamente."
-      );
     }
   };
 

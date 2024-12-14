@@ -66,7 +66,6 @@ const Leaderboards = () => {
     try {
       const response = await getDonorProfile(token);
       setProfileStats(response.data.donor);
-      console.log("Donation value:", response.data.donor.donation_value);
     } catch (error) {
       console.error("Erro ao obter os dados do perfil:", error);
     }

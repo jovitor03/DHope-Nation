@@ -46,11 +46,21 @@ root.render(
           />
           <Route
             path="/campaign/:id"
-            element={<ProtectedRoute element={<Campaign />} />}
+            element={
+              <ProtectedRoute
+                path="/campaign/:id"
+                element={<Campaign />}
+              />
+            }
           />
           <Route
             path="/campaign/:id/donate"
-            element={<ProtectedRoute element={<CampaignDonation />} />}
+            element={
+              <ProtectedRoute
+                path="/campaign/:id/donate"
+                element={<CampaignDonation />}
+              />
+            }
           />
           <Route
             path="/campaigns"
@@ -59,13 +69,10 @@ root.render(
           <Route
             path="/leaderboards"
             element={
-              <ProtectedRoute
-                path="/leaderboards"
-                element={<Leaderboards />}
-              />
+              <ProtectedRoute path="/leaderboards" element={<Leaderboards />} />
             }
           />
-          <Route path="*" element={<Navigate to="/login" />} />
+          <Route path="*" element={<Navigate to="/homepage" />} />
         </Routes>
       </BrowserRouter>
     </NotificationProvider>

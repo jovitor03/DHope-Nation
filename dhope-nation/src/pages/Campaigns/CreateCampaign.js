@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import CampaignCreatorLayout from "../../layouts/CampaignCreatorLayout";
 import "../../styles/Campaigns.css";
 import { createCampaign, postCampaignImages } from "../../api/Campaign";
 import { useNavigate } from "react-router-dom";
 import plusIcon from "../../assets/images/plus.png";
 import imageIcon from "../../assets/images/image.png";
+import { NotificationContext } from "../../context/NotificationContext";
 
 function CreateCampaign() {
   const [title, setTitle] = useState("");
@@ -17,6 +18,8 @@ function CreateCampaign() {
   const [isOpen, setIsOpen] = useState(false);
   const [textareaHeight, setTextareaHeight] = useState("150px");
 
+  const { showNotification } = useContext(NotificationContext);
+
   const navigate = useNavigate();
 
   const dropdownRef = useRef(null);
@@ -27,17 +30,21 @@ function CreateCampaign() {
     const files = Array.from(event.target.files);
 
     if (files.length !== 4) {
+      showNotification("Please select 4 images.", "error");
       return;
     }
 
     const maxSize = 10 * 1024 * 1024;
     const validFiles = files.filter((file) => file.size <= maxSize);
     if (validFiles.length < files.length) {
-      alert("One or more files are too large. Maximum size is 10 MB.");
+      showNotification(
+        "One or more files are too large. Maximum size is 10 MB.",
+        "error"
+      );
       return;
     }
     if (validFiles.length < 4) {
-      alert("Please select 4 images.");
+      showNotification("Please select 4 images.", "error");
       return;
     }
 
@@ -109,8 +116,6 @@ function CreateCampaign() {
   };
 
   const handleCreateCampaign = async () => {
-    console.log(selectedCategories);
-
     const data = {
       title: title,
       category: selectedCategories,
