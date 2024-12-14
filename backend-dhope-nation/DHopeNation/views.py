@@ -274,6 +274,24 @@ def get_campaigns_by_title(request):
     campaigns = Campaign.objects.filter(title__icontains=title)
     serializer = CampaignSerializer(campaigns, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def close_campain(request):
+    user = get_object_or_404(UserAccount, username=request.user.username)
+    if user.is_campaign_creator:
+        campaign_creator = get_object_or_404(CampaignCreator, user=user)
+        campaign_id = request.data.get('campaign_id')
+        campaign = get_object_or_404(Campaign, id=campaign_id)
+        if campaign.campaign_creator == campaign_creator:
+            campaign.is_completed = True
+            campaign.is_active = False
+            campaign.save()
+            return Response({"message": "Campaign closed successfully"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Campaign does not belong to the user"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({"error": "User is not a campaign creator"}, status=status.HTTP_400_BAD_REQUEST)
 #-------------------------------------------------Donations---------------------------------------------------------------
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
