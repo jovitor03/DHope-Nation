@@ -15,7 +15,6 @@ function CampaignCreatorProfile() {
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState({});
   const [createdCampaigns, setCreatedCampaigns] = useState([]);
-  const [campaignImages, setCampaignImages] = useState({}); // Estado para armazenar as imagens das campanhas
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Estado para controle do modal de exclusão
 
   const getProfileData = async () => {
