@@ -297,14 +297,19 @@ function CreateCampaign() {
               <h2 className="text-[#35473A] text-xl font-semibold">
                 Description:
               </h2>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Write your campaign's description here! (Max. 250 characters)"
-                style={{ height: textareaHeight }}
-                className="bg-transparent focus:outline-none border border-green-800 text-[#28372C] w-full text-xl p-4 placeholder-gray-500 resize-none"
-                maxLength={350}
-              ></textarea>
+              <div className="relative">
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Write your campaign's description here! (Min. 200 characters)"
+                  style={{ height: textareaHeight }}
+                  className="bg-transparent focus:outline-none border border-green-800 text-[#28372C] w-full text-xl p-4 placeholder-gray-500 resize-none text-justify"
+                  maxLength={350}
+                ></textarea>
+                <div className="absolute bottom-2 right-2 text-gray-500 text-xl z-10">
+                  {description.length}/350
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-col md:flex-row w-full items-center md:space-x-4 justify-center">
