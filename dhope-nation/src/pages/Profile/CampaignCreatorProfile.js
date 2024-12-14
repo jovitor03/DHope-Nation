@@ -35,7 +35,7 @@ function CampaignCreatorProfile() {
     if (!dateString) return "Unknown";
     try {
       const date = new Date(dateString);
-      return format(date, "dd MMM yyyy");
+      return format(date, "dd MMM yyyy 'at' HH:mm");
     } catch (error) {
       console.error("Erro ao formatar a data:", error);
       return "Invalid date";
@@ -227,22 +227,22 @@ function CampaignCreatorProfile() {
       {/* Modal de Confirmação de Exclusão de Conta */}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-20">
-          <div className="bg-[#f1f5f0] p-8 rounded-lg shadow-lg max-w-sm w-full text-center">
+          <div className="bg-[#f1f5f0] p-8 rounded-lg shadow-lg max-w-lg w-full text-center">
             <h2 className="text-2xl font-semibold mb-4 text-[#516158]">
               Are you sure you want to delete your account?
             </h2>
             <div className="flex justify-center space-x-12">
               <button
-                className="bg-[#34A77F] text-white px-4 py-2 rounded-md hover:bg-[#2e8063]"
-                onClick={handleConfirmDeleteAccount} // Confirmar exclusão
+                className="bg-[#34A77F] text-white px-6 py-2 rounded-md hover:bg-[#2e8063] text-xl "
+                onClick={handleConfirmDeleteAccount}
               >
-                Yes
+                Yes, I want to delete my account
               </button>
               <button
-                className="bg-[#CA0404] text-white px-4 py-2 rounded-md hover:bg-red-700"
-                onClick={handleCancelDeleteAccount} // Cancelar exclusão
+                className="bg-[#CA0404] text-white px-6 py-2 rounded-md hover:bg-red-700 text-xl font-semibold"
+                onClick={handleCancelDeleteAccount}
               >
-                No
+                No, I want to stay with you
               </button>
             </div>
           </div>
