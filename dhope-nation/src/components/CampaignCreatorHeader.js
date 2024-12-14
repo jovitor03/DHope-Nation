@@ -15,7 +15,7 @@ function Header() {
   };
 
   const handleProfileClick = () => {
-    navigate("/profile");
+    navigate("/profile/campaign-creator");
   };
 
   const handleLogoutClick = () => {
