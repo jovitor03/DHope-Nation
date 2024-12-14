@@ -18,6 +18,15 @@ export const getCampaignCreatorProfile = (token) => {
   });
 };
 
+export const getCampaignsByCreator = (token) => {
+  return axios.get("http://127.0.0.1:8000/profile/campaign-creator/my-campaigns/", {
+    headers: {
+      Authorization: `Token ${token}`,
+      Accept: "*/*",
+    },
+  });
+};
+
 export const deleteProfile = (token) => {
   return axios.delete("http://127.0.0.1:8000/profile/donor/delete/", {
     headers: {
