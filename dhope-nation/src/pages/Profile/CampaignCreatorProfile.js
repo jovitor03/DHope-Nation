@@ -3,21 +3,28 @@ import CampaignCreatorLayout from "../../layouts/CampaignCreatorLayout";
 import profileIcon from "../../assets/images/profile-big-icon.png";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import LinearProgressBar from "../../components/LevelProgressBar.js";
 import {
   getCampaignCreatorProfile,
   deleteProfile,
-  getCampaignsByCreator, // Importar a função para buscar campanhas
+  getCampaignsByCreator,
 } from "../../api/Profile.js";
-import { getCampaignImages } from "../../api/Campaign.js";
+import { getCampaignImages, closeCampaign } from "../../api/Campaign.js";
 import "../../styles/Profile.css";
 import LoadingScreen from "../../components/LoadingScreen.js";
 
 function CampaignCreatorProfile() {
   const navigate = useNavigate();
-  const [profileData, setProfileData] = useState({});
-  const [createdCampaigns, setCreatedCampaigns] = useState([]);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Estado para controle do modal de exclusão
+  const [profileData, setProfileData] = useState({});//Dados do campaign creator logado
+  const [createdCampaigns, setCreatedCampaigns] = useState([]);//Campanhas do campaign creator logado
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);//Aviso para confirmação de eliminar conta
   const [loading, setLoading] = useState(true);
+  const [isCloseModalOpen, setIsCloseModalOpen] = useState(false);//Aviso para confirmação concluir uma campanha
+  const [selectedCampaignId, setSelectedCampaignId] = useState(null);//Campanha escolhida
+  const [currentPage, setCurrentPage] = useState(1);//Página atual
+  const [filterActive, setFilterActive] = useState(true);//Filtar campanhas ativas ou encerradas
+  const [campaignTitle, setCampaignTitle] = useState("Active Campaigns");//Título de Ativas ou encerradas
+  const campaignsPerPage = 3;//Número de campanhas por página
 
   const getProfileData = async () => {
     const token = localStorage.getItem("authToken");
@@ -52,22 +59,50 @@ function CampaignCreatorProfile() {
     }
     try {
       const response = await getCampaignsByCreator(token);
-      setCreatedCampaigns(response.data);
-
-      // Buscar as imagens para cada campanha
       const campaignsWithImages = await Promise.all(
         response.data.map(async (campaign) => {
           const images = await getCampaignImages(campaign.id);
           return { ...campaign, images };
         })
       );
-
-      // Atualizar o estado com as campanhas e suas imagens
       setCreatedCampaigns(campaignsWithImages);
     } catch (error) {
       console.error("Error fetching campaigns:", error);
     }
   };
+
+  //Campanhas ativas são as que forma criadas e ainda não verificadas, e as encerradaas são as que ja estao completed e foram previamente verificadas, já não estando ativas
+  const filteredCampaigns = createdCampaigns.filter((campaign) => {
+    if (filterActive) {
+      return (campaign.is_active || (!campaign.is_active && !campaign.is_verified));
+    } else {
+      return !campaign.is_active && campaign.is_completed;
+    }
+  });
+
+  const indexOfLastCampaign = currentPage * campaignsPerPage;
+  const indexOfFirstCampaign = indexOfLastCampaign - campaignsPerPage;
+  const currentCampaigns = filteredCampaigns.slice(indexOfFirstCampaign, indexOfLastCampaign);
+
+  const goToNextPage = () => {
+    if (currentPage < Math.ceil(filteredCampaigns.length / campaignsPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+  
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+  
+  
+  const isNextButtonDisabled =
+    currentPage === Math.ceil(filteredCampaigns.length / campaignsPerPage);
+  
+  const isPreviousButtonDisabled = currentPage === 1;
+
+  const hasCampaignsToShow = filteredCampaigns.length > 0;
 
   const handleDeleteAccount = async () => {
     const token = localStorage.getItem("authToken");
@@ -78,7 +113,6 @@ function CampaignCreatorProfile() {
     try {
       await deleteProfile(token);
       localStorage.removeItem("authToken");
-      alert("Conta excluída com sucesso.");
       window.location.href = "/login";
     } catch (error) {
       console.error("Erro ao excluir a conta:", error);
@@ -95,6 +129,34 @@ function CampaignCreatorProfile() {
     };
   };
 
+  const handleCloseCampaignClick = (campaignId) => {
+    setSelectedCampaignId(campaignId);
+    setIsCloseModalOpen(true);
+  };
+
+  const handleCancelCloseCampaign = () => {
+    setIsCloseModalOpen(false);
+    setSelectedCampaignId(null);
+  };
+
+  const handleConfirmCloseCampaign = async () => {
+    if (!selectedCampaignId) return;
+
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.error("Authentication token not found.");
+      return;
+    }
+    try {
+      await closeCampaign(token, selectedCampaignId);
+      setIsCloseModalOpen(false);
+      setSelectedCampaignId(null);
+      getCampaigns();
+    } catch (error) {
+      alert(error || "Error closing the campaign.");
+    }
+  };
+
   useEffect(() => {
     setLoading(true);
     getProfileData();
@@ -106,18 +168,10 @@ function CampaignCreatorProfile() {
     navigate("/create-campaign");
   };
 
-  // Lógica para abrir e fechar o modal de confirmação de exclusão
-  const handleDeleteAccountClick = () => {
-    setIsDeleteModalOpen(true); // Abre o modal de confirmação de exclusão
-  };
-
-  const handleCancelDeleteAccount = () => {
-    setIsDeleteModalOpen(false); // Fecha o modal de confirmação de exclusão
-  };
-
-  const handleConfirmDeleteAccount = () => {
-    handleDeleteAccount(); // Chama a função para excluir a conta
-    setIsDeleteModalOpen(false); // Fecha o modal após confirmar
+  const toggleFilter = () => {
+    setFilterActive(!filterActive);
+    setCurrentPage(1);
+    setCampaignTitle(filterActive ? "Ended Campaigns" : "Active Campaigns"); // Altera o título conforme o filtro
   };
 
   return (
@@ -127,7 +181,7 @@ function CampaignCreatorProfile() {
         <div className="fade-in">
           <CampaignCreatorLayout>
             <div className="flex flex-row items-start justify-start p-8 gap-8">
-              {/* Perfil */}
+
               <div className="w-1/4 text-[#303934]">
                 <div className="flex flex-col items-center gap-4">
                   <img
@@ -148,7 +202,7 @@ function CampaignCreatorProfile() {
                   </div>
                   <button
                     className="bg-[#CA0404] rounded-md text-white font-semibold px-4 py-2 text-lg"
-                    onClick={handleDeleteAccountClick} // Botão para excluir a conta
+                    onClick={() => setIsDeleteModalOpen(true)}
                   >
                     Delete Account
                   </button>
@@ -161,22 +215,33 @@ function CampaignCreatorProfile() {
                 </div>
               </div>
 
-              {/* Campanhas */}
               <div className="w-3/4 flex flex-col gap-6">
-                {createdCampaigns.length > 0 ? (
-                  createdCampaigns.map((campaign) => {
+                {/*Título e botão ao alternar entre Ativas e Fechadas*/}
+                <div className="flex items-center justify-between mb-4">
+                  <h1 className="text-4xl font-bold text-[#303934]">{campaignTitle}</h1>
+                  <button
+                    className="bg-[#5B8C5A] text-white px-4 py-2 rounded-md"
+                    onClick={toggleFilter}
+                  >
+                    {filterActive ? "Show Ended Campaigns" : "Show Active Campaigns"}
+                  </button>
+                </div>
+                {filteredCampaigns.length > 0 ? (
+                  currentCampaigns.map((campaign) => {
                     const progressPercentage =
                       (campaign.current_amount / campaign.goal) * 100;
 
-                    // Obtendo a URL da primeira imagem da campanha
                     const campaignImage =
                       campaign.images && campaign.images[0]?.image;
 
+                      // Verifica se a campanha está por verificar (nova)
+                      const isWaitingForVerification = !campaign.is_verified && !campaign.is_active;
+                      
                     return (
                       <div
                         key={campaign.id}
                         className="relative mb-8 mr-4 w-full h-64 flex flex-col items-center justify-center rounded-lg overflow-hidden cursor-pointer"
-                        onClick={navigateToCampaign(campaign.id)}
+                        onClick={isWaitingForVerification ? null : navigateToCampaign(campaign.id)} // Se estiver esperando verificação, não redireciona
                         style={{
                           backgroundImage: campaignImage
                             ? `url(http://127.0.0.1:8000${campaignImage})`
@@ -185,24 +250,23 @@ function CampaignCreatorProfile() {
                           backgroundPosition: "center",
                         }}
                       >
-                        {/* Conteúdo da campanha */}
                         <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-between p-6">
                           <div className="flex flex-col items-center">
-                            {/* Nome da campanha */}
                             <label className="font-semibold text-4xl text-white">
                               {campaign.title}
                             </label>
                           </div>
-
-                          {/* Barra de progresso */}
-                          <div className="w-full bg-gray-200 rounded-full h-7 mt-4">
-                            <div
-                              className="bg-[#C8E5B3] h-7 rounded-full"
-                              style={{ width: `${progressPercentage}%` }}
-                            ></div>
+                          <div className="w-full">
+                            <LinearProgressBar
+                              width="100%"
+                              height={40}
+                              fillColor={"#C8E5B3"}
+                              xp={campaign.current_amount}
+                              xpToNextLevel={campaign.goal}
+                              minXpLevel={0}
+                              radius={25}
+                            />
                           </div>
-
-                          {/* Detalhes do progresso */}
                           <div className="flex justify-between mt-2 text-sm text-gray-200">
                             <span>
                               {`Raised: ${campaign.current_amount.toFixed(
@@ -211,35 +275,47 @@ function CampaignCreatorProfile() {
                                 2
                               )}€ (${progressPercentage.toFixed(2)}%)`}
                             </span>
-
-                            {/* Deadline à esquerda da barra de progresso */}
                             <span className="text-md">
                               Deadline: {formatDate(campaign.end_date)}
                             </span>
                           </div>
-
-                          {/* Botão Encerrar */}
-                          <button
-                            className="bg-[#CA0404] text-white font-semibold px-4 py-2 rounded-md mt-4"
-                            onClick={() =>
-                              console.log(`Encerrar campanha ${campaign.id}`)
-                            }
-                          >
-                            Encerrar
-                          </button>
+                          {/*Mostrar botão de concluir nas ativas, waiting nas por verificar e ended nas encerradas*/}
+                          {filterActive ? (
+                            campaign.is_verified ? (
+                              <button
+                                className="bg-[#CA0404] text-white font-semibold px-4 py-2 rounded-md mt-4"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleCloseCampaignClick(campaign.id);
+                                }}
+                              >
+                                Conclude Campaign
+                              </button>
+                            ) : (
+                              <span className="text-center bg-[#7B241C] text-white px-4 py-2 rounded-md mt-4">
+                                Waiting on verification by the Administration
+                              </span>
+                            )
+                          ) : (
+                            <span className="text-center bg-[#7B241C] text-white px-4 py-2 rounded-md mt-4">
+                              Ended
+                            </span>
+                          )}
                         </div>
                       </div>
                     );
                   })
                 ) : (
                   <label className="text-center text-lg text-gray-500">
-                    No campaigns created yet.
+                    {filterActive
+                      ? "No active campaigns available."
+                      : "No ended campaigns available."}
                   </label>
                 )}
               </div>
             </div>
 
-            {/* Modal de Confirmação de Exclusão de Conta */}
+            {/*Confirmar apagar a conta*/}
             {isDeleteModalOpen && (
               <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-20">
                 <div className="bg-[#f1f5f0] p-8 rounded-lg shadow-lg max-w-lg w-full text-center">
@@ -248,19 +324,62 @@ function CampaignCreatorProfile() {
                   </h2>
                   <div className="flex justify-center space-x-12">
                     <button
-                      className="bg-[#34A77F] text-white px-6 py-2 rounded-md hover:bg-[#2e8063] text-xl "
-                      onClick={handleConfirmDeleteAccount}
+                      className="bg-[#34A77F] text-white px-6 py-2 rounded-md hover:bg-[#2e8063] text-xl"
+                      onClick={handleDeleteAccount}
                     >
                       Yes, I want to delete my account
                     </button>
                     <button
                       className="bg-[#CA0404] text-white px-6 py-2 rounded-md hover:bg-red-700 text-xl font-semibold"
-                      onClick={handleCancelDeleteAccount}
+                      onClick={() => setIsDeleteModalOpen(false)}
                     >
                       No, I want to stay with you
                     </button>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {isCloseModalOpen && (
+              <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-20">
+                <div className="bg-[#f1f5f0] p-8 rounded-lg shadow-lg max-w-lg w-full text-center">
+                  <h2 className="text-2xl font-semibold mb-4 text-[#516158]">
+                    Are you sure you want to end this cause so soon?
+                  </h2>
+                  <div className="flex justify-center space-x-12">
+                    <button
+                      className="bg-[#34A77F] text-white px-6 py-2 rounded-md hover:bg-[#2e8063] text-xl"
+                      onClick={handleConfirmCloseCampaign}
+                    >
+                      Yes, I want to end this cause.
+                    </button>
+                    <button
+                      className="bg-[#CA0404] text-white px-6 py-2 rounded-md hover:bg-red-700 text-xl font-semibold"
+                      onClick={handleCancelCloseCampaign}
+                    >
+                      No, I will continue gathering hope!
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {hasCampaignsToShow && (
+              <div className="flex justify-center mt-4 space-x-4">
+                <button
+                  className="bg-[#5B8C5A] text-white px-4 py-2 rounded-md disabled:bg-gray-300"
+                  disabled={isPreviousButtonDisabled}
+                  onClick={goToPreviousPage}
+                >
+                  Previous
+                </button>
+                <button
+                  className="bg-[#5B8C5A] text-white px-4 py-2 rounded-md disabled:bg-gray-300"
+                  disabled={isNextButtonDisabled}
+                  onClick={goToNextPage}
+                >
+                  Next
+                </button>
               </div>
             )}
           </CampaignCreatorLayout>
