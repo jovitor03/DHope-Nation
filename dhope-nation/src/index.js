@@ -29,7 +29,7 @@ root.render(
           <Route path="/create-account/page-2" element={<CreateAccount2 />} />
           <Route path="/confirm-identity" element={<ConfirmIdentity />} />
           <Route
-            path="/profile"
+            path="/profile/donor"
             element={<ProtectedRoute element={<DonorProfile />} />}
           />
           <Route

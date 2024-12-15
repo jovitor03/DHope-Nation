@@ -11,11 +11,12 @@ function Header() {
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
+    localStorage.removeItem("user_type");
     navigate("/login");
   };
 
   const handleProfileClick = () => {
-    navigate("/profile");
+    navigate("/profile/donor");
   };
 
   const handleLogoutClick = () => {
