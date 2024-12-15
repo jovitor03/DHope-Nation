@@ -143,7 +143,13 @@ const Leaderboards = () => {
                                 )}
                               />
                             </div>
-                            <span className="absolute inset-0 flex items-center justify-center text-4xl font-bold text-white">
+                            <span
+                              className={`absolute inset-0 flex items-center justify-center font-bold text-white ${
+                                String(leaderboardStats.level).length >= 3
+                                  ? "text-4xl"
+                                  : "text-5xl"
+                              }`}
+                            >
                               {leaderboardStats.level}
                             </span>
                           </div>
@@ -194,7 +200,13 @@ const Leaderboards = () => {
                                 )}
                               />
                             </div>
-                            <span className="absolute inset-0 flex items-center justify-center text-4xl font-semibold text-white">
+                            <span
+                              className={`absolute inset-0 flex items-center justify-center font-semibold text-white ${
+                                String(profileStats.level).length >= 3
+                                  ? "text-4xl"
+                                  : "text-5xl"
+                              }`}
+                            >
                               {profileStats.level}
                             </span>
                           </div>
@@ -268,7 +280,13 @@ const Leaderboards = () => {
                                 )}
                               />
                             </div>
-                            <span className="absolute inset-0 flex items-center justify-center text-4xl font-bold text-white">
+                            <span
+                              className={`absolute inset-0 flex items-center justify-center font-bold text-white ${
+                                String(leaderboardStats.level).length >= 3
+                                  ? "text-4xl"
+                                  : "text-5xl"
+                              }`}
+                            >
                               {leaderboardStats.level}
                             </span>
                           </div>
@@ -319,7 +337,13 @@ const Leaderboards = () => {
                                 )}
                               />
                             </div>
-                            <span className="absolute inset-0 flex items-center justify-center text-4xl font-semibold text-white">
+                            <span
+                              className={`absolute inset-0 flex items-center justify-center font-bold text-white ${
+                                String(profileStats.level).length >= 3
+                                  ? "text-4xl"
+                                  : "text-5xl"
+                              }`}
+                            >
                               {profileStats.level}
                             </span>
                           </div>
