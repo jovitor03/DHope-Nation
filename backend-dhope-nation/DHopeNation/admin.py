@@ -7,4 +7,3 @@ admin.site.register(UserAccount)
 admin.site.register(Campaign)
 admin.site.register(CampaignImage)
 admin.site.register(Donation)
-# Register your models here.
