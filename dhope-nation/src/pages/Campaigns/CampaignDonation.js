@@ -154,7 +154,7 @@ function CampaignDonation() {
   const handleConfirmDonation = async () => {
     const amount = parseFloat(donationAmount);
 
-    if (!amount || amount <= 0) {
+    if (amount < 0.5 || amount > 100000) {
       return;
     }
 
