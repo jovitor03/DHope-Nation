@@ -18,7 +18,7 @@ function CreateCampaign() {
   const [goal, setGoal] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [textareaHeight, setTextareaHeight] = useState("150px");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const { showNotification } = useContext(NotificationContext);
 
