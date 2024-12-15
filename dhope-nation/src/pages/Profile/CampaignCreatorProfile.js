@@ -12,19 +12,20 @@ import {
 import { getCampaignImages, closeCampaign } from "../../api/Campaign.js";
 import "../../styles/Profile.css";
 import LoadingScreen from "../../components/LoadingScreen.js";
+import Pagination from "../../components/Pagination.js";
 
 function CampaignCreatorProfile() {
   const navigate = useNavigate();
-  const [profileData, setProfileData] = useState({});//Dados do campaign creator logado
-  const [createdCampaigns, setCreatedCampaigns] = useState([]);//Campanhas do campaign creator logado
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);//Aviso para confirmação de eliminar conta
+  const [profileData, setProfileData] = useState({}); //Dados do campaign creator logado
+  const [createdCampaigns, setCreatedCampaigns] = useState([]); //Campanhas do campaign creator logado
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); //Aviso para confirmação de eliminar conta
   const [loading, setLoading] = useState(true);
-  const [isCloseModalOpen, setIsCloseModalOpen] = useState(false);//Aviso para confirmação concluir uma campanha
-  const [selectedCampaignId, setSelectedCampaignId] = useState(null);//Campanha escolhida
-  const [currentPage, setCurrentPage] = useState(1);//Página atual
-  const [filterActive, setFilterActive] = useState(true);//Filtar campanhas ativas ou encerradas
-  const [campaignTitle, setCampaignTitle] = useState("Active Campaigns");//Título de Ativas ou encerradas
-  const campaignsPerPage = 3;//Número de campanhas por página
+  const [isCloseModalOpen, setIsCloseModalOpen] = useState(false); //Aviso para confirmação concluir uma campanha
+  const [selectedCampaignId, setSelectedCampaignId] = useState(null); //Campanha escolhida
+  const [currentPage, setCurrentPage] = useState(1); //Página atual
+  const [filterActive, setFilterActive] = useState(true); //Filtar campanhas ativas ou encerradas
+  const [campaignTitle, setCampaignTitle] = useState("Active Campaigns"); //Título de Ativas ou encerradas
+  const campaignsPerPage = 3; //Número de campanhas por página
 
   const getProfileData = async () => {
     const token = localStorage.getItem("authToken");
@@ -74,7 +75,9 @@ function CampaignCreatorProfile() {
   //Campanhas ativas são as que forma criadas e ainda não verificadas, e as encerradaas são as que ja estao completed e foram previamente verificadas, já não estando ativas
   const filteredCampaigns = createdCampaigns.filter((campaign) => {
     if (filterActive) {
-      return (campaign.is_active || (!campaign.is_active && !campaign.is_verified));
+      return (
+        campaign.is_active || (!campaign.is_active && !campaign.is_verified)
+      );
     } else {
       return !campaign.is_active && campaign.is_completed;
     }
@@ -82,25 +85,10 @@ function CampaignCreatorProfile() {
 
   const indexOfLastCampaign = currentPage * campaignsPerPage;
   const indexOfFirstCampaign = indexOfLastCampaign - campaignsPerPage;
-  const currentCampaigns = filteredCampaigns.slice(indexOfFirstCampaign, indexOfLastCampaign);
-
-  const goToNextPage = () => {
-    if (currentPage < Math.ceil(filteredCampaigns.length / campaignsPerPage)) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-  
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-  
-  
-  const isNextButtonDisabled =
-    currentPage === Math.ceil(filteredCampaigns.length / campaignsPerPage);
-  
-  const isPreviousButtonDisabled = currentPage === 1;
+  const currentCampaigns = filteredCampaigns.slice(
+    indexOfFirstCampaign,
+    indexOfLastCampaign
+  );
 
   const hasCampaignsToShow = filteredCampaigns.length > 0;
 
@@ -174,6 +162,8 @@ function CampaignCreatorProfile() {
     setCampaignTitle(filterActive ? "Ended Campaigns" : "Active Campaigns"); // Altera o título conforme o filtro
   };
 
+  const totalPages = Math.ceil(filteredCampaigns.length / campaignsPerPage);
+
   return (
     <div>
       {loading && <LoadingScreen />}
@@ -181,7 +171,6 @@ function CampaignCreatorProfile() {
         <div className="fade-in">
           <CampaignCreatorLayout>
             <div className="flex flex-row items-start justify-start p-8 gap-8">
-
               <div className="w-1/4 text-[#303934]">
                 <div className="flex flex-col items-center gap-4">
                   <img
@@ -218,12 +207,16 @@ function CampaignCreatorProfile() {
               <div className="w-3/4 flex flex-col gap-6">
                 {/*Título e botão ao alternar entre Ativas e Fechadas*/}
                 <div className="flex items-center justify-between mb-4">
-                  <h1 className="text-4xl font-bold text-[#303934]">{campaignTitle}</h1>
+                  <h1 className="text-4xl font-bold text-[#303934]">
+                    {campaignTitle}
+                  </h1>
                   <button
                     className="bg-[#5B8C5A] text-white px-4 py-2 rounded-md"
                     onClick={toggleFilter}
                   >
-                    {filterActive ? "Show Ended Campaigns" : "Show Active Campaigns"}
+                    {filterActive
+                      ? "Show Ended Campaigns"
+                      : "Show Active Campaigns"}
                   </button>
                 </div>
                 {filteredCampaigns.length > 0 ? (
@@ -234,14 +227,19 @@ function CampaignCreatorProfile() {
                     const campaignImage =
                       campaign.images && campaign.images[0]?.image;
 
-                      // Verifica se a campanha está por verificar (nova)
-                      const isWaitingForVerification = !campaign.is_verified && !campaign.is_active;
-                      
+                    // Verifica se a campanha está por verificar (nova)
+                    const isWaitingForVerification =
+                      !campaign.is_verified && !campaign.is_active;
+
                     return (
                       <div
                         key={campaign.id}
                         className="relative mb-8 mr-4 w-full h-64 flex flex-col items-center justify-center rounded-lg overflow-hidden cursor-pointer"
-                        onClick={isWaitingForVerification ? null : navigateToCampaign(campaign.id)} // Se estiver esperando verificação, não redireciona
+                        onClick={
+                          isWaitingForVerification
+                            ? null
+                            : navigateToCampaign(campaign.id)
+                        } // Se estiver esperando verificação, não redireciona
                         style={{
                           backgroundImage: campaignImage
                             ? `url(http://127.0.0.1:8000${campaignImage})`
@@ -312,6 +310,15 @@ function CampaignCreatorProfile() {
                       : "No ended campaigns available."}
                   </label>
                 )}
+                {hasCampaignsToShow && (
+                  <div className="mb-8">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={setCurrentPage}
+                    />
+                  </div>
+                )}
               </div>
             </div>
 
@@ -361,25 +368,6 @@ function CampaignCreatorProfile() {
                     </button>
                   </div>
                 </div>
-              </div>
-            )}
-
-            {hasCampaignsToShow && (
-              <div className="flex justify-center mt-4 space-x-4">
-                <button
-                  className="bg-[#5B8C5A] text-white px-4 py-2 rounded-md disabled:bg-gray-300"
-                  disabled={isPreviousButtonDisabled}
-                  onClick={goToPreviousPage}
-                >
-                  Previous
-                </button>
-                <button
-                  className="bg-[#5B8C5A] text-white px-4 py-2 rounded-md disabled:bg-gray-300"
-                  disabled={isNextButtonDisabled}
-                  onClick={goToNextPage}
-                >
-                  Next
-                </button>
               </div>
             )}
           </CampaignCreatorLayout>
