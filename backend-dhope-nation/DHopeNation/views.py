@@ -211,7 +211,7 @@ def get_campaigns_by_creator(request):
         return Response({"error": "User is not a campaign creator"}, status=status.HTTP_400_BAD_REQUEST)
 @api_view(['GET'])
 def get_all_campaigns(request):
-    campaigns = Campaign.objects.all().filter(is_verified=True)
+    campaigns = Campaign.objects.all().filter(is_verified=True, is_active=True)
     serializer = CampaignSerializer(campaigns, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 @api_view(['POST'])
