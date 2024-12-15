@@ -200,3 +200,22 @@ export const getCampaignsByCategory = async (token, category) => {
     throw error;
   }
 };
+
+export const closeCampaign = async (token, campaignId) => {
+  try {
+    const response = await axios.post(
+      "http://127.0.0.1:8000/close-campaign/",
+      { campaign_id: campaignId },
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return response.data; 
+  } catch (error) {
+    console.error("Erro ao encerrar a campanha:", error.response?.data || error.message);
+    throw error.response?.data || error.message; 
+  }
+};
