@@ -46,6 +46,7 @@ urlpatterns = [
     path('campaign/donate/', views.donate, name='donate_campaign'),
     path('campaign/upload-image/', views.upload_image, name='upload-image'),
     path('image/campaigns', views.get_images, name='get_images'),
+    path('close-campaign/', views.close_campain, name='close_campaign'),
     
     path('stats/donors/', views.donar_count, name='donar_count'),
     path('donors/', views.get_all_donors, name='get_all_donors'),
@@ -61,6 +62,8 @@ urlpatterns = [
     path('campaigns-by-category/', views.get_campaigns_by_category, name='campaigns-by-category'),
     path('campaigns-by-title/', views.get_campaigns_by_title, name='campaigns-by-title'),
     path('donations/last-30-days/', views.get_donations_last_30_days, name='get_donations_last_30_days'),
+    path('top-donations-last-30-days/', views.get_top_donations_last_30_days, name='top-10-donations-last-30-days'),
+    path('top-10-donation-last-30-days/', views.get_top_10_donations_last_30_days, name='top-10-donations-last-30-days'),
 ]
 
 if settings.DEBUG:
