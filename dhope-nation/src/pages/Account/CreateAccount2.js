@@ -1,7 +1,7 @@
 import "../../styles/Account.css";
 import logo from "../../assets/images/logo.png";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 function CreateAccount2() {
   const location = useLocation();
@@ -10,18 +10,28 @@ function CreateAccount2() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleNextPage = () => {
+  const handleNextPage = useCallback(() => {
     if (!username || !password) {
       return;
     }
     navigate(`/confirm-identity`, {
       state: { type, name, surname, email, username, password },
     });
-  };
+  }, [type, name, surname, email, username, password, navigate]);
 
   useEffect(() => {
-    console.log("Details: ", type, name, surname, email);
-  }, [type, name, surname, email]);
+    const handleKeyDown = (event) => {
+      if (event.key === "Enter") {
+        handleNextPage();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleNextPage]);
 
   return (
     <div className="account-page text-black">
@@ -59,20 +69,12 @@ function CreateAccount2() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <div className="flex flex-row justify-between">
-          <Link
-            to="/create-account/page-1"
-            className="btn btn-primary bg-white border-2 border-[#34A77F] text-[#34A77F] rounded-md text-lg hover:bg-[#ebebeb] hover:border-[#34A77F] mt-8 w-[12vw]"
-          >
-            <button>Go Back</button>
-          </Link>
-          <button
-            onClick={handleNextPage}
-            className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8 w-[12vw]"
-          >
-            Next
-          </button>
-        </div>
+        <button
+          onClick={handleNextPage}
+          className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8 w-[12vw] w-full"
+        >
+          Next
+        </button>
         <label className="text-[#8C8C8C] font-semibold mt-8 ">
           Copyright © [2024] DHope Nation. <br /> All rights reserved.
         </label>

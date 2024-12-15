@@ -1,79 +1,183 @@
-import { useEffect, useState } from "react";
-import HomepageLayout from "../layouts/DonorLayout";
-import homepageSlogan from "../assets/images/homepage-slogan.png"; // Importa a imagem desejada
+import { useState, useEffect, useContext } from "react";
+import DonorLayout from "../layouts/DonorLayout";
+import CampaignCreatorLayout from "../layouts/CampaignCreatorLayout";
+import {
+  getTopDonations,
+  getLatestDonations,
+  getNewCampaigns,
+  getCampaignImages,
+} from "../api/Campaign";
+import homepageSlogan from "../assets/images/homepage-slogan.png";
+import Notification from "../components/Notification";
+import { NotificationContext } from "../context/NotificationContext";
+import LoadingScreen from "../components/LoadingScreen.js";
 
 function HomePage() {
+  const [newCampaigns, setNewCampaigns] = useState([]);
   const [topDonations, setTopDonations] = useState([]);
   const [latestDonations, setLatestDonations] = useState([]);
-  const [newCampaigns, setNewCampaigns] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { notifications } = useContext(NotificationContext);
+
+  const userType = localStorage.getItem("user_type");
 
   useEffect(() => {
-    // Simulação de fetch das informações (substitua pelas APIs reais)
-    setTopDonations([
-      { name: "Campaign Name 1", value: "+0.50€" },
-      { name: "Campaign Name 2", value: "+100.00€" },
-      { name: "Campaign Name 3", value: "+56.87€" },
-    ]);
-    setLatestDonations([
-      { name: "Campaign Name 1", value: "+50.70€" },
-      { name: "Campaign Name 2", value: "+1 200.00€" },
-      { name: "Campaign Name 3", value: "+5 605.73€" },
-    ]);
-    setNewCampaigns([
-      { name: "Campaign Name 1", goal: "20 222.50€" },
-      { name: "Campaign Name 2", goal: "3 012.00€" },
-      { name: "Campaign Name 3", goal: "88 758.99€" },
-    ]);
+    const fetchData = async () => {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        console.error("Token de autenticação não encontrado.");
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const campaigns = await getNewCampaigns(token);
+        const campaignsWithImages = await Promise.all(
+          campaigns.map(async (campaign) => {
+            const images = await getCampaignImages(campaign.id);
+            return { ...campaign, images };
+          })
+        );
+        setNewCampaigns(campaignsWithImages);
+
+        const topDonations = await getTopDonations(token);
+        const topDonationsWithImages = await Promise.all(
+          topDonations.map(async (donation) => {
+            const images = await getCampaignImages(donation.campaign);
+            return { ...donation, images };
+          })
+        );
+        setTopDonations(topDonationsWithImages);
+
+        const latestDonations = await getLatestDonations(token);
+        const latestDonationsWithImages = await Promise.all(
+          latestDonations.map(async (donation) => {
+            const images = await getCampaignImages(donation.campaign);
+            return { ...donation, images };
+          })
+        );
+        setLatestDonations(latestDonationsWithImages);
+
+        setTimeout(() => setLoading(false), 1000);
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
+  const navigateToCampaign = (campaignId) => () => {
+    window.location.href = `/campaign/${campaignId}`;
+  };
+
+  const Layout = userType === "Donor" ? DonorLayout : CampaignCreatorLayout;
+
   return (
-    <HomepageLayout>
-        <div className="w-full h-[35vh] mt-3">
-        <img
-          src={homepageSlogan}
-          alt="Homepage Slogan"
-          className="w-full object-cover h-full"
-        />
-        </div>
-        <div className="bg-[#A0C0A2] min-h-screen px-8 pb-6">
-
-        {/* New Campaigns */}
-        <Section title="New Campaigns" data={newCampaigns} isCampaigns={true} />
-
-        {/* Top Donations */}
-        <Section title="Top Donations - October" data={topDonations} />
-
-        {/* Latest Donations */}
-        <Section title="Latest Donations" data={latestDonations} />
-
-      </div>
-    </HomepageLayout>
-  );
-}
-
-function Section({ title, data, isCampaigns = false }) {
-  return (
-    <div className="mb-6 h-[35vh] px-8 py-6">
-      <h2 className="text-xl font-bold text-[#2D2D2D] mb-4">{title}</h2>
-      <div className="grid grid-cols-3 gap-6 h-full">
-        {data.map((item, index) => (
-          <div
-            key={index}
-            //Aqui colocar caminho da campanha escolhida
-            // onClick={() => window.location.href = "/profile"}
-            className="bg-[#E4F0EA] rounded-md p-4 shadow-md text-center flex flex-col justify-center"
-          >
-            <h3 className="text-2xl font-bold text-[#2D2D2D] mb-6 text-center">
-              {item.name}
-            </h3>
-            {isCampaigns ? (
-              <p className="text-lg text-[#4A4A4A] font-medium">Goal: {item.goal}</p>
-            ) : (
-              <p className="text-lg text-[#4A4A4A] font-medium">{item.value}</p>
+    <div>
+      {loading && <LoadingScreen />}
+      {!loading && (
+        <div className="fade-in">
+          <Layout>
+            {notifications.length > 0 && (
+              <Notification notifications={notifications} />
             )}
-          </div>
-        ))}
-      </div>
+            <div className="w-full mt-3">
+              <img
+                src={homepageSlogan}
+                alt="Homepage Slogan"
+                className="w-full object-cover"
+              />
+            </div>
+            <div className="flex flex-col">
+              <div className="ml-24 mt-8 mr-24">
+                <h2 className="text-[#062134] font-semibold text-3xl">
+                  New Campaigns
+                </h2>
+                <div className="flex flex-row justify-between space-x-12 mt-2">
+                  {newCampaigns.slice(0, 3).map((campaign) => (
+                    <div
+                      key={campaign.id}
+                      className="relative mb-8 mr-4 w-1/3 h-64 2xl:h-80 flex flex-col items-center justify-center rounded-lg overflow-hidden cursor-pointer"
+                      onClick={navigateToCampaign(campaign.id)}
+                    >
+                      <img
+                        src={"http://127.0.0.1:8000" + campaign.images[0].image}
+                        alt={campaign.name}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white text-center">
+                        <h3 className="text-3xl font-bold mb-2">
+                          {campaign.title}
+                        </h3>
+                        <p className="text-2xl mb-2">
+                          Goal: {campaign.goal.toFixed(2)}€
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="ml-24 mt-8 mr-24">
+                <h2 className="text-[#062134] font-semibold text-3xl">
+                  Top Donations - Last 30 Days
+                </h2>
+                <div className="flex flex-row justify-between space-x-12 mt-2">
+                  {topDonations.slice(0, 3).map((donation) => (
+                    <div
+                      key={donation.id}
+                      className="relative mb-8 mr-4 w-1/3 h-64 flex flex-col items-center justify-center rounded-lg overflow-hidden cursor-pointer"
+                      onClick={navigateToCampaign(donation.campaign)}
+                    >
+                      <img
+                        src={"http://127.0.0.1:8000" + donation.images[0].image}
+                        alt={donation.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white text-center">
+                        <h3 className="text-3xl font-bold mb-2">
+                          {donation.title}
+                        </h3>
+                        <p className="text-2xl mb-2">
+                          +{donation.amount.toFixed(2)}€
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="ml-24 mt-8 mr-24">
+                <h2 className="text-[#062134] font-semibold text-3xl">
+                  Last Donations
+                </h2>
+                <div className="flex flex-row justify-between space-x-12 mt-2">
+                  {latestDonations.slice(0, 3).map((donation) => (
+                    <div
+                      key={donation.id}
+                      className="relative mb-8 mr-4 w-1/3 h-64 flex flex-col items-center justify-center rounded-lg overflow-hidden cursor-pointer"
+                      onClick={navigateToCampaign(donation.campaign)}
+                    >
+                      <img
+                        src={"http://127.0.0.1:8000" + donation.images[0].image}
+                        alt={donation.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white text-center">
+                        <h3 className="text-3xl font-bold mb-2">
+                          {donation.title}
+                        </h3>
+                        <p className="text-2xl mb-2">
+                          +{donation.amount.toFixed(2)}€
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Layout>
+        </div>
+      )}
     </div>
   );
 }

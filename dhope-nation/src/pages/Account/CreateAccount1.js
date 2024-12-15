@@ -1,7 +1,7 @@
 import "../../styles/Account.css";
 import logo from "../../assets/images/logo.png";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 function CreateAccount1() {
   const [type, setType] = useState("");
@@ -10,14 +10,28 @@ function CreateAccount1() {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
-  const handleNextPage = () => {
+  const handleNextPage = useCallback(() => {
     if (!type || !name || !surname || !email) {
       return;
     }
     navigate(`/create-account/page-2`, {
       state: { type, name, surname, email },
     });
-  };
+  }, [type, name, surname, email, navigate]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Enter") {
+        handleNextPage();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleNextPage]);
 
   return (
     <div className="account-page text-black">
@@ -46,7 +60,7 @@ function CreateAccount1() {
               type="radio"
               name="userType"
               className="appearance-none w-5 h-5 bg-white border-2 rounded-full relative border-gray-400"
-              value={"donator"}
+              value={"donor"}
               onChange={(e) => setType(e.target.value)}
             />
             <label className="text-left text-lg mt-0 ml-2">Donor</label>

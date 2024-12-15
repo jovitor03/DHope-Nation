@@ -15,7 +15,7 @@ function Header() {
   };
 
   const handleProfileClick = () => {
-    navigate("/profile");
+    navigate("/profile/campaign-creator");
   };
 
   const handleLogoutClick = () => {
@@ -35,6 +35,10 @@ function Header() {
     navigate("/homepage");
   };
 
+  const goToCampaigns = () => {
+    navigate("/campaigns");
+  };
+
   return (
     <div className="flex flex-row items-center justify-between">
       <img
@@ -44,14 +48,11 @@ function Header() {
         onClick={goToHomepage}
       ></img>
       <div className="flex flex-row items-center gap-12 mr-16">
-        <label className="text-3xl text-[#062134] font-semibold hover:cursor-pointer">
+        <label
+          className="text-3xl text-[#062134] font-semibold hover:cursor-pointer"
+          onClick={goToCampaigns}
+        >
           CAMPAIGNS
-        </label>
-        <label className="text-3xl text-[#062134] font-semibold hover:cursor-pointer">
-          LEADERBOARDS
-        </label>
-        <label className="text-3xl text-[#062134] font-semibold hover:cursor-pointer">
-          REQUESTS
         </label>
         <img
           alt="logo"
@@ -74,13 +75,13 @@ function Header() {
             </h2>
             <div className="flex justify-center space-x-12">
               <button
-                className="bg-[#34A77F] text-white px-4 py-2 rounded-md hover:bg-[#2e8063]"
+                className="bg-[#34A77F] text-white px-4 py-2 rounded-md hover:bg-[#2e8063] text-xl"
                 onClick={handleConfirmLogout}
               >
                 Yes
               </button>
               <button
-                className="bg-[#CA0404] text-white px-4 py-2 rounded-md hover:bg-red-700"
+                className="bg-[#CA0404] text-white px-4 py-2 rounded-md hover:bg-red-700 text-xl font-semibold"
                 onClick={handleCancelLogout}
               >
                 No

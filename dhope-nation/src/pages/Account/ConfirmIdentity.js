@@ -1,8 +1,8 @@
 import "../../styles/Account.css";
 import logo from "../../assets/images/logo.png";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { register } from "../../api/Accounts";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 function CreateAccount3() {
   const location = useLocation();
@@ -17,14 +17,10 @@ function CreateAccount3() {
     }
   };
 
-  useEffect(() => {
-    console.log("Details: ", type, name, surname, email, username, password);
-  }, [type, name, surname, email, username, password]);
-
-  const handleSignUp = async () => {
+  const handleSignUp = useCallback(async () => {
     let donor = false;
 
-    if (type === "donator") {
+    if (type === "donor") {
       donor = true;
     } else if (type === "campaignCreator") {
       donor = false;
@@ -37,20 +33,31 @@ function CreateAccount3() {
     formData.append("username", username);
     formData.append("password", password);
     formData.append("is_campaign_creator", !donor);
-    formData.append("is_donator", donor);
+    formData.append("is_donor", donor);
     formData.append("identification", file);
 
     try {
       await register(formData);
-      alert(
-        "Account created successfully! Wait for your account to be validated."
-      );
       navigate("/login");
     } catch (error) {
       console.error("Error creating account: ", error);
       alert("An error occurred. Please try again.");
     }
-  };
+  }, [type, name, surname, email, username, password, file, navigate]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Enter") {
+        handleSignUp();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleSignUp]);
 
   return (
     <div className="account-page text-black">
@@ -67,7 +74,7 @@ function CreateAccount3() {
           valid government-issued ID (e.g., passport, driver's license) with
           your date of birth to confirm your age.
         </label>
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-y-2">
           <div>
             <input
               type="file"
@@ -85,23 +92,19 @@ function CreateAccount3() {
           </div>
           <span className="text-lg ml-4">
             <span className="font-semibold">File:</span>{" "}
-            {file ? file.name : "No file selected"}
+            {file
+              ? file.name.length > 30
+                ? `${file.name.substring(0, 30)}...`
+                : file.name
+              : "No file selected"}
           </span>
         </div>
-        <div className="flex flex-row justify-between">
-          <Link
-            to="/create-account/page-2"
-            className="btn btn-primary bg-white border-2 border-[#34A77F] text-[#34A77F] rounded-md text-lg hover:bg-[#ebebeb] hover:border-[#34A77F] mt-8 w-[12vw]"
-          >
-            Go Back
-          </Link>
-          <button
-            onClick={handleSignUp}
-            className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8 w-[12vw]"
-          >
-            Sign Up
-          </button>
-        </div>
+        <button
+          onClick={handleSignUp}
+          className="btn btn-primary bg-[#34A77F] border-[#34A77F] text-white rounded-md text-lg hover:bg-[#2e8063] mt-8 w-[12vw] w-full"
+        >
+          Sign Up
+        </button>
         <label className="text-[#8C8C8C] font-semibold mt-8 ">
           Copyright © [2024] DHope Nation. <br /> All rights reserved.
         </label>

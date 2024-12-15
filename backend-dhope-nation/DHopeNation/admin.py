@@ -1,9 +1,9 @@
 from django.contrib import admin
-from .models import Donator, CampaignCreator,UserAccount,Campaign
+from .models import Donor, CampaignCreator,UserAccount,Campaign,CampaignImage,Donation
 
-admin.site.register(Donator)
+admin.site.register(Donor)
 admin.site.register(CampaignCreator)
 admin.site.register(UserAccount)
 admin.site.register(Campaign)
-
-# Register your models here.
+admin.site.register(CampaignImage)
+admin.site.register(Donation)
