@@ -437,3 +437,8 @@ def update_rank():
 
     return Response({"success": "Ranks updated successfully"}, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+def check_if_token_exists(request, token):
+    if Token.objects.filter(key=token).exists():
+        return Response({"exists": True}, status=status.HTTP_200_OK)
+    return Response({"exists": False}, status=status.HTTP_404_NOT_FOUND)

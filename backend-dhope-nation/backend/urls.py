@@ -64,6 +64,8 @@ urlpatterns = [
     path('donations/last-30-days/', views.get_donations_last_30_days, name='get_donations_last_30_days'),
     path('top-donations-last-30-days/', views.get_top_donations_last_30_days, name='top-10-donations-last-30-days'),
     path('top-10-donation-last-30-days/', views.get_top_10_donations_last_30_days, name='top-10-donations-last-30-days'),
+
+    path('check-if-token-exists/<str:token>/', views.check_if_token_exists, name='check-if-token-exists'),
 ]
 
 if settings.DEBUG:

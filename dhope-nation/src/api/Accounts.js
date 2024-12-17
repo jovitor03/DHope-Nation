@@ -24,3 +24,11 @@ export const accountType = (token) => {
     },
   });
 };
+
+export const getIfTokenExists = (token) => {
+  return axios.get(`http://127.0.0.1:8000/check-if-token-exists/${token}`, {
+    headers: {
+      Accept: "*/*",
+    },
+  });
+};
