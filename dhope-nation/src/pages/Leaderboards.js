@@ -9,6 +9,7 @@ import DonorLayout from "../layouts/DonorLayout.js";
 import LevelBorder from "../components/LevelBorder.js";
 import Hexagon from "../components/Hexagon.js";
 import LoadingScreen from "../components/LoadingScreen.js";
+import { getIfTokenExists } from "../api/Accounts.js";
 
 const Leaderboards = () => {
   const [globalLeaderboards, setGlobalLeaderboards] = useState([]);
@@ -16,6 +17,21 @@ const Leaderboards = () => {
   const [profileData, setProfileData] = useState({});
   const [profileStats, setProfileStats] = useState({});
   const [loading, setLoading] = useState(true);
+
+  const verifyToken = async (token) => {
+    try {
+      const response = await getIfTokenExists(token);
+      if (response.status !== 200) {
+        console.error("Token inválido.");
+        return;
+      } else {
+        console.log("Token válido.");
+      }
+    } catch (error) {
+      window.location.href = "/login";
+      return;
+    }
+  };
 
   const fetchLeaderboardsLast30Days = async () => {
     const data = await getLeaderboardsLast30Days(localStorage.getItem("token"));
@@ -74,6 +90,14 @@ const Leaderboards = () => {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.error("Token de autenticação não encontrado.");
+      return;
+    } else {
+      verifyToken(token);
+    }
+
     setLoading(true);
     fetchProfileData();
     fetchProfileStats();

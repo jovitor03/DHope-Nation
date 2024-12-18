@@ -5,6 +5,7 @@ import CampaignCreatorLayout from "../../layouts/CampaignCreatorLayout";
 import DonorLayout from "../../layouts/DonorLayout";
 import Pagination from "../../components/Pagination";
 import LoadingScreen from "../../components/LoadingScreen";
+import { getIfTokenExists } from "../../api/Accounts";
 
 const CampaignSearch = () => {
   const [campaigns, setCampaigns] = useState([]);
@@ -26,7 +27,30 @@ const CampaignSearch = () => {
 
   const totalPages = Math.ceil(campaigns.length / campaignsPerPage);
 
+  const verifyToken = async (token) => {
+    try {
+      const response = await getIfTokenExists(token);
+      if (response.status !== 200) {
+        console.error("Token inválido.");
+        return;
+      } else {
+        console.log("Token válido.");
+      }
+    } catch (error) {
+      window.location.href = "/login";
+      return;
+    }
+  };
+
   useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.error("Token de autenticação não encontrado.");
+      return;
+    } else {
+      verifyToken(token);
+    }
+
     setTimeout(() => {
       setLoading(false);
     }, 1000);

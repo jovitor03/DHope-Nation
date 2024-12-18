@@ -10,6 +10,7 @@ import crossIcon from "../../assets/images/cross.png";
 import { NotificationContext } from "../../context/NotificationContext.js";
 import Notification from "../../components/Notification.js";
 import LoadingScreen from "../../components/LoadingScreen.js";
+import { getIfTokenExists } from "../../api/Accounts.js";
 
 function CampaignDetails() {
   const [textareaHeight, setTextareaHeight] = useState("150px");
@@ -22,6 +23,21 @@ function CampaignDetails() {
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
+
+  const verifyToken = async (token) => {
+    try {
+      const response = await getIfTokenExists(token);
+      if (response.status !== 200) {
+        console.error("Token inválido.");
+        return;
+      } else {
+        console.log("Token válido.");
+      }
+    } catch (error) {
+      window.location.href = "/login";
+      return;
+    }
+  };
 
   useEffect(() => {
     const updateTextareaHeight = () => {
@@ -44,18 +60,22 @@ function CampaignDetails() {
 
   useEffect(() => {
     const fetchCampaign = async () => {
-      const data = await getCampaignById(
-        campaignId,
-        localStorage.getItem("authToken")
-      );
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        console.error("Token de autenticação não encontrado.");
+        return;
+      } else {
+        verifyToken(token);
+      }
+
+      const data = await getCampaignById(campaignId, token);
       if (!data) {
         navigate("/homepage");
       } else {
         setCampaign(data);
         setTimeout(() => {
           setLoading(false);
-        }
-        , 1000);
+        }, 1000);
       }
     };
 
@@ -269,4 +289,3 @@ function CampaignDetails() {
 }
 
 export default CampaignDetails;
-

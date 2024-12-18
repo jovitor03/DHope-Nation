@@ -13,6 +13,7 @@ import { getCampaignImages, closeCampaign } from "../../api/Campaign.js";
 import "../../styles/Profile.css";
 import LoadingScreen from "../../components/LoadingScreen.js";
 import Pagination from "../../components/Pagination.js";
+import { getIfTokenExists } from "../../api/Accounts.js";
 
 function CampaignCreatorProfile() {
   const navigate = useNavigate();
@@ -26,6 +27,21 @@ function CampaignCreatorProfile() {
   const [filterActive, setFilterActive] = useState(true); //Filtar campanhas ativas ou encerradas
   const [campaignTitle, setCampaignTitle] = useState("Active Campaigns"); //Título de Ativas ou encerradas
   const campaignsPerPage = 3; //Número de campanhas por página
+
+  const verifyToken = async (token) => {
+    try {
+      const response = await getIfTokenExists(token);
+      if (response.status !== 200) {
+        console.error("Token inválido.");
+        return;
+      } else {
+        console.log("Token válido.");
+      }
+    } catch (error) {
+      window.location.href = "/login";
+      return;
+    }
+  };
 
   const getProfileData = async () => {
     const token = localStorage.getItem("authToken");
@@ -146,6 +162,14 @@ function CampaignCreatorProfile() {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      window.location.href = "/login";
+      return;
+    } else {
+      verifyToken(token);
+    }
+
     setLoading(true);
     getProfileData();
     getCampaigns();
