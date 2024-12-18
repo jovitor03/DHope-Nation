@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from django.contrib import admin
 from .models import Donor, CampaignCreator,UserAccount,Campaign,CampaignImage,Donation
 
@@ -37,6 +38,9 @@ class DonationAdmin(admin.ModelAdmin):
     list_filter = ('date',)
     readonly_fields = ('date',)
     search_fields = ('donor__user__username',)
+
+admin.site.site_header = 'DHope Nation Administration'
+admin.site.unregister(Group)
 
 #admin.site.register(Donor)
 #admin.site.register(CampaignCreator)
