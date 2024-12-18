@@ -18,6 +18,7 @@ import { format } from "date-fns";
 import { getCampaignImages } from "../../api/Campaign.js";
 import "../../styles/Profile.css";
 import LoadingScreen from "../../components/LoadingScreen.js";
+import { getIfTokenExists } from "../../api/Accounts.js";
 
 function DonorProfile() {
   const [profileStats, setProfileStats] = useState({});
@@ -30,6 +31,21 @@ function DonorProfile() {
   const maxXP = 25024950;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const verifyToken = async (token) => {
+    try {
+      const response = await getIfTokenExists(token);
+      if (response.status !== 200) {
+        console.error("Token inválido.");
+        return;
+      } else {
+        console.log("Token válido.");
+      }
+    } catch (error) {
+      window.location.href = "/login";
+      return;
+    }
+  };
 
   const getProfileStats = async () => {
     const token = localStorage.getItem("authToken");
@@ -163,6 +179,14 @@ function DonorProfile() {
   }, [donorDonations]);
 
   useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.error("Token de autenticação não encontrado.");
+      return;
+    } else {
+      verifyToken(token);
+    }
+
     setLoading(true);
     getProfileStats();
     getProfileData();

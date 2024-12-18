@@ -13,6 +13,7 @@ import {
 } from "../../api/Profile";
 import { NotificationContext } from "../../context/NotificationContext.js";
 import LoadingScreen from "../../components/LoadingScreen.js";
+import { getIfTokenExists } from "../../api/Accounts.js";
 
 function CampaignDonation() {
   const [campaign, setCampaign] = useState(null);
@@ -29,12 +30,29 @@ function CampaignDonation() {
 
   const navigate = useNavigate();
 
+  const verifyToken = async (token) => {
+    try {
+      const response = await getIfTokenExists(token);
+      if (response.status !== 200) {
+        console.error("Token inválido.");
+        return;
+      } else {
+        console.log("Token válido.");
+      }
+    } catch (error) {
+      window.location.href = "/login";
+      return;
+    }
+  };
+
   useEffect(() => {
     const fetchProfileData = async () => {
       const token = localStorage.getItem("authToken");
       if (!token) {
         console.error("Token de autenticação não encontrado.");
         return;
+      } else {
+        verifyToken(token);
       }
       try {
         setLoading(true);

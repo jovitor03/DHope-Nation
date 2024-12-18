@@ -7,6 +7,7 @@ import plusIcon from "../../assets/images/plus.png";
 import imageIcon from "../../assets/images/image.png";
 import { NotificationContext } from "../../context/NotificationContext";
 import LoadingScreen from "../../components/LoadingScreen";
+import { getIfTokenExists } from "../../api/Accounts";
 
 function CreateCampaign() {
   const [title, setTitle] = useState("");
@@ -27,6 +28,21 @@ function CreateCampaign() {
   const dropdownRef = useRef(null);
 
   const [imagePreviews, setImagePreviews] = useState([]);
+
+  const verifyToken = async (token) => {
+    try {
+      const response = await getIfTokenExists(token);
+      if (response.status !== 200) {
+        console.error("Token inválido.");
+        return;
+      } else {
+        console.log("Token válido.");
+      }
+    } catch (error) {
+      window.location.href = "/login";
+      return;
+    }
+  };
 
   const handleImageChange = (event) => {
     const files = Array.from(event.target.files);
@@ -55,6 +71,14 @@ function CreateCampaign() {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.error("Token de autenticação não encontrado.");
+      return;
+    } else {
+      verifyToken(token);
+    }
+
     setTimeout(() => {
       setLoading(false);
     }, 1000);
