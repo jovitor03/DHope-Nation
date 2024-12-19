@@ -73,3 +73,10 @@ In the project directory, you can run:
 ### On MacOS: `python3 manage.py runserver`
 
 ### On Windows: `python manage.py runserver`
+
+Runs the server.
+Open [http://localhost:8000/admin](http://localhost:8000/admin) to view the administration server.
+
+Administration
+Username: admin
+Password: 1234
