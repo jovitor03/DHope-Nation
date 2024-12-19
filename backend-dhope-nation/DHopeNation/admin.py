@@ -20,6 +20,7 @@ class UserAccountAdmin(admin.ModelAdmin):
     list_display = ('id','username','is_donor','is_campaign_creator','identification',)
     exclude = ('is_superuser','is_staff','groups','user_permissions',)
     search_fields = ('username',)
+    readonly_fields = ('is_campaign_creator','is_donor',)
    
 @admin.register(Campaign)
 class CampaignAdmin(admin.ModelAdmin):
