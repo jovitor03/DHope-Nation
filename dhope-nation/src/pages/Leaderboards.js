@@ -373,7 +373,7 @@ const Leaderboards = () => {
                           </div>
                           <div className="flex flex-col items-start ml-4">
                             <label className="text-3xl font-bold">
-                              {profileData.username} ({profileStats.rank}º)
+                              {profileData.username}
                             </label>
                             <label
                               className={`text-2xl font-semibold ${
