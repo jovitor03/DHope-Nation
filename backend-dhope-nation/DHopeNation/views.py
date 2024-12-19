@@ -440,5 +440,8 @@ def update_rank():
 @api_view(['GET'])
 def check_if_token_exists(request, token):
     if Token.objects.filter(key=token).exists():
-        return Response({"exists": True}, status=status.HTTP_200_OK)
+        token=Token.objects.get(key=token)
+        user=UserAccount.objects.filter(username=token.user).get()
+        if user.is_active:
+            return Response({"exists": True}, status=status.HTTP_200_OK)
     return Response({"exists": False}, status=status.HTTP_404_NOT_FOUND)
